@@ -10,8 +10,7 @@ const Topbar = ({ toggleSidebar }) => {
                 className="btn btn-link d-md-none rounded-circle mr-3"
                 onClick={toggleSidebar}
             >
-                <span className="material-icons" style={{ color: "#5f6368", fontSize: 24}}></span>
-                {/* <MenuIcon style={{ color: "#5f6368", fontSize: 24 }} /> 아이콘 */}
+                <i className="fa fa-bars"></i>
             </button>
 
             {/* Search */}
