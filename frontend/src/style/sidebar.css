@@ -1,0 +1,14 @@
+/* 기본 Sidebar 상태 */
+.sidebar {
+    transition: margin-left 0.3s ease-in-out;
+  }
+  
+/* Sidebar가 열렸을 때 */
+.sidebar.toggled {
+margin-left: 0;
+}
+
+/* Sidebar가 닫혔을 때 */
+.sidebar.collapsed {
+margin-left: -250px; /* Sidebar 너비에 따라 조정 */
+}
