@@ -13,12 +13,12 @@ const Sidebar = () => {
       id="accordionSidebar"
     >
       {/* Sidebar - Brand */}
-      <a className="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+      <a className="sidebar-brand d-flex align-items-center justify-content-center" href="#">
         <div className="sidebar-brand-icon rotate-n-15">
           <i className="fas fa-laugh-wink"></i>
         </div>
         <div className="sidebar-brand-text mx-3">
-          SB Admin <sup>2</sup>
+          HRmony
         </div>
       </a>
 
@@ -27,9 +27,9 @@ const Sidebar = () => {
 
       {/* Nav Item - Dashboard */}
       <li className="nav-item active">
-        <a className="nav-link" href="index.html">
+        <a className="nav-link" href="#">
           <i className="fas fa-fw fa-tachometer-alt"></i>
-          <span>Dashboard</span>
+          <span>홈</span>
         </a>
       </li>
 
@@ -37,7 +37,7 @@ const Sidebar = () => {
       <hr className="sidebar-divider" />
 
       {/* Heading */}
-      <div className="sidebar-heading">Interface</div>
+      <div className="sidebar-heading">REQUEST</div>
 
       {/* Nav Item - Utilities Collapse Menu */}
       <li className="nav-item">
@@ -50,7 +50,7 @@ const Sidebar = () => {
           aria-controls="collapseUtilities"
         >
           <i className="fas fa-fw fa-wrench"></i>
-          <span>Utilities</span>
+          <span>요청</span>
         </a>
         <div
           id="collapseUtilities"
@@ -59,18 +59,15 @@ const Sidebar = () => {
           data-parent="#accordionSidebar"
         >
           <div className="bg-white py-2 collapse-inner rounded">
-            <h6 className="collapse-header">Custom Utilities:</h6>
+            <h6 className="collapse-header">프로젝트 요청</h6>
             <a className="collapse-item" href="utilities-color.html">
-              Colors
+              프로젝트 요청
             </a>
             <a className="collapse-item" href="utilities-border.html">
-              Borders
+              보낸 요청
             </a>
             <a className="collapse-item" href="utilities-animation.html">
-              Animations
-            </a>
-            <a className="collapse-item" href="utilities-other.html">
-              Other
+              받은 요청
             </a>
           </div>
         </div>
@@ -80,7 +77,7 @@ const Sidebar = () => {
       <hr className="sidebar-divider" />
 
       {/* Heading */}
-      <div className="sidebar-heading">Addons</div>
+      <div className="sidebar-heading">Project</div>
 
       {/* Nav Item - Pages Collapse Menu */}
       <li className="nav-item">
@@ -93,7 +90,7 @@ const Sidebar = () => {
           aria-controls="collapsePages"
         >
           <i className="fas fa-fw fa-folder"></i>
-          <span>Pages</span>
+          <span>프로젝트</span>
         </a>
         <div
           id="collapsePages"
@@ -102,23 +99,15 @@ const Sidebar = () => {
           data-parent="#accordionSidebar"
         >
           <div className="bg-white py-2 collapse-inner rounded">
-            <h6 className="collapse-header">Login Screens:</h6>
+            <h6 className="collapse-header">프로젝트 확인</h6>
             <a className="collapse-item" href="login.html">
-              Login
+              시작 전 프로젝트
             </a>
             <a className="collapse-item" href="register.html">
-              Register
+              진행 중인 프로젝트
             </a>
             <a className="collapse-item" href="forgot-password.html">
-              Forgot Password
-            </a>
-            <div className="collapse-divider"></div>
-            <h6 className="collapse-header">Other Pages:</h6>
-            <a className="collapse-item" href="404.html">
-              404 Page
-            </a>
-            <a className="collapse-item" href="blank.html">
-              Blank Page
+              완료 프로젝트
             </a>
           </div>
         </div>
@@ -127,21 +116,30 @@ const Sidebar = () => {
       {/* Divider */}
       <hr className="sidebar-divider d-none d-md-block" />
 
+      {/* Heading */}
+      <div className="sidebar-heading">mypage</div>
+
       {/* Nav Item - Tables */}
       <li className="nav-item">
         <a className="nav-link" href="tables.html">
           <i className="fas fa-fw fa-table"></i>
-          <span>Tables</span>
+          <span>마이페이지</span>
         </a>
       </li>
+
+      {/* Divider */}
+      <hr className="sidebar-divider d-none d-md-block" />
 
       {/* Nav Item - Chart */}
       <li className="nav-item">
         <a className="nav-link" href="tables.html">
           <i className="fas fa-fw fa-table"></i>
-          <span>Chart</span>
+          <span>로그아웃</span>
         </a>
       </li>
+
+      {/* Divider */}
+      <hr className="sidebar-divider d-none d-md-block" />
 
       {/* Sidebar Toggler (Sidebar) */}
       <div className="text-center d-none d-md-inline">
