@@ -7,7 +7,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       id="accordionSidebar"
     >
       {/* Sidebar - Brand */}
-      <a className="sidebar-brand d-flex align-items-center justify-content-center" href="#">
+      <a className="sidebar-brand d-flex align-items-center justify-content-center" href="/">
         <div className="sidebar-brand-icon rotate-n-15">
           <i className="fas fa-laugh-wink"></i>
         </div>
@@ -21,8 +21,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
       {/* Nav Item - Dashboard */}
       <li className="nav-item active">
-        <a className="nav-link" href="#">
-          <i className="fas fa-fw fa-tachometer-alt"></i>
+        <a className="nav-link" href="/">
+        <i class="fa-solid fa-house"></i>
           <span>홈</span>
         </a>
       </li>
@@ -43,7 +43,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           aria-expanded="false"
           aria-controls="collapseUtilities"
         >
-          <i className="fas fa-fw fa-wrench"></i>
+          <i class="fa-solid fa-bullhorn"></i>
           <span>요청</span>
         </a>
         <div
@@ -116,7 +116,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       {/* Nav Item - Tables */}
       <li className="nav-item">
         <a className="nav-link" href="tables.html">
-          <i className="fas fa-fw fa-table"></i>
+          <i class="fa-solid fa-person"></i>
           <span>마이페이지</span>
         </a>
       </li>
@@ -127,7 +127,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       {/* Nav Item - Chart */}
       <li className="nav-item">
         <a className="nav-link" href="tables.html">
-          <i className="fas fa-fw fa-table"></i>
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
           <span>로그아웃</span>
         </a>
       </li>
