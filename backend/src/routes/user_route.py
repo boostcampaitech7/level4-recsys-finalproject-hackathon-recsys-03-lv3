@@ -9,7 +9,7 @@ user = APIRouter()
 
 
 @user.post("/login", response_model=UserLoginResponse)
-async def login_user(user_data: UserLoginRequest, db: Session = Depends(get_db)) -> UserLoginResponse:
+def login_user(user_data: UserLoginRequest, db: Session = Depends(get_db)) -> UserLoginResponse:
     """
     사용자 로그인 API
 
@@ -24,3 +24,12 @@ async def login_user(user_data: UserLoginRequest, db: Session = Depends(get_db))
         return UserService.login_user(db, user_data.email, user_data.password)
     except HTTPException as e:
         raise e
+
+
+@user.post("/logout")
+def logout_user():
+    """
+    사용자 로그아웃 API
+    (클라이언트에서 JWT 토큰 삭제)
+    """
+    pass
