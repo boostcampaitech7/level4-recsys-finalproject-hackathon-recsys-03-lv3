@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, sessionmaker
 import cx_Oracle
 
 # .env 파일 로드
@@ -18,11 +18,16 @@ ORACLE_PASSWORD = os.getenv("ORACLE_PASSWORD")
 # SQLAlchemy 연결 URL 생성
 DATABASE_URL = f"oracle+cx_oracle://{ORACLE_USER}:{ORACLE_PASSWORD}@hrmonydb_high"
 
-# SQLAlchemy 엔진 생성
+# SQLAlchemy 엔진 및 세션 생성
 engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# 연결 테스트
-with engine.connect() as connection:
-    result = connection.execute(text("SELECT 'Connection successful!' FROM dual"))
-    for row in result:
-        print(row[0])
+def get_db():
+    """
+    데이터베이스 세션을 생성하고, 요청 종료 시 닫음
+    """
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
