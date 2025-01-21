@@ -1,15 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 
-const Sidebar = () => {
-  const [isToggled, setIsToggled] = useState(true);
-
-  const toggleSidebar = () => {
-    setIsToggled(!isToggled);
-  };
-
+const Sidebar = ({ isOpen, toggleSidebar }) => {
   return (
     <ul
-      className={`navbar-nav bg-gradient-primary sidebar sidebar-dark accordion ${isToggled ? "toggled" : ""}`}
+      className={`navbar-nav bg-gradient-primary sidebar sidebar-dark accordion ${isOpen ? "toggled" : ""}`}
       id="accordionSidebar"
     >
       {/* Sidebar - Brand */}
