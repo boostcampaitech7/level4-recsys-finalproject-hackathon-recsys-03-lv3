@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 from api.db import Base
 
+
 class Role(Base):
     __tablename__ = "ROLE"
 
@@ -9,4 +10,8 @@ class Role(Base):
     name = Column("ROLE_NAME", String(100), nullable=False)
 
     # 관계 정의
-    users = relationship("User", back_populates="role")
+    users = relationship(
+        "User",
+        back_populates="role",
+        foreign_keys="User.role_id"
+    )

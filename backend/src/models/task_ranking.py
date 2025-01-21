@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 from api.db import Base
 
+
 class TaskRanking(Base):
     __tablename__ = "TASK_RANKING"
 
@@ -11,5 +12,13 @@ class TaskRanking(Base):
     matching_score = Column("MATCHING_SCORE", Integer, nullable=False)
 
     # 관계 정의
-    task = relationship("Task", back_populates="task_rankings")
-    user = relationship("User", back_populates="task_rankings")
+    task = relationship(
+        "Task",
+        back_populates="task_rankings",
+        primaryjoin="and_(TaskRanking.task_id == Task.id, TaskRanking.project_id == Task.project_id)"
+    )
+    user = relationship(
+        "User",
+        back_populates="task_rankings",
+        foreign_keys=[user_id]
+    )

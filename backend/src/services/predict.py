@@ -1,5 +1,5 @@
 from huggingface_hub import hf_hub_download
-import os
+
 
 def download_model_file(repo_name: str, file_name: str, save_dir: str = "./model") -> str:
     """
@@ -22,6 +22,7 @@ def download_model_file(repo_name: str, file_name: str, save_dir: str = "./model
         return file_path
     except Exception as e:
         print(f"Failed to download file: {e}")
+
 
 repo_name = "TaroSin/HRmony"
 file_name = "model.pkl"

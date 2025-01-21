@@ -7,8 +7,9 @@ from api.db import get_db
 
 user = APIRouter()
 
+
 @user.post("/login", response_model=UserLoginResponse)
-def login_user(user_data: UserLoginRequest, db: Session = Depends(get_db)) -> UserLoginResponse:
+async def login_user(user_data: UserLoginRequest, db: Session = Depends(get_db)) -> UserLoginResponse:
     """
     사용자 로그인 API
 

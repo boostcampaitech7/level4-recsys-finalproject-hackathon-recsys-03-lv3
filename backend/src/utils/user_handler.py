@@ -40,5 +40,5 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
         bool: 비밀번호가 일치하면 True, 그렇지 않으면 False
     """
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-    
+
     return pwd_context.verify(plain_password, hashed_password)

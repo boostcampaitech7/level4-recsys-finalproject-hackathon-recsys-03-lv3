@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from api.db import Base
 
+
 class User(Base):
     __tablename__ = "USER"
 
@@ -19,13 +20,50 @@ class User(Base):
     position_id = Column("POSITION_ID", Integer, ForeignKey("POSITION.POSITION_ID"), nullable=False)
 
     # 관계 정의
-    team = relationship("Team", back_populates="users")
-    rank = relationship("Rank", back_populates="users")
-    role = relationship("Role", back_populates="users")
-    position = relationship("Position", back_populates="users")
-    projects = relationship("Project", back_populates="user")
-    project_applicants = relationship("ProjectApplicants", back_populates="user")
-    task_rankings = relationship("TaskRanking", back_populates="user")
-    task_participants = relationship("TaskParticipants", back_populates="user")
-    user_skills = relationship("UserSkill", back_populates="user")
+    team = relationship(
+        "Team",
+        back_populates="users",
+        foreign_keys=[team_id]
+    )
+    rank = relationship(
+        "Rank",
+        back_populates="users",
+        foreign_keys=[rank_id]
+    )
+    role = relationship(
+        "Role",
+        back_populates="users",
+        foreign_keys=[role_id]
+    )
+    position = relationship(
+        "Position",
+        back_populates="users",
+        foreign_keys=[position_id]
+    )
+    projects = relationship(
+        "Project",
+        back_populates="user",
+        foreign_keys="Project.user_id"
+    )
+    project_applicants = relationship(
+        "ProjectApplicants",
+        back_populates="user",
+        foreign_keys="ProjectApplicants.user_id"
+    )
+    task_rankings = relationship(
+        "TaskRanking",
+        back_populates="user",
+        foreign_keys="TaskRanking.user_id"
+    )
+    task_participants = relationship(
+        "TaskParticipants",
+        back_populates="user",
+        foreign_keys="TaskParticipants.user_id"
+    )
+    user_skills = relationship(
+        "UserSkill",
+        back_populates="user",
+        foreign_keys="UserSkill.user_id"
+    )
+
     

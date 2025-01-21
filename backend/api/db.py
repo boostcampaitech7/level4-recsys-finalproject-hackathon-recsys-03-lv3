@@ -22,6 +22,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 # Base 클래스 생성 (모델 정의에 사용)
 Base = declarative_base()
 
+
 # 데이터베이스 세션 생성 함수
 def get_db():
     """

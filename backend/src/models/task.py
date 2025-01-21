@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from api.db import Base
 
+
 class Task(Base):
     __tablename__ = "TASK"
 
@@ -11,7 +12,23 @@ class Task(Base):
     size = Column("TASK_SIZE", Integer, nullable=False)
 
     # 관계 정의
-    project = relationship("Project", back_populates="tasks")
-    task_rankings = relationship("TaskRanking", back_populates="task")
-    task_participants = relationship("TaskParticipants", back_populates="task")
-    task_skills = relationship("TaskSkill", back_populates="task")
+    project = relationship(
+        "Project",
+        back_populates="tasks",
+        foreign_keys=[project_id]
+    )
+    task_rankings = relationship(
+        "TaskRanking",
+        back_populates="task",
+        primaryjoin="and_(TaskRanking.task_id == Task.id, TaskRanking.project_id == Task.project_id)"
+    )
+    task_participants = relationship(
+        "TaskParticipants",
+        back_populates="task",
+        primaryjoin="and_(TaskParticipants.task_id == Task.id, TaskParticipants.project_id == Task.project_id)"
+    )
+    task_skills = relationship(
+        "TaskSkill",
+        back_populates="task",
+        primaryjoin="and_(TaskSkill.task_id == Task.id, TaskSkill.project_id == Task.project_id)"
+    )

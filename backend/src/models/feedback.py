@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from api.db import Base
 
+
 class Feedback(Base):
     __tablename__ = "FEEDBACK"
 
@@ -13,4 +14,8 @@ class Feedback(Base):
     project_id = Column("PROJECT_ID", Integer, ForeignKey("PROJECT.PROJECT_ID"), nullable=False)
 
     # 관계 정의
-    project = relationship("Project", back_populates="feedbacks")
+    project = relationship(
+        "Project",
+        back_populates="feedbacks",
+        foreign_keys=[project_id]
+    )

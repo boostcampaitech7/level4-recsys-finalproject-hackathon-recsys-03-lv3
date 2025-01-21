@@ -6,6 +6,7 @@ from src.schemas.user import UserLoginResponse
 from src.utils.user_handler import verify_password, create_jwt_token
 from src.utils.error_messages import ERROR_MESSAGES
 
+
 class UserService:
     def login_user(db: Session, email: str, password: str) -> UserLoginResponse:
         """
@@ -40,7 +41,7 @@ class UserService:
                 status_code=ERROR_MESSAGES["UNAUTHORIZED"]["status"],
                 detail=ERROR_MESSAGES["UNAUTHORIZED"]["message"]
             )
-        
+
         if not user.team_id or not user.position_id:
             raise HTTPException(
                 status_code=ERROR_MESSAGES["UNPROCESSABLE_ENTITY"]["status"],
