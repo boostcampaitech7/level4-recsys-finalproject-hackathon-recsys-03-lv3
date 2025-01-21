@@ -1,5 +1,4 @@
 import React from "react";
-// import MenuIcon from "@mui/icons-material/Menu";
 
 const Topbar = ({ toggleSidebar }) => {
     return (
@@ -10,8 +9,7 @@ const Topbar = ({ toggleSidebar }) => {
                 className="btn btn-link d-md-none rounded-circle mr-3"
                 onClick={toggleSidebar}
             >
-                <span className="material-icons" style={{ color: "#5f6368", fontSize: 24}}></span>
-                {/* <MenuIcon style={{ color: "#5f6368", fontSize: 24 }} /> 아이콘 */}
+                <i className="fa fa-bars"></i>
             </button>
 
             {/* Search */}
@@ -45,7 +43,7 @@ const Topbar = ({ toggleSidebar }) => {
                         aria-haspopup="true"
                         aria-expanded="false"
                     >
-                        <i className="fa-search fa-fw"></i>
+                        <i className="fas fa-search fa-fw"></i>
                     </a>
                     <div
                         className="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
@@ -113,6 +111,18 @@ const Topbar = ({ toggleSidebar }) => {
                                 $290.29 has been deposited into your account!
                             </div>
                         </a>
+                        <a className="dropdown-item d-flex align-items-center" href="#">
+                            <div className="mr-3">
+                                <div className="icon-circle bg-warning">
+                                    <i className="fas fa-exclamation-triangle text-white"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <div className="small text-gray-500">December 2, 2019</div>
+                                Spending Alert: We've noticed unusually high spending for your account.
+                            </div>
+                        </a>
+                        <a className="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
                     </div>
                 </li>
 
