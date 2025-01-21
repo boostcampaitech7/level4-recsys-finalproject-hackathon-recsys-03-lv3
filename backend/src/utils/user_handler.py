@@ -5,6 +5,10 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 
 
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = "HS256"
+
+
 def create_jwt_token(data: dict) -> str:
     """
     주어진 데이터를 기반으로 JWT 토큰을 생성
@@ -18,14 +22,30 @@ def create_jwt_token(data: dict) -> str:
     # .env 파일 로드
     load_dotenv()
 
-    SECRET_KEY = os.getenv("SECRET_KEY")
-    ALGORITHM = "HS256"
-
-    expiration = datetime.now() + timedelta(hours=1)
+    expiration = datetime.now() + timedelta(hours=1)  # 1시간 후 만료
     payload = data.copy()
     payload.update({"exp": expiration})
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
     return token
+
+
+def decode_jwt_token(token: str) -> dict:
+    """
+    JWT 토큰에서 사용자 데이터 추출
+
+    Args:
+        token (str): JWT 토큰
+
+    Returns:
+        dict: 토큰에 포함된 사용자 데이터 (예: 사용자 ID, 이름 등)
+    """
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise Exception("이미 만료된 토큰입니다.")
+    except jwt.InvalidTokenError:
+        raise Exception("유효하지 않은 토큰입니다.")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
