@@ -1,0 +1,6 @@
+.logo-image {
+  width: 30px; /* 너비 */
+  height: 42px; /* 높이 */
+  transform: rotate(15deg); /* 15도 회전 */
+  transition: transform 0.3s; /* 부드러운 회전 효과 */
+}

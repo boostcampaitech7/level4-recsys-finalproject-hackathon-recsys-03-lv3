@@ -1,4 +1,6 @@
 import React from "react";
+import logoLight from "../assets/logo_light.png";
+import "../style/LogoImage.css";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   return (
@@ -7,13 +9,14 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       id="accordionSidebar"
     >
       {/* Sidebar - Brand */}
-      <a className="sidebar-brand d-flex align-items-center justify-content-center" href="/">
+      <a
+        className="sidebar-brand d-flex align-items-center justify-content-center"
+        href="/"
+      >
         <div className="sidebar-brand-icon rotate-n-15">
-          <i className="fas fa-laugh-wink"></i>
+          <img src={logoLight} className="logo-image"></img>
         </div>
-        <div className="sidebar-brand-text mx-3">
-          HRmony
-        </div>
+        <div className="sidebar-brand-text mx-3">HRmony</div>
       </a>
 
       {/* Divider */}
@@ -22,7 +25,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       {/* Nav Item - Dashboard */}
       <li className="nav-item active">
         <a className="nav-link" href="/">
-        <i class="fa-solid fa-house"></i>
+          <i class="fa-solid fa-house"></i>
           <span>홈</span>
         </a>
       </li>

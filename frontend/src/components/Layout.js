@@ -4,11 +4,11 @@ import Topbar from "./Topbar";
 import Footer from "./Footer";
 
 const Layout = ({ children }) => {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-    };
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   return (
     <div id="wrapper" className="d-flex">
