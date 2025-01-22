@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import Footer from "./Footer";
+import { Outlet } from "react-router-dom";
 
-const Layout = ({ children }) => {
+const Layout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -16,7 +16,7 @@ const Layout = ({ children }) => {
       <div id="content-wrapper" className="d-flex flex-column">
         <div id="content">
           <Topbar toggleSidebar={toggleSidebar} />
-          <div className="container-fluid">{children}</div>
+          <div className="container-fluid">{<Outlet />}</div>
         </div>
         <Footer />
       </div>

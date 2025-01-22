@@ -1,8 +1,8 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Layout from '../components/Layout';
-import Dashboard from './Dashboard';
-import LoginPage from './LoginPage';
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Layout from "../components/Layout";
+import Dashboard from "./Dashboard";
+import LoginPage from "./LoginPage";
 
 const AppRouter = () => {
   return (
@@ -14,7 +14,7 @@ const AppRouter = () => {
         {/* Layout 적용된 경로 */}
         <Route path="/" element={<Layout />}>
           {/* Layout 내부의 하위 경로 */}
-          <Route index element={<Dashboard />} />
+          {/* <Route index element={<Dashboard />} /> */}
           {/* 추가 경로 */}
           {/* <Route path="another-path" element={<AnotherComponent />} /> */}
         </Route>
