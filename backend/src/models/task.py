@@ -8,7 +8,7 @@ class Task(Base):
 
     project_id = Column("PROJECT_ID", Integer, ForeignKey("PROJECT.PROJECT_ID"), primary_key=True)
     id = Column("TASK_ID", Integer, primary_key=True, index=True)
-    name = Column("TASK_NAME", String(100), nullable=False)
+    name = Column("TASK_NAME", String(1000), nullable=False)
     size = Column("TASK_SIZE", Integer, nullable=False)
 
     # 관계 정의
