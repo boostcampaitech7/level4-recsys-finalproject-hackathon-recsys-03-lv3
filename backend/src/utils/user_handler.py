@@ -3,10 +3,39 @@ import jwt
 from dotenv import load_dotenv
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
-
+from fastapi.security import HTTPBearer
+from starlette.requests import Request
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
+
+
+class AuthRequired(HTTPBearer):
+    """
+    HTTPBearer 인증을 처리하는 클래스
+    (FastAPI의 HTTPBearer를 확장하여 Authorization 헤더를 검증하고, JWT 토큰을 디코딩하여 요청 상태에 사용자 정보를 추가)
+
+    Args:
+        HTTPBearer (bool): 인증 실패 시 자동으로 예외를 발생시킬지 여부
+    """
+    async def __call__(self, request: Request):
+        auth_header = request.headers.get("Authorization")
+
+        if not auth_header:
+            raise Exception("Authorization 헤더가 없습니다.")
+
+        try:
+            token_type, token = auth_header.split(" ")
+            if token_type != "Bearer":
+                raise Exception("Invalid token type in Authorization header.")
+        except ValueError:
+            raise Exception("Authorization 헤더가 잘못된 형식입니다.")
+
+        if not isinstance(token, str):
+            raise Exception(f"Invalid token type. Token must be a string. Got: {type(token)}")
+
+        # 디코드된 정보를 상태에 저장
+        request.state.token_info = decode_jwt_token(token)
 
 
 def create_jwt_token(data: dict) -> str:

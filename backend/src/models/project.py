@@ -11,7 +11,7 @@ class Project(Base):
     content = Column("PROJECT_CONTENT", String(4000), nullable=False)
     start_date = Column("START_DATE", String(8), nullable=True)
     end_date = Column("END_DATE", String(8), nullable=True)
-    progress_status = Column("PROGRESS_STAUS", CHAR(1), nullable=False)
+    progress_status = Column("PROGRESS_STATUS", CHAR(1), nullable=False)
 
     # 외래 키
     team_id = Column("TEAM_ID", Integer, ForeignKey("TEAM.TEAM_ID"), nullable=False)
