@@ -16,7 +16,7 @@ ORACLE_PASSWORD = os.getenv("ORACLE_PASSWORD")  # Oracle 비밀번호
 DATABASE_URL = f"oracle+cx_oracle://{ORACLE_USER}:{ORACLE_PASSWORD}@hrmonydb_high"
 
 # SQLAlchemy 엔진 및 세션 생성
-engine = create_engine(DATABASE_URL)
+engine = create_engine(DATABASE_URL, echo=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Base 클래스 생성 (모델 정의에 사용)

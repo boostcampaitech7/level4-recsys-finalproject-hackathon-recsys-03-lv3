@@ -42,12 +42,6 @@ class UserService:
                 detail=ERROR_MESSAGES["UNAUTHORIZED"]["message"]
             )
 
-        if not user.team_id or not user.position_id:
-            raise HTTPException(
-                status_code=ERROR_MESSAGES["UNPROCESSABLE_ENTITY"]["status"],
-                detail=ERROR_MESSAGES["UNPROCESSABLE_ENTITY"]["message"].format("유효하지 않은 이메일 또는 비밀번호입니다.")
-            )
-
         # JWT 토큰 생성
         session_data = {
             "user_id": user.id,
