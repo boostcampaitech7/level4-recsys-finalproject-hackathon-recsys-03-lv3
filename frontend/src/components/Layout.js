@@ -16,7 +16,9 @@ const Layout = () => {
       <div id="content-wrapper" className="d-flex flex-column">
         <div id="content">
           <Topbar toggleSidebar={toggleSidebar} />
-          <div className="container-fluid">{<Outlet />}</div>
+          <div className="container-fluid">
+            <Outlet />
+          </div>
         </div>
         <Footer />
       </div>
