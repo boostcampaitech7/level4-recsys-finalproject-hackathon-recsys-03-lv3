@@ -32,7 +32,6 @@ const Chat = () => {
   const [selectedTeams, setSelectedTeams] = useState([]);
   const [userInput, setUserInput] = useState("");
   const [step, setStep] = useState(0);
-  const [headerTitle, setHeaderTitle] = useState("# New Chat");
   const [isTeamButtonClicked, setIsTeamButtonClicked] = useState(false);
   const [isDeadlineButtonClicked, setIsDeadlineButtonClicked] = useState(false);
   const [isClearable, setIsClearable] = useState(true);
@@ -169,6 +168,20 @@ const Chat = () => {
                 </tr>
               </tbody>
             </table>
+            <div className="d-flex">
+              <button
+                className="btn btn-link ms-auto"
+                type="button"
+                id="sendRequest"
+                onClick={() => {
+                  alert("요청이 완료되었습니다.");
+                  window.location.reload(); //window.location.href = "https://example.com";
+                }}
+              >
+                <i class="fa-solid fa-arrow-right me-2 fw-bold"></i>
+                요청 보내기
+              </button>
+            </div>
           </div>
         ),
       });

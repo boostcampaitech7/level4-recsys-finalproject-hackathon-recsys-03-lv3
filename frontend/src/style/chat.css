@@ -27,8 +27,8 @@
 
 .chat-content {
   display: inline-block;
-  max-width: 70%;
-  word-wrap: break-word;
+  max-width: 80%;
+  overflow-wrap: break-word;
   text-align: left;
 }
 
@@ -58,4 +58,24 @@
 .custom-date-picker-input:hover {
   border-color: #80bdff;
   background-color: #e9ecef;
+}
+
+.table th {
+  width: 20%;
+  padding: 10px;
+  font-weight: bold;
+  vertical-align: center;
+  text-align: center;
+}
+
+@media (max-width: 1200px) {
+  .table th {
+    white-space: nowrap;
+  }
+}
+
+.table td {
+  width: 70%;
+  padding: 10px;
+  vertical-align: center;
 }
