@@ -57,7 +57,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         >
           <div className="bg-white py-2 collapse-inner rounded">
             <h6 className="collapse-header">프로젝트 요청</h6>
-            <a className="collapse-item" href="utilities-color.html">
+            <a className="collapse-item" href="chat">
               프로젝트 요청
             </a>
             <a className="collapse-item" href="utilities-border.html">
@@ -129,7 +129,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
       {/* Nav Item - Chart */}
       <li className="nav-item">
-        <a className="nav-link" href="tables.html">
+        <a className="nav-link" href="login">
           <i class="fa-solid fa-arrow-right-from-bracket"></i>
           <span>로그아웃</span>
         </a>
