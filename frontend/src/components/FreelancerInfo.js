@@ -1,7 +1,7 @@
 import React from "react";
 import InfoCard from "./InfoCard";
 import ProfileIcon from "./ProfileIcon";
-import SkillIcon from "./SkillIcon";
+import UserSkillTag from "./UserSkillTag";
 import RadarChart from "./RadarChart";
 import "../style/FreelancerInfo.css";
 
@@ -39,7 +39,7 @@ const FreelancerInfo = ({ profile }) => {
 
           <div className="skills d-flex flex-wrap mt-3">
             {parsedSkills.map(({ skill, score }, index) => (
-              <SkillIcon key={index} text={skill} score={score} />
+              <UserSkillTag key={index} text={skill} score={score} />
             ))}
           </div>
         </div>

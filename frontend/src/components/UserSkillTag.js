@@ -1,5 +1,5 @@
 import React from "react";
-import "../style/SkillIcon.css";
+import "../style/UserSkillTag.css";
 
 const getBackgroundColor = (score) => {
   // 점수에 따라 색상을 계산 (0 ~ 10 사이의 score)
