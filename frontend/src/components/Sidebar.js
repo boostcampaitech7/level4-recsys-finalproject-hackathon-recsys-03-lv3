@@ -1,6 +1,6 @@
 import React from "react";
 import logoLight from "../assets/logo_light.png";
-import "../style/LogoImage.css";
+import "../style/Images.css";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   return (
