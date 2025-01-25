@@ -1,0 +1,45 @@
+.star-rating-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.star-rating {
+  display: flex;
+  gap: 4px;
+  cursor: pointer;
+  font-size: 24px;
+  user-select: none;
+}
+
+.star {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  overflow: hidden;
+  color: lightgray;
+}
+
+.star.full {
+  color: #f39c12;
+}
+
+.star.half::before {
+  content: "★";
+  position: absolute;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  color: #f39c12;
+  overflow: hidden;
+}
+
+.star.empty {
+  color: lightgray;
+}
+
+.score-display {
+  font-size: 18px;
+  color: #333;
+  font-weight: bold;
+}
