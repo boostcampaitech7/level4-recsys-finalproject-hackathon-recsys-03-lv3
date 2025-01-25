@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import Footer from "./Footer";
 import { Outlet } from "react-router-dom";
@@ -12,7 +11,6 @@ const Layout = () => {
 
   return (
     <div id="wrapper" className="d-flex">
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <div id="content-wrapper" className="d-flex flex-column">
         <div id="content">
           <Topbar toggleSidebar={toggleSidebar} />
