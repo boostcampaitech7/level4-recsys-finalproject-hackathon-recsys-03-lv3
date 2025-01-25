@@ -1,0 +1,80 @@
+/* 전체 드롭다운 컨테이너 */
+.single-selector {
+  position: relative;
+  display: inline-block;
+  font-family: Arial, sans-serif;
+}
+
+/* 라벨과 선택된 값 컨테이너 */
+.label-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  width: 200px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: white;
+  color: #333;
+}
+
+/* 선택된 값 */
+.selected-value {
+  color: #007bff;
+  margin-right: 8px;
+}
+
+/* 화살표 스타일 */
+.arrow i {
+  font-size: 12px;
+  transition: transform 0.3s ease;
+}
+.arrow.open {
+  transform: rotate(180deg);
+}
+
+/* 드롭다운 메뉴 */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  margin-top: 4px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+/* 드롭다운 리스트 */
+.dropdown-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* 드롭다운 아이템 */
+.dropdown-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+/* 선택된 아이템 */
+.dropdown-item.selected {
+  font-weight: bold;
+  color: #007bff;
+  background-color: #e9f5ff;
+}
+
+/* 선택 표시 (체크마크) */
+.checkmark i {
+  float: right;
+  color: #007bff;
+  font-size: 18px;
+}
