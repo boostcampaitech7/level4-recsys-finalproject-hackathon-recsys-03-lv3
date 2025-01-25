@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../style/SingleSelector.css";
+import "../style/Selectors.css";
 
 const SingleSelector = ({ title }) => {
   const [isOpen, setIsOpen] = useState(false);

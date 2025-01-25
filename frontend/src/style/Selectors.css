@@ -5,13 +5,19 @@
   font-family: Arial, sans-serif;
 }
 
+.multi-selector {
+  position: relative;
+  display: inline-block;
+  font-family: Arial, sans-serif;
+}
+
 /* 라벨과 선택된 값 컨테이너 */
 .label-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 8px 12px;
-  width: 200px;
+  width: 240px;
   border: 1px solid #ddd;
   border-radius: 4px;
   cursor: pointer;
@@ -46,6 +52,7 @@
   background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+  display: block;
 }
 
 /* 드롭다운 리스트 */
@@ -77,4 +84,35 @@
   float: right;
   color: #007bff;
   font-size: 18px;
+}
+
+.back-option {
+  color: #888;
+  font-style: italic;
+}
+
+/* 스크롤 바 */
+.scrollable {
+  max-height: 200px; /* 스크롤바 높이 제한 */
+  overflow-y: auto; /* 스크롤바 활성화 */
+}
+
+/* "전체" 스타일 */
+.전체-option {
+  color: #333; /* 기본 텍스트 색상 */
+  font-weight: normal;
+  background-color: transparent; /* 파란 배경 제거 */
+  cursor: pointer;
+}
+
+.전체-option.selected {
+  color: #333;
+  background-color: transparent; /* 선택 상태에서도 파란 배경 제거 */
+}
+
+.divider {
+  height: 1px;
+  background-color: #ddd;
+  margin: 8px 0;
+  border: none;
 }
