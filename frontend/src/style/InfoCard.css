@@ -1,0 +1,16 @@
+.info-card {
+  background-color: #ffffff;
+  width: 1400px;
+  min-width: 1200px;
+  min-height: 200px;
+  margin: 20px auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+  display: flex;
+  transition: transform 0.1s ease-in-out;
+}
+
+.info-card:hover {
+  transform: scale(1.01);
+}
