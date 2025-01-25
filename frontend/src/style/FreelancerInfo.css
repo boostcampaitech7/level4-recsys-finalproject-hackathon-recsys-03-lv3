@@ -1,0 +1,27 @@
+.info-card {
+  height: 280px;
+  overflow: visible;
+  justify-content: center;
+}
+
+.profile-info {
+  flex: 2;
+  color: black;
+}
+
+.profile-info h5 {
+  margin: 0;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.field {
+  margin: 5px 0;
+  font-size: 18px;
+}
+
+.intro {
+  max-width: 700px;
+  margin: 5px 0;
+  font-size: 18px;
+}
