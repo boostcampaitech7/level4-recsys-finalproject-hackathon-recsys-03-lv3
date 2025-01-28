@@ -20,3 +20,8 @@ class Company(Base):
         back_populates="companies",
         foreign_keys=[location_id]
     )
+    projects = relationship(
+        "Project",
+        back_populates="company",
+        foreign_keys="Project.company_id"
+    )
