@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from api.db import get_db
 from src.schemas.auth import LoginRequest, LoginResponse
 from src.services.auth_service import AuthService
-from api.db import get_db
 
 auth = APIRouter()
 
@@ -14,8 +14,8 @@ def login_user(user_data: LoginRequest, db: Session = Depends(get_db)) -> LoginR
     사용자 로그인 API
 
     Args:
-        user_data (UserLoginRequest): 이메일과 비밀번호를 포함한 요청 데이터
-        db (Session, optional): SQLAlchemy 데이터베이스 세션
+        user_data (LoginRequest): 이메일과 비밀번호를 포함한 요청 데이터
+        db (Session): SQLAlchemy 데이터베이스 세션
 
     Returns:
         LoginResponse: 사용자 정보와 인증 토큰을 포함한 응답 데이터
