@@ -1,3 +1,5 @@
+@import "colors.css";
+
 .star-rating-container {
   display: flex;
   align-items: center;
@@ -17,11 +19,11 @@
   width: 24px;
   height: 24px;
   overflow: hidden;
-  color: lightgray;
+  color: var(--color-secondary);
 }
 
 .star.full {
-  color: #f39c12;
+  color: var(--color-star);
 }
 
 .star.half::before {
@@ -30,16 +32,18 @@
   left: 0;
   width: 50%;
   height: 100%;
-  color: #f39c12;
+  color: var(--color-star);
   overflow: hidden;
 }
 
 .star.empty {
-  color: lightgray;
+  color: var(--color-secondary);
 }
 
 .score-display {
   font-size: 18px;
   color: #333;
   font-weight: bold;
+  position: relative;
+  top: 6px;
 }

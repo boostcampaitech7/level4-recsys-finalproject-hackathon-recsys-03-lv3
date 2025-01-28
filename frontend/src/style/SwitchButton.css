@@ -1,3 +1,5 @@
+@import "colors.css";
+
 /* 스위치 버튼 스타일 */
 .switch-container {
   display: flex;
@@ -12,7 +14,7 @@
 .switch {
   width: 40px;
   height: 20px;
-  background: #ccc;
+  background: var(--color-secondary);
   border-radius: 20px;
   position: relative;
   cursor: pointer;
@@ -20,7 +22,7 @@
 }
 
 .switch.active {
-  background: #4e73df;
+  background: var(--color-point);
 }
 
 .switch-toggle {
