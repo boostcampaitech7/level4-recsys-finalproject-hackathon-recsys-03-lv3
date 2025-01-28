@@ -4,3 +4,9 @@
   transform: rotate(15deg); /* 15도 회전 */
   transition: transform 0.3s; /* 부드러운 회전 효과 */
 }
+
+.profile-image {
+  width: 150px; /* 너비 */
+  height: 150px; /* 높이 */
+  transition: transform 0.3s; /* 부드러운 회전 효과 */
+}
