@@ -1,0 +1,33 @@
+# Environment Settings
+device: cuda
+seed: 42
+state: 'INFO'
+encoding: 'utf-8'
+reproducibility: True
+data_path: "datasets/"
+checkpoint_dir: "output/"
+
+# Training Settings_basic
+epochs: 1
+train_batch_size: 2048
+eval_batch_size: 2048
+learner: 'adam'
+learning_rate: 0.0001
+train_neg_sample_args: ~  # neg_sampling: {'uniform': 1}
+eval_step: 1
+stopping_step: 10         # early stopping threshold
+# loss_decimal_place: 4
+# weight_decay: 0.000
+
+# Evaluation Settings
+eval_args:
+    group_by: user
+    order: TO                   # Timestamp가 없다면 RO
+    split: {"LS": 'valid_and_test'}
+    mode: full
+repeatable: False
+metrics: ['Recall', 'MRR', 'NDCG', 'Hit', 'Precision']
+topk: 10
+valid_metric: Recall@10
+# eval_batch_size: 4096
+metric_decimal_place: 4
