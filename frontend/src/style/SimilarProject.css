@@ -1,3 +1,5 @@
+@import "colors.css";
+
 /* 이전 버튼 */
 .carousel-control-prev {
   position: absolute;
@@ -5,7 +7,7 @@
   left: -30px; /* 콘텐츠 바깥으로 이동 */
   transform: translateY(-50%);
   z-index: 10;
-  background-color: #18bc9c;
+  background-color: var(--color-primary);
   height: 40px;
   width: 40px;
 }
@@ -17,7 +19,7 @@
   right: -30px; /* 콘텐츠 바깥으로 이동 */
   transform: translateY(-50%);
   z-index: 10;
-  background-color: #18bc9c;
+  background-color: var(--color-primary);
   height: 40px;
   width: 40px;
 }
@@ -29,7 +31,7 @@
   height: 30px;
   background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
   border-radius: 50%; /* 둥근 모양 */
-  background-color: #18bc9c;
+  background-color: var(--color-primary);
 }
 
 /* 버튼 호버 시 효과 */
