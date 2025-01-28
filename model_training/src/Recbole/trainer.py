@@ -5,7 +5,7 @@ def train(config, model_class, data_list):
 
     tr_data, val_data, te_data = data_list
 
-    model = model_class(config, tr_data.dataset).to(config['device'])
+    model = model_class(config, tr_data.dataset).to(config["device"])
     trainer = Trainer(config, model)
 
     print("==== train start ====")

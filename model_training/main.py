@@ -1,7 +1,7 @@
 import argparse
 import importlib
-from omegaconf import OmegaConf
 
+from omegaconf import OmegaConf
 from recbole.config import Config
 
 from src.utils import set_seed
@@ -17,16 +17,16 @@ if __name__ == "__main__":
     arg(
         "--config",
         "-c",
-        help='Configuration 파일을 설정합니다.',
-        default='config/config.yaml'
+        help="Configuration 파일을 설정합니다.",
+        default="config/config.yaml"
     )
     arg(
         "--type",
         "-t",
         type=str,
-        choices=['g', 's', 'c'],
+        choices=["g", "s", "c"],
         help="model의 종류를 설정합니다. g:general, s:sequential, c:context-aware)",
-        default="None"
+        default=None
     )
     arg(
         "--model",
@@ -50,15 +50,15 @@ if __name__ == "__main__":
     set_seed(args.seed)
 
     # Recbole
-    if args.type != "None":
+    if args.type:
 
-        model_type = {'g': 'general_recommender', 's': 'sequential_recommender', 'c': 'context_aware_recommender'}
-        recbole_model = importlib.import_module('recbole.model.' + model_type.get(args.type))
+        model_type = {"g": "general_recommender", "s": "sequential_recommender", "c": "context_aware_recommender"}
+        recbole_model = importlib.import_module("recbole.model." + model_type.get(args.type))
         model_class = getattr(recbole_model, args.model)
 
         # 1. Recbole Config 세팅
         config_path = "config/"
-        config = Config(model=args.model, config_file_list=[config_path + "Recbole.yaml", config_path + args.model +".yaml"])
+        config = Config(model=args.model, config_file_list=[config_path + "Recbole.yaml", config_path + args.model + ".yaml"])
 
         # 2. Recbole 데이터 생성 (/datasets/모델별 폴더에 저장)
         generate_data(args=args, config=config)
