@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 
-filter = APIRouter()
+auth = APIRouter()
 
 
-@filter.get("/")
+@auth.get("/")
 def get_users():
     return {"message": "List of auths"}
