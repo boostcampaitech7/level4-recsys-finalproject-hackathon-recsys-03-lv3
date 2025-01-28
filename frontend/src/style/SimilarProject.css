@@ -1,0 +1,39 @@
+/* 이전 버튼 */
+.carousel-control-prev {
+  position: absolute;
+  top: 50%;
+  left: -30px; /* 콘텐츠 바깥으로 이동 */
+  transform: translateY(-50%);
+  z-index: 10;
+  background-color: #18bc9c;
+  height: 40px;
+  width: 40px;
+}
+
+/* 다음 버튼 */
+.carousel-control-next {
+  position: absolute;
+  top: 50%;
+  right: -30px; /* 콘텐츠 바깥으로 이동 */
+  transform: translateY(-50%);
+  z-index: 10;
+  background-color: #18bc9c;
+  height: 40px;
+  width: 40px;
+}
+
+/* 버튼 아이콘 크기 조정 */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  width: 30px;
+  height: 30px;
+  background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+  border-radius: 50%; /* 둥근 모양 */
+  background-color: #18bc9c;
+}
+
+/* 버튼 호버 시 효과 */
+.carousel-control-prev-icon:hover,
+.carousel-control-next-icon:hover {
+  background-color: rgba(0, 0, 0, 0.8); /* 더 진한 배경 */
+}
