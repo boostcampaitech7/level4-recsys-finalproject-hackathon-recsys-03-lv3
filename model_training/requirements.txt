@@ -1,3 +1,7 @@
+python-dotenv==1.0.1          # .env 파일을 통한 환경 변수 관리
+cx_Oracle==8.3.0              # Oracle 데이터베이스용 Python 클라이언트 라이브러리
+sqlalchemy==2.0.37            # ORM
+huggingface_hub==0.27.1       # HuggingFace 라이브러리
 numpy==1.26.0
 pandas==2.2.3
 torch==2.0.0
