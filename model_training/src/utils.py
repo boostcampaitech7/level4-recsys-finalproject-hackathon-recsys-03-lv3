@@ -1,27 +1,33 @@
-from huggingface_hub import HfApi, HfFolder
+import os
+import random
+import numpy as np
+import torch
 
-def upload_model(local_model_path: str, repo_name: str):
+
+def set_seed(seed):
     """
-    HTTP 기반 업로드 방식으로 Hugging Face Hub에 모델 업로드.
+    재현성을 위한 랜덤 시드를 설정하는 메서드
+    다양한 라이브러리의 랜덤 시드를 설정 (Python의 random 모듈, Numpy, PyTorch(CPU 및 GPU))
 
     Args:
-        local_model_path (str): 로컬 모델 디렉토리 경로.
-        repo_name (str): Hugging Face 저장소 이름.
+        seed (int): 랜덤 숫자 생성을 위한 시드 값
     """
-    try:
-        # Hugging Face Hub 인증 토큰 가져오기
-        token = HfFolder.get_token()
-        if token is None:
-            raise ValueError("No Hugging Face token found. Please log in using `huggingface-cli login`.")
+    random.seed(seed)
+    os.environ["PYTHONHASHSEED"] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
 
-        # API를 사용하여 모델 업로드
-        api = HfApi()
-        api.upload_folder(
-            folder_path=local_model_path,
-            repo_id=repo_name,
-            repo_type="model",
-            token=token
-        )
-        print(f"Model successfully uploaded to https://huggingface.co/{repo_name}")
-    except Exception as e:
-        print(f"Failed to upload model: {e}")
+
+def check_path(path: str) -> None:
+    """
+    디렉토리가 존재하는지 확인하고, 존재하지 않으면 생성하는 메서드
+
+    Args:
+        path (str): 확인하고 생성할 경로
+    """
+    if not os.path.exists(path):
+        os.makedirs(path)
+        print(f"{path} created")

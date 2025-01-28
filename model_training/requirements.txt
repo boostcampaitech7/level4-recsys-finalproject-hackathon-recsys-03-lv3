@@ -1,0 +1,7 @@
+numpy==1.26.0
+pandas==2.2.3
+torch==2.0.0
+tqdm==4.66.6
+omegaconf==2.3.0
+recbole==1.2.0
+kmeans-pytorch==0.3

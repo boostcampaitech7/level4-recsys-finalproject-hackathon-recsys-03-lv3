@@ -1,0 +1,3 @@
+seed: 42
+data_path: "~/develop/data/train/"
+output_path: "output/"
