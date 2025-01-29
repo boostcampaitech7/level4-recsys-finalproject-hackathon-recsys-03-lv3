@@ -1,25 +1,24 @@
 import React from "react";
 import InfoCard from "./InfoCard";
 import ProfileIcon from "./ProfileIcon";
-import UserSkillTag from "./UserSkillTag";
+import FreelancerSkillTag from "./FreelancerSkillTag";
 import RadarChart from "./RadarChart";
 import "../style/FreelancerInfo.css";
 
 const FreelancerInfo = ({ profile }) => {
-  const { photo, name, field, experience, introduction, skills, radarData } =
-    profile;
-
-  const parsedSkills = skills.map((skillString) => {
-    // 정규식을 사용해 기술 이름과 점수를 분리
-    const match = skillString.match(/^(.*)\s(\d+)$/);
-    if (match) {
-      const skill = match[1]; // 점수 앞의 모든 부분을 기술 이름으로
-      const score = parseInt(match[2], 10); // 숫자를 점수로 변환
-      return { skill, score };
-    }
-    // 예외 처리: 유효하지 않은 형식의 데이터는 기본값 반환
-    return { skill: skillString, score: 0 };
-  });
+  const {
+    photo,
+    name,
+    feedbackscore,
+    feedbackcount,
+    role,
+    workexp,
+    worktype,
+    location,
+    content,
+    skills,
+    radarData,
+  } = profile;
 
   return (
     <InfoCard>
@@ -31,15 +30,22 @@ const FreelancerInfo = ({ profile }) => {
 
         {/* 프로필 정보 */}
         <div className="profile-info me-4" style={{ flex: 2 }}>
-          <h5 className="fw-bold mb-1">{name}</h5>
-          <div className="field mb-2">
-            {field} | {experience}
+          <div className="d-flex justify-content-between align-items-center">
+            <h5 className="fw-bold mb-1">{name}</h5>
+            <div className="feedback-score d-flex align-items-center">
+              <span className="text-warning me-">★</span>
+              <span className="fw-bold">{feedbackscore.toFixed(1)}</span>
+              <span className="text-muted ms-1">({feedbackcount})</span>
+            </div>
           </div>
-          <div className="intro">{introduction}</div>
+          <div className="field mb-2">
+            {role} | {workexp} | {worktype} | {location}
+          </div>
+          <div className="intro">{content}</div>
 
           <div className="skills d-flex flex-wrap mt-3">
-            {parsedSkills.map(({ skill, score }, index) => (
-              <UserSkillTag key={index} text={skill} score={score} />
+            {skills.map(({ skill, score }, index) => (
+              <FreelancerSkillTag key={index} text={skill} score={score} />
             ))}
           </div>
         </div>

@@ -1,0 +1,36 @@
+.search-freelancer-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  padding: 20px;
+  max-width: 100%;
+}
+
+.header-container,
+.card-container {
+  width: 100%;
+  max-width: 1000px; /* 모든 요소 동일 폭 */
+  margin: 0 auto; /* 중앙 정렬 */
+}
+
+.header-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: left;
+  color: black;
+}
+
+.card-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: left;
+  font-weight: 600;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
