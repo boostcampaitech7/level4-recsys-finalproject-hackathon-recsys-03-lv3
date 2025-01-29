@@ -41,15 +41,15 @@ class Project(Base):
     skills = relationship(
         "ProjectSkill",
         back_populates="project",
-        foreign_keys=["ProjectSkill.project_id"]
+        foreign_keys="ProjectSkill.project_id"
     )
     rankings = relationship(
         "ProjectRanking",
         back_populates="project",
-        foreign_keys=["ProjectRanking.project_id"]
+        foreign_keys="ProjectRanking.project_id"
     )
     feedbacks = relationship(
         "Feedback",
         back_populates="project",
-        foreign_keys=["Feedback.project_id"]
+        foreign_keys="Feedback.project_id"
     )

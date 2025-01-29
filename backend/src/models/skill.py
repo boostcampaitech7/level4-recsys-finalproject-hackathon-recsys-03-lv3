@@ -12,11 +12,11 @@ class Skill(Base):
     # 관계 정의
     freelancers = relationship(
         "FreelancerSkill",
-        back_populates="skills",
+        back_populates="skill",
         foreign_keys="FreelancerSkill.skill_id"
     )
     projects = relationship(
         "ProjectSkill",
-        back_populates="skills",
+        back_populates="skill",
         foreign_keys="ProjectSkill.skill_id"
     )
