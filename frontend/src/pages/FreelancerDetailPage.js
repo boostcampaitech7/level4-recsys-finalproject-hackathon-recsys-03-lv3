@@ -100,7 +100,6 @@ const ProjectHistory = ({ history }) => {
       className="project-history container-fluid detail-card mt-4"
       //   style={{ height: "300px", overflow: "hidden" }}
     >
-      <h4 className="mb-3">프로젝트 히스토리</h4>
       <div className="history-list">
         <div className="row">
           {history.map((project) => (
