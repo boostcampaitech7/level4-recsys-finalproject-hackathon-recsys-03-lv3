@@ -1,6 +1,7 @@
 @import "colors.css";
 
-.profile-page {
+.profile-page,
+.suggest-page {
   overflow-x: auto;
 }
 
@@ -61,4 +62,9 @@
 .button-right {
   display: flex;
   justify-content: flex-end;
+}
+
+.suggest-project {
+  width: 800px;
+  min-width: 100px;
 }
