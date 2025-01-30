@@ -9,68 +9,100 @@ const SearchFreelancer = () => {
   const freelancers = [
     {
       photo: profile1,
-      name: "희수희수야",
-      feedbackscore: 5.0,
-      feedbackcount: 12,
+      freelancerId: 122,
+      freelancerName: "희수희수야",
+      workExp: "7년",
+      workType: "원격",
       role: "백엔드 개발자",
-      workexp: "7년",
-      worktype: "원격",
-      location: "양산",
-      content:
+      freelancerContent:
         "27년 차 Java 개발자로, 백엔드와 프론트엔드 개발에 모두 능숙합니다. 데이터베이스 설계 및 관리 경험이 풍부하며, 앱 개발과 배포까지 전 과정을 주도한 경험이 있습니다.",
-      skills: [
-        { skill: "Java", score: 4.5 },
-        { skill: "Spring Boot", score: 4 },
-        { skill: "jQuery", score: 3.5 },
-        { skill: "SQL", score: 4.5 },
-        { skill: "AJAX", score: 3 },
-        { skill: "JSP", score: 4 },
+      locationName: "양산",
+      categoryList: ["IT•정보통신업", "건설업"],
+      skillList: [
+        { skillName: "Java", skillScore: 4.5 },
+        { skillName: "Spring Boot", skillScore: 4 },
+        { skillName: "jQuery", skillScore: 3.5 },
+        { skillName: "SQL", skillScore: 4.5 },
+        { skillName: "AJAX", skillScore: 3 },
+        { skillName: "JSP", skillScore: 4 },
       ],
-      radarData: [5, 5, 5, 5, 5],
+      feedbackCount: 12,
+      expertise: 4.2,
+      proactiveness: 4.3,
+      punctuality: 4.1,
+      communication: 4.4,
+      maintainability: 4.0,
     },
     {
       photo: profile2,
-      name: "박왕균이",
-      feedbackscore: 4.7,
-      feedbackcount: 18,
+      freelancerId: 123,
+      freelancerName: "박왕균이",
+      workExp: "3년",
+      workType: "원격",
       role: "프론트엔드 개발자",
-      workexp: "3년",
-      worktype: "원격",
-      location: "서울",
-      content:
+      freelancerContent:
         "웹 애플리케이션 개발, 클라우드 관리 시스템 개발, 모바일 앱 개발, 금융 백엔드 시스템 개발, 게임 클라이언트/서버 개발 등 다양한 업무의 개발 경험이 있으며, 서비스 운영 경험을 다년간 지니고 있는 시니어 개발자.",
-      skills: [
-        { skill: "Python", score: 5 },
-        { skill: "PyTorch", score: 4 },
-        { skill: "Tensorflow", score: 4.5 },
-        { skill: "HTML", score: 2 },
-        { skill: "Vue.js", score: 4 },
-        { skill: "CSS", score: 3.5 },
+      locationName: "서울",
+      categoryList: ["제조업", "IT•정보통신업"],
+      skillList: [
+        { skillName: "Python", skillScore: 5 },
+        { skillName: "PyTorch", skillScore: 4 },
+        { skillName: "Tensorflow", skillScore: 4.5 },
+        { skillName: "HTML", skillScore: 2 },
+        { skillName: "Vue.js", skillScore: 4 },
+        { skillName: "CSS", skillScore: 3.5 },
       ],
-      radarData: [4, 5, 4, 4, 4],
+      feedbackCount: 18,
+      expertise: 4.7,
+      proactiveness: 4.8,
+      punctuality: 4.6,
+      communication: 4.7,
+      maintainability: 4.5,
     },
     {
       photo: profile3,
-      name: "성택이선택",
-      feedbackscore: 4.8,
-      feedbackcount: 15,
+      freelancerId: 124,
+      freelancerName: "성택의선택",
+      workExp: "5년",
+      workType: "대면",
       role: "백엔드 개발자",
-      workexp: "5년",
-      worktype: "대면",
-      location: "서울",
-      content:
+      freelancerContent:
         "혁신적인 것을 더 많이 만들 수 있는 다재다능한 능력을 가진 경험이 풍부한 베테랑 개발자입니다. 보다 효율적이고 신속적인 접근으로 문제 해결을 중심으로 역할을 수행하고 있습니다.",
-      skills: [
-        { skill: "Java", score: 4 },
-        { skill: "Spring Boot", score: 4.5 },
-        { skill: "jQuery", score: 3.5 },
-        { skill: "SQL", score: 4 },
-        { skill: "AJAX", score: 3 },
-        { skill: "JSP", score: 1 },
+      locationName: "서울",
+      categoryList: ["제조업", "IT•정보통신업"],
+      skillList: [
+        { skillName: "Java", skillScore: 4 },
+        { skillName: "Spring Boot", skillScore: 4.5 },
+        { skillName: "jQuery", skillScore: 3.5 },
+        { skillName: "SQL", skillScore: 4 },
+        { skillName: "AJAX", skillScore: 3 },
+        { skillName: "JSP", skillScore: 1 },
       ],
-      radarData: [4, 4, 4, 5, 4],
+      feedbackCount: 18,
+      expertise: 4.7,
+      proactiveness: 4.8,
+      punctuality: 4.6,
+      communication: 4.7,
+      maintainability: 4.5,
     },
   ];
+
+  freelancers.forEach((freelancer) => {
+    const {
+      expertise,
+      proactiveness,
+      punctuality,
+      communication,
+      maintainability,
+    } = freelancer;
+    freelancer.feedbackScore =
+      (expertise +
+        proactiveness +
+        punctuality +
+        communication +
+        maintainability) /
+      5;
+  });
 
   return (
     <div className="search-freelancer-container">
@@ -80,7 +112,7 @@ const SearchFreelancer = () => {
       </div>
       {freelancers.map((freelancer, index) => (
         <div key={index} className="card-container">
-          <FreelancerInfo profile={freelancer} className="card" />
+          <FreelancerInfo freelancerInfo={freelancer} className="card" />
         </div>
       ))}
     </div>

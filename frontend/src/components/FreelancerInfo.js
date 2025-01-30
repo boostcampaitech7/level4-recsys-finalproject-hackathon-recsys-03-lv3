@@ -5,20 +5,24 @@ import FreelancerSkillTag from "./FreelancerSkillTag";
 import RadarChart from "./RadarChart";
 import "../style/FreelancerInfo.css";
 
-const FreelancerInfo = ({ profile }) => {
+const FreelancerInfo = ({ freelancerInfo }) => {
   const {
     photo,
-    name,
-    feedbackscore,
-    feedbackcount,
+    freelancerName,
+    workExp,
+    workType,
     role,
-    workexp,
-    worktype,
-    location,
-    content,
-    skills,
-    radarData,
-  } = profile;
+    freelancerContent,
+    locationName,
+    skillList,
+    feedbackCount,
+    feedbackScore,
+    expertise,
+    proactiveness,
+    punctuality,
+    communication,
+    maintainability,
+  } = freelancerInfo;
 
   return (
     <InfoCard>
@@ -31,28 +35,40 @@ const FreelancerInfo = ({ profile }) => {
         {/* 프로필 정보 */}
         <div className="profile-info me-4" style={{ flex: 2 }}>
           <div className="d-flex justify-content-between align-items-center">
-            <h5 className="fw-bold mb-1">{name}</h5>
+            <h5 className="fw-bold mb-1">{freelancerName}</h5>
             <div className="feedback-score d-flex align-items-center">
               <span className="text-warning me-">★</span>
-              <span className="fw-bold">{feedbackscore.toFixed(1)}</span>
-              <span className="text-muted ms-1">({feedbackcount})</span>
+              <span className="fw-bold">{feedbackScore.toFixed(1)}</span>
+              <span className="text-muted ms-1">({feedbackCount})</span>
             </div>
           </div>
           <div className="field mb-2">
-            {role} | {workexp} | {worktype} | {location}
+            {role} | {workExp} | {workType} | {locationName}
           </div>
-          <div className="intro">{content}</div>
+          <div className="intro">{freelancerContent}</div>
 
-          <div className="skills d-flex flex-wrap mt-3">
-            {skills.map(({ skill, score }, index) => (
-              <FreelancerSkillTag key={index} text={skill} score={score} />
+          <div className="skillList d-flex flex-wrap mt-3">
+            {skillList.map(({ skillName, skillScore }, index) => (
+              <FreelancerSkillTag
+                key={index}
+                text={skillName}
+                score={skillScore}
+              />
             ))}
           </div>
         </div>
 
         {/* 방사형 차트 */}
         <div className="radar-chart" style={{ flex: 1 }}>
-          <RadarChart data={radarData} />
+          <RadarChart
+            data={[
+              expertise,
+              proactiveness,
+              punctuality,
+              communication,
+              maintainability,
+            ]}
+          />
         </div>
       </div>
     </InfoCard>
