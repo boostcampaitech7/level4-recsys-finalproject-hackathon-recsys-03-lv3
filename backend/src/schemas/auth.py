@@ -1,14 +1,13 @@
 from pydantic import BaseModel
 
 
-class UserLoginRequest(BaseModel):
+class LoginRequest(BaseModel):
     email: str
     password: str
 
 
-class UserLoginResponse(BaseModel):
+class LoginResponse(BaseModel):
     token: str
     user_id: int
     user_name: str
-    team_id: int
-    position_id: int
+    user_type: int

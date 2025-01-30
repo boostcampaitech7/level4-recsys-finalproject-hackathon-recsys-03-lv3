@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from huggingface_hub import HfFolder, HfApi
+from huggingface_hub import HfFolder
 
 # .env 파일 로드
 load_dotenv()

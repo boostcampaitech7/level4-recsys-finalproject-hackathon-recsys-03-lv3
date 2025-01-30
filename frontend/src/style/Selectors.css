@@ -1,3 +1,5 @@
+@import "colors.css";
+
 /* 전체 드롭다운 컨테이너 */
 .single-selector {
   position: relative;
@@ -18,16 +20,16 @@
   justify-content: space-between;
   padding: 8px 12px;
   width: 240px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-secondary);
   border-radius: 4px;
   cursor: pointer;
   background-color: white;
-  color: #333;
+  color: var(--color-chat);
 }
 
 /* 선택된 값 */
 .selected-value {
-  color: #007bff;
+  color: var(--color-point);
   margin-right: 8px;
 }
 
@@ -47,7 +49,7 @@
   left: 0;
   width: 100%;
   margin-top: 4px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-secondary);
   border-radius: 4px;
   background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -75,14 +77,14 @@
 /* 선택된 아이템 */
 .dropdown-item.selected {
   font-weight: bold;
-  color: #007bff;
+  color: var(--color-point);
   background-color: #e9f5ff;
 }
 
 /* 선택 표시 (체크마크) */
 .checkmark i {
   float: right;
-  color: #007bff;
+  color: var(--color-point);
   font-size: 18px;
 }
 
@@ -99,20 +101,20 @@
 
 /* "전체" 스타일 */
 .전체-option {
-  color: #333; /* 기본 텍스트 색상 */
+  color: var(--color-chat); /* 기본 텍스트 색상 */
   font-weight: normal;
   background-color: transparent; /* 파란 배경 제거 */
   cursor: pointer;
 }
 
 .전체-option.selected {
-  color: #333;
+  color: var(--color-chat);
   background-color: transparent; /* 선택 상태에서도 파란 배경 제거 */
 }
 
 .divider {
   height: 1px;
-  background-color: #ddd;
+  background-color: var(--color-secondary);
   margin: 8px 0;
   border: none;
 }

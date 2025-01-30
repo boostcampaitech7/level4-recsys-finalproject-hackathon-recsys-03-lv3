@@ -10,13 +10,13 @@ class Skill(Base):
     name = Column("SKILL_NAME", String(100), nullable=False)
 
     # 관계 정의
-    user_skills = relationship(
-        "UserSkill",
+    freelancers = relationship(
+        "FreelancerSkill",
         back_populates="skill",
-        foreign_keys="UserSkill.skill_id"
+        foreign_keys="FreelancerSkill.skill_id"
     )
-    task_skills = relationship(
-        "TaskSkill",
+    projects = relationship(
+        "ProjectSkill",
         back_populates="skill",
-        foreign_keys="TaskSkill.skill_id"
+        foreign_keys="ProjectSkill.skill_id"
     )

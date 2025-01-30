@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, CHAR
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from api.db import Base
 
@@ -8,38 +8,48 @@ class Project(Base):
 
     id = Column("PROJECT_ID", Integer, primary_key=True, index=True)
     name = Column("PROJECT_NAME", String(100), nullable=False)
+    duration = Column("DURATION", Integer, nullable=False)
+    budget = Column("BUDGET", Integer, nullable=False)
+    work_type = Column("WORK_TYPE", Integer, nullable=False)
+    contract_type = Column("CONTRACT_TYPE", Integer, nullable=False)
+    priority = Column("PRIORITY", Integer, nullable=False)
     content = Column("PROJECT_CONTENT", String(4000), nullable=False)
-    start_date = Column("START_DATE", String(8), nullable=True)
-    end_date = Column("END_DATE", String(8), nullable=True)
-    progress_status = Column("PROGRESS_STATUS", CHAR(1), nullable=False)
+    status = Column("STATUS", Integer, nullable=False)
+    register_date = Column("REGISTER_DATE", String(10), nullable=False)
 
     # 외래 키
-    team_id = Column("TEAM_ID", Integer, ForeignKey("TEAM.TEAM_ID"), nullable=False)
-    user_id = Column("USER_ID", Integer, ForeignKey("USER.USER_ID"), nullable=False)
+    category_id = Column("CATEGORY_ID", Integer, ForeignKey("CATEGORY.CATEGORY_ID"), nullable=False)
+    freelancer_id = Column("FREELANCER_ID", Integer, ForeignKey("FREELANCER.FREELANCER_ID"))
+    company_id = Column("COMPANY_ID", Integer, ForeignKey("COMPANY.COMPANY_ID"), nullable=False)
 
     # 관계 정의
+    company = relationship(
+        "Company",
+        back_populates="projects",
+        foreign_keys=[company_id]
+    )
+    category = relationship(
+        "Category",
+        back_populates="projects",
+        foreign_keys=[category_id]
+    )
+    freelancer = relationship(
+        "Freelancer",
+        back_populates="projects",
+        foreign_keys=[freelancer_id]
+    )
+    skills = relationship(
+        "ProjectSkill",
+        back_populates="project",
+        foreign_keys="ProjectSkill.project_id"
+    )
+    rankings = relationship(
+        "ProjectRanking",
+        back_populates="project",
+        foreign_keys="ProjectRanking.project_id"
+    )
     feedbacks = relationship(
         "Feedback",
         back_populates="project",
         foreign_keys="Feedback.project_id"
-    )
-    project_applicants = relationship(
-        "ProjectApplicants",
-        back_populates="project",
-        foreign_keys="ProjectApplicants.project_id"
-    )
-    tasks = relationship(
-        "Task",
-        back_populates="project",
-        foreign_keys="Task.project_id"
-    )
-    team = relationship(
-        "Team",
-        back_populates="projects",
-        foreign_keys=[team_id]
-    )
-    user = relationship(
-        "User",
-        back_populates="projects",
-        foreign_keys=[user_id]
     )
