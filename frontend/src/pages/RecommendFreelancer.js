@@ -1,11 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import FreelancerInfo from "../components/FreelancerInfo";
-import "../style/SearchFreelancer.css";
+import "../style/RecommendFreelancer.css";
 import profile1 from "../assets/profile_example1.jpg";
 import profile2 from "../assets/profile_example2.jpg";
 import profile3 from "../assets/profile_example3.jpg";
 
-const SearchFreelancer = () => {
+const RecommendFreelancer = () => {
+  const [search, setSearch] = useState("");
+  const [filterRole, setFilterRole] = useState("");
+  const [filterWorkType, setFilterWorkType] = useState("");
+  const [filterSkillList, setFilterSkillList] = useState("");
+
   const freelancers = [
     {
       photo: profile1,
@@ -32,6 +37,8 @@ const SearchFreelancer = () => {
       punctuality: 4.1,
       maintainability: 4.0,
       communication: 4.4,
+      matchingScore: 90,
+      applied: 1,
     },
     {
       photo: profile2,
@@ -58,6 +65,8 @@ const SearchFreelancer = () => {
       punctuality: 4.6,
       maintainability: 4.5,
       communication: 4.7,
+      matchingScore: 60,
+      applied: 0,
     },
     {
       photo: profile3,
@@ -84,6 +93,8 @@ const SearchFreelancer = () => {
       punctuality: 4.6,
       maintainability: 4.5,
       communication: 4.7,
+      matchingScore: 40,
+      applied: 1,
     },
   ];
 
@@ -104,21 +115,56 @@ const SearchFreelancer = () => {
       5;
   });
 
+  const filteredFreelancers = freelancers.filter((freelancer) => {
+    return (
+      freelancer.freelancerName.includes(search) &&
+      (!filterRole || freelancer.role === filterRole) &&
+      (!filterWorkType || freelancer.workType === filterWorkType) &&
+      (!filterSkillList || freelancer.skillList === filterSkillList)
+    );
+  });
+
   return (
-    <div className="search-freelancer-container">
+    <div className="freelancer-list-container">
       <div className="header-container">
-        <h3 className="header">프리랜서 리스트</h3>
+        <h3 className="header">추천 프리랜서 리스트</h3>
         <p>총 {freelancers.length}명의 프리랜서가 있습니다.</p>
       </div>
-      {freelancers.map((freelancer) => (
-        <FreelancerInfo
-          key={freelancer.freelancerId}
-          freelancerInfo={freelancer}
-          pageType="search"
+      <div className="filters">
+        <select onChange={(e) => setFilterRole(e.target.value)}>
+          <option value="">직무</option>
+          <option value="백엔드 개발자">백엔드 개발자</option>
+          <option value="프론트엔드 개발자">프론트엔드 개발자</option>
+        </select>
+        <select onChange={(e) => setFilterWorkType(e.target.value)}>
+          <option value="">근무 형태</option>
+          <option value="대면">대면</option>
+          <option value="원격">원격</option>
+        </select>
+        <select onChange={(e) => setFilterSkillList(e.target.value)}>
+          <option value="">스킬</option>
+          <option value="Java">Java</option>
+          <option value="SQL">SQL</option>
+        </select>
+        <input
+          type="text"
+          placeholder="검색"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
-      ))}
+      </div>
+
+      <div className="freelancers">
+        {filteredFreelancers.map((freelancer) => (
+          <FreelancerInfo
+            key={freelancer.freelancerId}
+            freelancerInfo={freelancer}
+            pageType="recommend"
+          />
+        ))}
+      </div>
     </div>
   );
 };
 
-export default SearchFreelancer;
+export default RecommendFreelancer;

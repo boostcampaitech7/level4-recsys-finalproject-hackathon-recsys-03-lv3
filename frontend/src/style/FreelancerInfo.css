@@ -8,7 +8,8 @@
 .profile-info {
   flex: 2;
   color: black;
-  max-width: 600px;
+  max-width: 500px;
+  padding-right: 30px;
 }
 
 .profile-info h5 {
@@ -32,4 +33,44 @@
   -webkit-line-clamp: 2; /* 표시할 최대 줄 수 (예: 3줄) */
   -webkit-box-orient: vertical; /* 세로 방향으로 줄 제한 */
   white-space: normal; /* 줄바꿈 허용 */
+}
+
+/* 매칭 점수 스타일 */
+.matching-score-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-chart {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.profile-icon-recommend {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #e0e0e0; /* Default background color */
+}
+
+.matching-percentage {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #18bc9c;
+}
+
+/* 방사형 차트 */
+.radar-chart {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

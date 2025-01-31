@@ -1,0 +1,25 @@
+.freelancer-list-container {
+  margin: 0 auto;
+  padding: 20px;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.header-container,
+.filters {
+  width: 100%;
+  max-width: 1000px; /* 모든 요소 동일 폭 */
+  margin: 0 auto; /* 중앙 정렬 */
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.freelancers {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}

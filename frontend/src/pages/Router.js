@@ -5,6 +5,7 @@ import Layout from "../components/Layout";
 import LoginPage from "./LoginPage";
 import Chat from "./Chat";
 import SearchFreelancer from "./SearchFreelancer";
+import RecommendFreelancer from "./RecommendFreelancer";
 
 const AppRouter = () => {
   return (
@@ -20,6 +21,10 @@ const AppRouter = () => {
           {/* 추가 경로 */}
           <Route path="/chat" element={<Chat />} />
           <Route path="/search-freelancer" element={<SearchFreelancer />} />
+          <Route
+            path="/recommend-freelancer"
+            element={<RecommendFreelancer />}
+          />
         </Route>
       </Routes>
     </Router>
