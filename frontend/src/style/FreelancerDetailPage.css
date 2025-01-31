@@ -3,18 +3,19 @@
 .profile-page,
 .suggest-page {
   overflow-x: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .suggest-page {
   width: 100%;
   max-width: 900px; /* 부모 요소 최대 너비 제한 */
-  margin: auto; /* 가운데 정렬 */
 }
 
 .container-fluid.detail-card {
   width: 100%;
   max-width: 900px;
-  margin: auto;
+  margin-bottom: 20px;
   overflow: hidden; /* 부모 너비를 넘어서지 않도록 설정 */
 }
 
