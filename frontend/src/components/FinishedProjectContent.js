@@ -1,26 +1,26 @@
 import React, { useState } from "react";
 import InfoCard from "./InfoCard";
-import FreelancerSkillTag from "./FreelancerSkillTag";
+import ProjectSkillTag from "./ProjectSkillTag";
 import StarRating from "./StarRating";
 import RadarChart from "./RadarChart";
 import "../style/FinishedProjectContent.css";
 
 const FinishedProjectContent = ({ content }) => {
   const {
-    title,
+    projectName,
     duration,
-    startDate,
+    registerDate,
     endDate,
     category = "개발",
     role,
-    skills = [],
-    price,
+    skillNameList = [],
+    budget,
     radarData,
-    comment,
+    feedbackContent,
   } = content;
 
   // 평가 여부 상태 관리
-  const [isReviewed, setIsReviewed] = useState(false);
+  const [isReviewed, setIsReviewed] = useState(content.isReviewed);
 
   return (
     <InfoCard>
@@ -29,11 +29,11 @@ const FinishedProjectContent = ({ content }) => {
       >
         {/* 왼쪽: 프로젝트 정보 */}
         <div className="left-section">
-          <h3 className="project-title">{title}</h3>
+          <h3 className="project-title">{projectName}</h3>
 
           {/* 금액 표시 (평가 후에만 보이도록) */}
           <p className={`project-price ${isReviewed ? "visible" : ""}`}>
-            <strong>금액:</strong> {price.toLocaleString()}원
+            <strong>금액:</strong> {budget.toLocaleString()}원
           </p>
 
           <div className="project-info-grid">
@@ -42,7 +42,7 @@ const FinishedProjectContent = ({ content }) => {
                 <strong>기간:</strong> {duration}일
               </p>
               <p>
-                <strong>작업 시작일:</strong> {startDate}
+                <strong>작업 시작일:</strong> {registerDate}
               </p>
               <p>
                 <strong>작업 종료일:</strong> {endDate}
@@ -54,9 +54,9 @@ const FinishedProjectContent = ({ content }) => {
               </p>
               <p>{role}</p>
               <div className="skills">
-                {skills.length > 0 ? (
-                  skills.map((skill, index) => (
-                    <FreelancerSkillTag key={index} text={skill} score={10} />
+                {skillNameList.length > 0 ? (
+                  skillNameList.map((skill, index) => (
+                    <ProjectSkillTag key={index} text={skill} />
                   ))
                 ) : (
                   <span>스킬 정보 없음</span>
@@ -88,7 +88,9 @@ const FinishedProjectContent = ({ content }) => {
               <div className="radar-chart">
                 <RadarChart data={radarData ?? [0, 0, 0, 0, 0]} />
               </div>
-              {comment && <p className="review-comment">"{comment}"</p>}
+              {feedbackContent && (
+                <p className="review-comment">"{feedbackContent}"</p>
+              )}
             </>
           )}
         </div>
