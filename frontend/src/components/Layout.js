@@ -4,12 +4,6 @@ import Footer from "./Footer";
 import { Outlet } from "react-router-dom";
 
 const Layout = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
   return (
     <div
       id="wrapper"
@@ -35,7 +29,7 @@ const Layout = () => {
             minHeight: "95vh",
           }}
         >
-          <Topbar toggleSidebar={toggleSidebar} />
+          <Topbar />
           <div className="container-fluid">
             <Outlet />
           </div>

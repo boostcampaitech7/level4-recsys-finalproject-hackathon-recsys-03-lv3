@@ -1,27 +1,53 @@
 import React from "react";
 import "../style/SimilarProject.css";
+import ProjectSkillTag from "./ProjectSkillTag";
 
 const SimilarProject = () => {
   const projects = [
     {
-      title: "기업 - 프리랜서 매칭 플랫폼 프론트엔드 개발",
-      description: "HTML, CSS, Javascript, Vue.js를 사용하는 프로젝트",
-      tags: ["HTML", "CSS", "Javascript", "Vue.js"],
+      projectId: 101,
+      projectName: "Python 개발 프로젝트",
+      duration: 30,
+      budget: 5000000,
+      workType: 1,
+      contractType: 0,
+      status: 0,
+      registerDate: "20250125",
+      categoryName: "IT•정보통신업",
+      skillIdList: [1, 2, 3],
+      skillNameList: ["Python", "Django", "API"],
+      locationName: "서울특별시 강남구",
+      similarityScore: 15,
     },
     {
-      title: "기업 - 프리랜서 매칭 플랫폼 백엔드 개발",
-      description: "Spring Boot와 Java를 사용하는 프로젝트",
-      tags: ["Java", "Spring Boot"],
+      projectId: 102,
+      projectName: "Java 백엔드 개발",
+      duration: 60,
+      budget: 10000000,
+      workType: 0,
+      contractType: 1,
+      status: 0,
+      registerDate: "20250120",
+      categoryName: "IT•정보통신업",
+      skillIdList: [4, 5, 6],
+      skillNameList: ["Java", "Spring", "REST"],
+      locationName: "서울특별시 서초구",
+      similarityScore: 12,
     },
     {
-      title: "기업 - AI 기반 추천 시스템",
-      description: "Python과 TensorFlow를 사용하는 프로젝트",
-      tags: ["Python", "TensorFlow"],
-    },
-    {
-      title: "스타트업 - 모바일 앱 개발",
-      description: "React Native를 사용하는 프로젝트",
-      tags: ["React Native"],
+      projectId: 101,
+      projectName: "Python 개발 프로젝트",
+      duration: 30,
+      budget: 5000000,
+      workType: 1,
+      contractType: 0,
+      status: 0,
+      registerDate: "20250125",
+      categoryName: "IT•정보통신업",
+      skillIdList: [1, 2, 3],
+      skillNameList: ["Python", "Django", "API"],
+      locationName: "서울특별시 강남구",
+      similarityScore: 15,
     },
   ];
 
@@ -44,12 +70,25 @@ const SimilarProject = () => {
                   {/* 첫 번째 카드 */}
                   <div className="col-md-12">
                     <div className="card p-3">
-                      <h5>{projects[index].title}</h5>
-                      <p>{projects[index].description}</p>
+                      <a href="#">
+                        <h5>{projects[index].projectName}</h5>
+                      </a>
+                      <p>{projects[index].categoryName}</p>
+                      <p className="f-12">
+                        금액: {projects[index].budget}원{" "}
+                        <i class="bi bi-geo-alt"></i>
+                        {projects[index].locationName}
+                      </p>
+                      <p className="f-12">
+                        등록일:{" "}
+                        {projects[index].registerDate
+                          .replace(/(\d{4})(\d{2})(\d{2})/, "$1년 $2월 $3일")
+                          .replace(/\b0(\d)/g, "$1")}
+                      </p>
                       <div>
-                        {projects[index].tags.map((tag, i) => (
-                          <span key={i} className="badge bg-secondary me-2">
-                            {tag}
+                        {projects[index].skillNameList.map((skill, i) => (
+                          <span key={i} className="badge">
+                            <ProjectSkillTag text={skill} />
                           </span>
                         ))}
                       </div>
@@ -59,12 +98,25 @@ const SimilarProject = () => {
                   {projects[index + 1] && (
                     <div className="col-md-12">
                       <div className="card p-3">
-                        <h5>{projects[index + 1].title}</h5>
-                        <p>{projects[index + 1].description}</p>
+                        <a href="#">
+                          <h5>{projects[index + 1].projectName}</h5>
+                        </a>
+                        <p>{projects[index + 1].categoryName}</p>
+                        <p className="f-12">
+                          금액: {projects[index + 1].budget}원{" "}
+                          <i class="bi bi-geo-alt"></i>
+                          {projects[index + 1].locationName}
+                        </p>
+                        <p className="f-12">
+                          등록일:{" "}
+                          {projects[index + 1].registerDate
+                            .replace(/(\d{4})(\d{2})(\d{2})/, "$1년 $2월 $3일")
+                            .replace(/\b0(\d)/g, "$1")}
+                        </p>
                         <div>
-                          {projects[index + 1].tags.map((tag, i) => (
-                            <span key={i} className="badge bg-secondary me-2">
-                              {tag}
+                          {projects[index + 1].skillNameList.map((skill, i) => (
+                            <span key={i} className="badge">
+                              <ProjectSkillTag text={skill} />
                             </span>
                           ))}
                         </div>
