@@ -1,7 +1,22 @@
 @import "colors.css";
 
-.profile-page {
+.profile-page,
+.suggest-page {
   overflow-x: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.suggest-page {
+  width: 100%;
+  max-width: 900px; /* 부모 요소 최대 너비 제한 */
+}
+
+.container-fluid.detail-card {
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 20px;
+  overflow: hidden; /* 부모 너비를 넘어서지 않도록 설정 */
 }
 
 .detail-card {
@@ -12,6 +27,10 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 25px;
   display: flex;
+  width: 100%;
+  max-width: 900px;
+  margin: auto;
+  overflow: hidden;
 }
 
 .scrollable {
@@ -61,4 +80,17 @@
 .button-right {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+}
+
+.container-fluid.detail-card {
+  display: flex;
+  flex-direction: column; /* 📌 카드들을 세로로 배치 */
+  gap: 15px; /* 카드 사이 간격 추가 */
+}
+
+.suggest-project {
+  width: 100%; /* 가로폭을 부모 크기에 맞춤 */
+  max-width: 800px; /* 카드의 최대 너비 설정 */
+  margin: 0 auto; /* 가운데 정렬 */
 }

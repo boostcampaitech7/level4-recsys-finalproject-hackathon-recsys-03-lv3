@@ -2,7 +2,6 @@
 
 .star-rating-container {
   display: flex;
-  align-items: center;
   gap: 12px;
 }
 
@@ -17,7 +16,6 @@
 .star-rating div {
   font-size: 20px; /* 별 크기 */
   color: orange; /* 별 색상 */
-  line-height: 1; /* 줄 높이를 1로 설정해서 정렬 문제 해결 */
   vertical-align: middle; /* 세로 정렬 */
   margin-right: 2px; /* 별 사이 여백 */
 }

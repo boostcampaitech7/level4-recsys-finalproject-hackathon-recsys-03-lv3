@@ -3,7 +3,7 @@ import ProfileIcon from "../components/ProfileIcon";
 import profileExample from "../assets/profile_example5.jpg";
 import "../style/FreelancerDetailPage.css";
 import RadarChart from "../components/RadarChart";
-import SkillIcon from "../components/UserSkillTag";
+import FreelancerSkillTag from "../components/FreelancerSkillTag";
 import DoughnutChart from "../components/DoughnutChart";
 import StaticStarRating from "../components/StaticStarRating";
 
@@ -23,7 +23,10 @@ const ProfileHeader = ({ freelancerInfo }) => {
             </p>
             <div>
               {freelancerInfo.skillList.map((skill) => (
-                <SkillIcon text={skill.skillName} score={skill.skillScore} />
+                <FreelancerSkillTag
+                  text={skill.skillName}
+                  score={skill.skillScore}
+                />
               ))}
               {/* 더 많은 스킬 배지 추가 가능 */}
             </div>
@@ -40,9 +43,11 @@ const ProfileHeader = ({ freelancerInfo }) => {
         </div>
       </div>
       <div className="button-right align-items-center">
-        <button type="button" className="btn-suggest" href="#">
-          제안하기
-        </button>
+        <a href="/suggest">
+          <button type="button" className="btn-suggest">
+            제안하기
+          </button>
+        </a>
       </div>
     </div>
   );
