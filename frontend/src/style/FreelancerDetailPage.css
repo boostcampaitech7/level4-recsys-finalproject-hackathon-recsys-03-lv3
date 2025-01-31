@@ -5,6 +5,19 @@
   overflow-x: auto;
 }
 
+.suggest-page {
+  width: 100%;
+  max-width: 900px; /* 부모 요소 최대 너비 제한 */
+  margin: auto; /* 가운데 정렬 */
+}
+
+.container-fluid.detail-card {
+  width: 100%;
+  max-width: 900px;
+  margin: auto;
+  overflow: hidden; /* 부모 너비를 넘어서지 않도록 설정 */
+}
+
 .detail-card {
   background-color: #ffffff;
   min-height: 200px;
@@ -13,6 +26,10 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 25px;
   display: flex;
+  width: 100%;
+  max-width: 900px;
+  margin: auto;
+  overflow: hidden;
 }
 
 .scrollable {
@@ -64,7 +81,14 @@
   justify-content: flex-end;
 }
 
+.container-fluid.detail-card {
+  display: flex;
+  flex-direction: column; /* 📌 카드들을 세로로 배치 */
+  gap: 15px; /* 카드 사이 간격 추가 */
+}
+
 .suggest-project {
-  width: 800px;
-  min-width: 100px;
+  width: 100%; /* 가로폭을 부모 크기에 맞춤 */
+  max-width: 800px; /* 카드의 최대 너비 설정 */
+  margin: 0 auto; /* 가운데 정렬 */
 }
