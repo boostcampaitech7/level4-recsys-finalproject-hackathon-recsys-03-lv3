@@ -95,17 +95,16 @@ const FreelancerSuggest = () => {
             </div>
           </div>
         ))}
-      </div>
-
-      {/* 제안하기 버튼 */}
-      <div className="suggest-button-container">
-        <button
-          className={`suggest-button ${selectedProject ? "active" : ""}`}
-          disabled={!selectedProject}
-          onClick={handleSuggestClick}
-        >
-          제안하기
-        </button>
+        {/* 제안하기 버튼 */}
+        <div className="suggest-button-container">
+          <button
+            className={`suggest-button ${selectedProject ? "active" : ""}`}
+            disabled={!selectedProject}
+            onClick={handleSuggestClick}
+          >
+            제안하기
+          </button>
+        </div>
       </div>
     </div>
   );

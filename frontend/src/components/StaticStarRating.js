@@ -10,7 +10,7 @@ const StaticStarRating = ({ rating, numRates, totalStars = 5 }) => {
   };
 
   return (
-    <div className="star-rating-container align-items-center">
+    <div className="star-rating-container">
       <div className="star-rating">
         {[...Array(totalStars)].map((_, index) => (
           <div key={index} className={getStarClass(index)}>
