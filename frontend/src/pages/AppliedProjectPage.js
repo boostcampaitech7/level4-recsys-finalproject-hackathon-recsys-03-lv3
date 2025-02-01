@@ -88,8 +88,8 @@ const AppliedProjectPage = () => {
   return (
     <div className="applied-project-page-container">
       <div className="header-container">
-        <h3 className="header">지원한 프로젝트</h3>
-        <p>총 {displayedProjects.length}개의 지원한 프로젝트가 있습니다.</p>
+        <h3 className="header">신청한 프로젝트</h3>
+        <p>총 {displayedProjects.length}개의 신청한 프로젝트가 있습니다.</p>
       </div>
       <div className="filters">
         <div className="filter-group-left">
