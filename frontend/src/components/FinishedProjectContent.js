@@ -7,15 +7,20 @@ import "../style/FinishedProjectContent.css";
 
 const FinishedProjectContent = ({ content, onReview }) => {
   const {
+    projectId,
     projectName,
     duration,
+    budget,
+    workType, // 근무 형태(상주: 0, 원격: 1)
+    status, // 진행 상태(시작 전: 0, 진행 중: 1, 완료: 2)
     registerDate,
     endDate,
-    category = "개발",
-    role,
-    skillNameList = [],
-    budget,
+    categoryRole = "개발", // 직군
+    categoryName,
+    skillIdList,
+    skillNameList,
     radarData,
+    feedbackScore,
     feedbackContent,
     isReviewed, // 부모에서 직접 받은 값 사용
   } = content;
@@ -50,9 +55,9 @@ const FinishedProjectContent = ({ content, onReview }) => {
             </div>
             <div className="finished-project-info-right">
               <p>
-                <strong>{category}</strong>
+                <strong>{categoryRole}</strong>
               </p>
-              <p>{role}</p>
+              <p>{categoryName}</p>
               <div className="finished-skills">
                 {skillNameList.length > 0 ? (
                   skillNameList.map((skill, index) => (
@@ -83,7 +88,9 @@ const FinishedProjectContent = ({ content, onReview }) => {
           ) : (
             <>
               <div className="rating">
-                <StarRating />
+                <div>
+                  <StarRating /> {feedbackScore}
+                </div>
               </div>
               <div className="radar-chart">
                 <RadarChart data={radarData ?? [0, 0, 0, 0, 0]} />
