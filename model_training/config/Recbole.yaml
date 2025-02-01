@@ -8,7 +8,8 @@ data_path: "datasets/"
 checkpoint_dir: "output/"
 
 # Training Settings_basic
-epochs: 1
+verbose: 1
+epochs: 50
 train_batch_size: 2048
 eval_batch_size: 2048
 learner: 'adam'

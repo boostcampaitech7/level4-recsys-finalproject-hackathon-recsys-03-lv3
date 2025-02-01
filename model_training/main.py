@@ -1,5 +1,7 @@
 import argparse
 import importlib
+import logging
+import warnings
 
 from omegaconf import OmegaConf
 from recbole.config import Config
@@ -8,6 +10,9 @@ from src.dataset import load_data
 from src.utils import set_seed
 from src.Recbole.loader import generate_data, get_data
 from src.Recbole.trainer import train
+
+logging.basicConfig(level=logging.INFO)
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 
 if __name__ == "__main__":
