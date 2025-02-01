@@ -26,7 +26,7 @@ const CompanyMyPage = () => {
             </div>
           </div>
           <div>
-            <h3 className="company-introduction">&lt;소개&gt;</h3>
+            <h3 className="company-introduction">소개</h3>
             <p className="company-content">{company.companyContent}</p>
           </div>
         </InfoCard>
