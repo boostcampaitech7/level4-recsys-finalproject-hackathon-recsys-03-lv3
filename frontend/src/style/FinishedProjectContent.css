@@ -26,24 +26,24 @@
   min-width: 700px;
 }
 
-.project-title {
+.finished-project-title {
   font-size: 25px;
   font-weight: bold;
   margin-bottom: 10px;
 }
 
 /* 금액 (평가 전에는 투명 처리) */
-.project-price {
+.finished-project-price {
   font-size: 18px;
   margin: 0px;
   display: none;
 }
 
-.project-price.visible {
+.finished-project-price.visible {
   display: block;
 }
 
-.project-info-grid {
+.finished-project-info-grid {
   display: grid;
   grid-template-columns: 0.25fr 1fr;
   gap: 20px;
@@ -51,19 +51,19 @@
   min-width: 1200px;
 }
 
-.project-info-left,
-.project-info-right {
+.finished-project-info-left,
+.finished-project-info-right {
   display: flex;
   flex-direction: column;
 }
 
-.project-info-left p,
-.project-info-right p {
+.finished-project-info-left p,
+.finished-project-info-right p {
   margin: 5px 0;
   font-size: 18px;
 }
 
-.skills {
+.finished-skills {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;

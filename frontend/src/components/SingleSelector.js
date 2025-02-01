@@ -1,24 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../style/Selectors.css";
 
-const SingleSelector = ({ title, options, onChange }) => {
+const SingleSelector = ({ title, options, value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = useState(options[0]);
+  const [selectedValue, setSelectedValue] = useState(value || options[0]);
+
+  // 외부에서 value가 변경되면 내부 상태를 업데이트
+  useEffect(() => {
+    if (value !== undefined) {
+      setSelectedValue(value);
+    }
+  }, [value]);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
-  const selectOption = (value) => {
-    setSelectedValue(value);
+  const selectOption = (option) => {
+    setSelectedValue(option);
     setIsOpen(false);
-    onChange(value);
+    onChange(option);
   };
 
   return (
     <div className="single-selector">
       <div className="label-container" onClick={toggleDropdown}>
-        <span className="label">{title}</span>
+        <span className="label visually-hidden">{title}</span>
         <span className="selected-value">{selectedValue}</span>
         <span className={`arrow ${isOpen ? "open" : ""}`}>
           <i className="bi bi-caret-down-fill"></i>
