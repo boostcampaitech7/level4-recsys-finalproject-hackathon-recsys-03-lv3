@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "../style/Selectors.css";
 
 const SingleSelector = ({ title, options, onChange }) => {
+  options = ["전체", ...options];
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(options[0]);
 
