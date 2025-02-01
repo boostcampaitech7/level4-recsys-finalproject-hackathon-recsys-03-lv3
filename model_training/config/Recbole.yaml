@@ -22,7 +22,7 @@ stopping_step: 10         # early stopping threshold
 # Evaluation Settings
 eval_args:
     group_by: user
-    order: TO                   # Timestamp가 없다면 RO
+    order: RO
     split: {"LS": 'valid_and_test'}
     mode: full
 repeatable: False
