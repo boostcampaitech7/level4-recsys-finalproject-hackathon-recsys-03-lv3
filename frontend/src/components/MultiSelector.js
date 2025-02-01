@@ -32,8 +32,9 @@ const MultiSelector = ({ title, options, onChange }) => {
   return (
     <div className="multi-selector">
       <div className="label-container" onClick={toggleDropdown}>
+        {/* <span className="label">{title}</span> */}
         <span className="selected-value">
-          {selectedValues.length == options.length
+          {selectedValues.length === options.length
             ? title
             : selectedValues.length > 0
               ? selectedValues.join(", ")
