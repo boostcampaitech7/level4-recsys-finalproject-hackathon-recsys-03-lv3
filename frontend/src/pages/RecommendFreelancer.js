@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import FreelancerInfo from "../components/FreelancerInfo";
+import MultiSelector from "../components/MultiSelector";
 import SingleSelector from "../components/SingleSelector";
 import SwitchButton from "../components/SwitchButton";
 import "../style/RecommendFreelancer.css";
@@ -8,9 +9,9 @@ import profile2 from "../assets/profile_example2.jpg";
 import profile3 from "../assets/profile_example3.jpg";
 
 const RecommendFreelancer = () => {
-  const [filterRole, setFilterRole] = useState("직군/직무");
+  const [filterRoles, setFilterRoles] = useState([]);
   const [filterWorkType, setFilterWorkType] = useState("근무 형태");
-  const [filterSkillList, setFilterSkillList] = useState("스킬");
+  const [filterSkillList, setFilterSkillList] = useState([]);
   const [sortOption, setSortOption] = useState("최신순");
   const [showOnlyApplied, setShowOnlyApplied] = useState(false);
 
@@ -123,12 +124,12 @@ const RecommendFreelancer = () => {
     .filter((freelancer) => {
       return (
         (!showOnlyApplied || freelancer.applied === 1) &&
-        (filterRole === "직군/직무" || freelancer.role === filterRole) &&
+        (filterRoles.length === 0 || filterRoles.includes(freelancer.role)) &&
         (filterWorkType === "근무 형태" ||
           freelancer.workType === filterWorkType) &&
-        (filterSkillList === "스킬" ||
-          freelancer.skillList.some(
-            (skill) => skill.skillName === filterSkillList
+        (filterSkillList.length === 0 ||
+          freelancer.skillList.some((skill) =>
+            filterSkillList.includes(skill.skillName)
           ))
       );
     })
@@ -141,9 +142,9 @@ const RecommendFreelancer = () => {
     });
 
   const resetFilters = () => {
-    setFilterRole("직군/직무");
+    setFilterRoles([]);
     setFilterWorkType("근무 형태");
-    setFilterSkillList("스킬");
+    setFilterSkillList([]);
     setSortOption("최신순");
     setShowOnlyApplied(false);
   };
@@ -157,11 +158,11 @@ const RecommendFreelancer = () => {
       <div className="filters">
         <div className="filter-group-left">
           {/* 직군 필터 */}
-          <SingleSelector
+          <MultiSelector
             title="직군/직무"
-            options={["직군/직무", "백엔드 개발자", "프론트엔드 개발자"]}
-            onChange={setFilterRole}
-            value={filterRole}
+            options={["백엔드 개발자", "프론트엔드 개발자"]}
+            onChange={setFilterRoles}
+            value={filterRoles}
           />
 
           {/* 근무 형태 필터 */}
@@ -173,9 +174,9 @@ const RecommendFreelancer = () => {
           />
 
           {/* 스킬 필터 */}
-          <SingleSelector
+          <MultiSelector
             title="스킬"
-            options={["스킬", "Java", "SQL", "Spring Boot"]}
+            options={["Java", "SQL", "Spring Boot"]}
             onChange={setFilterSkillList}
             value={filterSkillList}
           />
