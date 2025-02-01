@@ -7,7 +7,7 @@ import "../style/colors.css";
 
 const ProjectInfo = ({ content }) => {
   const {
-    projectID, // 프로젝트 ID
+    projectId, // 프로젝트 ID
     projectName, // 프로젝트 이름
     duration, // 기간(단위: 일)
     budget, // 예상 금액
