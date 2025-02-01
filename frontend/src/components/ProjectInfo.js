@@ -11,22 +11,11 @@ const ProjectInfo = ({ projectinfo1 }) => {
   return (
     <InfoCard>
       <div className="status">
-        {["모집 중", "상주", "NEW"].map((badgeText) => {
-          if (state === badgeText) {
-            return (
-              <ProjectKeywordIcon
-                color="var(--color-primary)"
-                text={badgeText}
-              />
-            );
-          }
-          return (
-            <ProjectKeywordIcon
-              color="var(--color-secondary)"
-              text={badgeText}
-            />
-          );
-        })}
+        {state === 0 ? (
+          <ProjectKeywordIcon color="var(--color-primary)" text="모집 중" />
+        ) : (
+          <ProjectKeywordIcon color="var(--color-secondary)" text="모집 완료" />
+        )}
       </div>
       <div class="title">
         <a href="#" style={{ color: "black", textDecoration: "none" }}>
@@ -40,12 +29,16 @@ const ProjectInfo = ({ projectinfo1 }) => {
       </div>
       <div class="details-row">
         <span class="label">예상 기간</span>
-        <span class="value">{day}</span>
+        <span class="value">{day}일</span>
         <span class="category2">{category}</span>
       </div>
       <div class="details-row2">
         <span class="labe-date1">근무 시작일</span>
-        <span class="value2">{start_day}</span>
+        <span class="value2">
+          {start_day
+            .replace(/(\d{4})(\d{2})(\d{2})/, "$1년 $2월 $3일")
+            .replace(/\b0(\d)/g, "$1")}
+        </span>
         <span class="skills d-flex flex-wrap mt-3">
           {skills.map((skill, index) => (
             <ProjectSkillTag key={index} text={skill} />
