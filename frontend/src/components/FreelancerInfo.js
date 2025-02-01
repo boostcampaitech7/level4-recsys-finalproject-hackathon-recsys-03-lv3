@@ -122,7 +122,6 @@ const FreelancerInfo = ({ freelancerInfo, pageType }) => {
             {role} | {workExp} | {workType} | {locationName}
           </div>
           <div className="intro">{freelancerContent}</div>
-
           <div className="skillList d-flex flex-wrap mt-3">
             {skillList.map(({ skillName, skillScore }, index) => (
               <FreelancerSkillTag
