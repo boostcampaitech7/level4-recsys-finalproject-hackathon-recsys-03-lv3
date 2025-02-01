@@ -9,7 +9,7 @@
 }
 
 .header-container,
-.card-container {
+.filters {
   width: 100%;
   max-width: 1000px; /* 모든 요소 동일 폭 */
   margin: 0 auto; /* 중앙 정렬 */
@@ -23,15 +23,56 @@
   color: black;
 }
 
-.card-container {
-  width: 100%;
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
 .header {
   text-align: left;
   font-weight: 600;
   margin-top: 20px;
   margin-bottom: 10px;
+}
+
+.filters {
+  display: flex; /* 자식 요소들을 가로로 배치 */
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  font-size: 12px;
+}
+
+.filter-group-left {
+  display: flex;
+  gap: 10px; /* 필터 간 간격 */
+  flex-grow: 1; /* 왼쪽 필터 그룹이 가능한 공간을 차지 */
+}
+
+.reset-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background-color: transparent;
+  border: none;
+  color: #333;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.reset-button:hover {
+  font-weight: 500;
+}
+
+.filter-group-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filters > * {
+  flex-shrink: 0; /* 자식 요소가 줄어들지 않도록 설정 */
+}
+
+.freelancers {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
