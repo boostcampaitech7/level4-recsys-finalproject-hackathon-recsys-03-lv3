@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import FreelancerInfo from "../components/FreelancerInfo";
+import SingleSelector from "../components/SingleSelector";
+import SwitchButton from "../components/SwitchButton";
 import "../style/RecommendFreelancer.css";
 import profile1 from "../assets/profile_example1.jpg";
 import profile2 from "../assets/profile_example2.jpg";
 import profile3 from "../assets/profile_example3.jpg";
 
 const RecommendFreelancer = () => {
-  const [search, setSearch] = useState("");
-  const [filterRole, setFilterRole] = useState("");
-  const [filterWorkType, setFilterWorkType] = useState("");
-  const [filterSkillList, setFilterSkillList] = useState("");
+  const [filterRole, setFilterRole] = useState("직군/직무");
+  const [filterWorkType, setFilterWorkType] = useState("근무 형태");
+  const [filterSkillList, setFilterSkillList] = useState("스킬");
+  const [sortOption, setSortOption] = useState("최신순");
+  const [showOnlyApplied, setShowOnlyApplied] = useState(false);
 
   const freelancers = [
     {
@@ -115,14 +118,35 @@ const RecommendFreelancer = () => {
       5;
   });
 
-  const filteredFreelancers = freelancers.filter((freelancer) => {
-    return (
-      freelancer.freelancerName.includes(search) &&
-      (!filterRole || freelancer.role === filterRole) &&
-      (!filterWorkType || freelancer.workType === filterWorkType) &&
-      (!filterSkillList || freelancer.skillList === filterSkillList)
-    );
-  });
+  // 필터링 로직
+  const filteredFreelancers = freelancers
+    .filter((freelancer) => {
+      return (
+        (!showOnlyApplied || freelancer.applied === 1) &&
+        (filterRole === "직군/직무" || freelancer.role === filterRole) &&
+        (filterWorkType === "근무 형태" ||
+          freelancer.workType === filterWorkType) &&
+        (filterSkillList === "스킬" ||
+          freelancer.skillList.some(
+            (skill) => skill.skillName === filterSkillList
+          ))
+      );
+    })
+    .sort((a, b) => {
+      // 정렬 로직
+      if (sortOption === "최신순") return b.freelancerId - a.freelancerId;
+      if (sortOption === "매칭 점수 높은순")
+        return b.matchingScore - a.matchingScore;
+      return 0;
+    });
+
+  const resetFilters = () => {
+    setFilterRole("직군/직무");
+    setFilterWorkType("근무 형태");
+    setFilterSkillList("스킬");
+    setSortOption("최신순");
+    setShowOnlyApplied(false);
+  };
 
   return (
     <div className="freelancer-list-container">
@@ -131,27 +155,51 @@ const RecommendFreelancer = () => {
         <p>총 {freelancers.length}명의 프리랜서가 있습니다.</p>
       </div>
       <div className="filters">
-        <select onChange={(e) => setFilterRole(e.target.value)}>
-          <option value="">직무</option>
-          <option value="백엔드 개발자">백엔드 개발자</option>
-          <option value="프론트엔드 개발자">프론트엔드 개발자</option>
-        </select>
-        <select onChange={(e) => setFilterWorkType(e.target.value)}>
-          <option value="">근무 형태</option>
-          <option value="대면">대면</option>
-          <option value="원격">원격</option>
-        </select>
-        <select onChange={(e) => setFilterSkillList(e.target.value)}>
-          <option value="">스킬</option>
-          <option value="Java">Java</option>
-          <option value="SQL">SQL</option>
-        </select>
-        <input
-          type="text"
-          placeholder="검색"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        <div className="filter-group-left">
+          {/* 직군 필터 */}
+          <SingleSelector
+            title="직군/직무"
+            options={["직군/직무", "백엔드 개발자", "프론트엔드 개발자"]}
+            onChange={setFilterRole}
+            value={filterRole}
+          />
+
+          {/* 근무 형태 필터 */}
+          <SingleSelector
+            title="근무 형태"
+            options={["근무 형태", "원격", "대면"]}
+            onChange={setFilterWorkType}
+            value={filterWorkType}
+          />
+
+          {/* 스킬 필터 */}
+          <SingleSelector
+            title="스킬"
+            options={["스킬", "Java", "SQL", "Spring Boot"]}
+            onChange={setFilterSkillList}
+            value={filterSkillList}
+          />
+
+          {/* 필터 초기화 버튼 */}
+          <button className="reset-button" onClick={resetFilters}>
+            <i className="bi bi-arrow-counterclockwise"></i> 필터 초기화
+          </button>
+        </div>
+
+        {/* 정렬 옵션 */}
+        <div className="filter-group-right">
+          <SwitchButton
+            text="지원한 사람만 보기"
+            checked={showOnlyApplied}
+            onChange={setShowOnlyApplied}
+          />
+          <SingleSelector
+            title="정렬 기준"
+            options={["최신순", "매칭 점수 높은순"]}
+            onChange={setSortOption}
+            value={sortOption}
+          />
+        </div>
       </div>
 
       <div className="freelancers">

@@ -110,13 +110,15 @@ const SearchFreelancer = () => {
         <h3 className="header">프리랜서 리스트</h3>
         <p>총 {freelancers.length}명의 프리랜서가 있습니다.</p>
       </div>
-      {freelancers.map((freelancer) => (
-        <FreelancerInfo
-          key={freelancer.freelancerId}
-          freelancerInfo={freelancer}
-          pageType="search"
-        />
-      ))}
+      <div className="freelancers">
+        {freelancers.map((freelancer) => (
+          <FreelancerInfo
+            key={freelancer.freelancerId}
+            freelancerInfo={freelancer}
+            pageType="search"
+          />
+        ))}
+      </div>
     </div>
   );
 };

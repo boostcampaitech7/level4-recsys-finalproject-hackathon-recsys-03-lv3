@@ -134,7 +134,7 @@ const FreelancerInfo = ({ freelancerInfo, pageType }) => {
         </div>
 
         {/* 방사형 차트 */}
-        <div className="radar-chart" style={{ flex: 1 }}>
+        <div className="radar-chart">
           <RadarChart
             data={[
               expertise,
