@@ -27,15 +27,17 @@ const FinishedProjectContent = ({ content, onReview }) => {
       >
         {/* 왼쪽: 프로젝트 정보 */}
         <div className="left-section">
-          <h3 className="project-title">{projectName}</h3>
+          <h3 className="finished-project-title">{projectName}</h3>
 
           {/* 금액 표시 (평가 후에만 보이도록) */}
-          <p className={`project-price ${isReviewed ? "visible" : ""}`}>
+          <p
+            className={`finished-project-price ${isReviewed ? "visible" : ""}`}
+          >
             <strong>금액:</strong> {budget.toLocaleString()}원
           </p>
 
-          <div className="project-info-grid">
-            <div className="project-info-left">
+          <div className="finished-project-info-grid">
+            <div className="finished-project-info-left">
               <p>
                 <strong>기간:</strong> {duration}일
               </p>
@@ -46,12 +48,12 @@ const FinishedProjectContent = ({ content, onReview }) => {
                 <strong>작업 종료일:</strong> {endDate}
               </p>
             </div>
-            <div className="project-info-right">
+            <div className="finished-project-info-right">
               <p>
                 <strong>{category}</strong>
               </p>
               <p>{role}</p>
-              <div className="skills">
+              <div className="finished-skills">
                 {skillNameList.length > 0 ? (
                   skillNameList.map((skill, index) => (
                     <ProjectSkillTag key={index} text={skill} />
