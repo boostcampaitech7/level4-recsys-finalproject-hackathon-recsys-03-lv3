@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import InfoCard from "./InfoCard";
 import ProjectSkillTag from "./ProjectSkillTag";
 import StarRating from "./StarRating";
 import RadarChart from "./RadarChart";
 import "../style/FinishedProjectContent.css";
 
-const FinishedProjectContent = ({ content }) => {
+const FinishedProjectContent = ({ content, onReview }) => {
   const {
     projectName,
     duration,
@@ -17,10 +17,8 @@ const FinishedProjectContent = ({ content }) => {
     budget,
     radarData,
     feedbackContent,
+    isReviewed, // 부모에서 직접 받은 값 사용
   } = content;
-
-  // 평가 여부 상태 관리
-  const [isReviewed, setIsReviewed] = useState(content.isReviewed);
 
   return (
     <InfoCard>
@@ -72,7 +70,7 @@ const FinishedProjectContent = ({ content }) => {
             <div className="before-review-container">
               <button
                 className="review-button"
-                onClick={() => setIsReviewed(true)}
+                onClick={onReview} // 부모에서 받은 함수 실행
               >
                 평가하기
               </button>

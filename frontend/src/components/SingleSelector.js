@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import "../style/Selectors.css";
 
-const SingleSelector = ({ title }) => {
+const SingleSelector = ({ title, options, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = useState("전체");
-  const options = ["전체", "상주", "원격"];
+  const [selectedValue, setSelectedValue] = useState(options[0]);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -13,6 +12,7 @@ const SingleSelector = ({ title }) => {
   const selectOption = (value) => {
     setSelectedValue(value);
     setIsOpen(false);
+    onChange(value);
   };
 
   return (
