@@ -1,85 +1,59 @@
-.card {
-  border: 1px solid #ccc;
-  padding: 16px;
-  border-radius: 8px;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-}
+@import "colors.css";
 
-.status {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-  margin-left: 10px;
-}
-
-.title {
-  color: black; /* 글자색 검은색으로 변경 */
-  font-size: 30px; /* 글자 크기 20px로 변경 (원하는 크기로 조절) */
-  margin-left: 10px;
-}
-
-.details-row {
-  display: grid;
-  grid-template-columns: 150px 230px 1000px;
-  margin-top: 10px;
-  color: black;
-  margin-left: 10px;
-}
-
-.details {
-  margin-top: 10px;
-  color: black;
-}
-
-.label {
-  font-size: 20px;
-}
-.value {
-  margin-left: 0px;
-  font-size: 19px;
-}
-
-.category {
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.category2 {
-  font-size: 20px;
-}
-
-.location {
-  color: rgb(210, 210, 210); /* 글자색 검은색으로 변경 */
-  font-size: 30px; /* 글자 크기 20px로 변경 (원하는 크기로 조절) */
-  margin-top: 10px; /* 모든 방향에 10px 여백 적용 */
-  margin-left: 10px;
-}
-
-.location2 {
-  color: black; /* 글자색 검은색으로 변경 */
-  font-size: 20px; /* 글자 크기 20px로 변경 (원하는 크기로 조절) */
-  margin-left: 15px;
-}
-
-.location .location2 {
-  /* 텍스트 위치 조절 (원하는 값으로 조절) */
+/* InfoCard 기본 스타일 */
+.info-card {
   position: relative;
-  top: -3px; /* 위로 살짝 이동 */
+  height: auto;
+  min-height: 200px;
+  overflow-x: auto;
+  max-width: 1200px;
+  white-space: nowrap;
 }
-.details-row2 {
-  display: grid;
-  grid-template-columns: 150px 220px 1000px;
-  color: black;
+
+/* 전체 레이아웃 컨테이너 */
+.project-container {
+  justify-content: space-between;
   align-items: center;
-  margin-left: 10px;
+  width: 100%;
+  min-height: 200px;
+  padding: 10px; /* 여백 추가 */
+  box-sizing: border-box;
 }
 
-.labe-date1 {
-  margin-top: 10px;
-  font-size: 20px;
+/* 상태 아이콘 영역 (모집 상태 등 표시) */
+.status {
+  position: relative;
+  margin-bottom: 20px;
+  right: 5px;
 }
 
-.value2 {
-  margin-top: 10px;
-  font-size: 19px;
+/* 프로젝트 제목 */
+.project-title {
+  color: black;
+  font-size: 25px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* 프로젝트 정보 그리드 */
+.project-info-grid {
+  display: grid;
+  grid-template-columns: 0.25fr 1fr;
+  gap: 20px;
+  align-items: start;
+  min-width: 1200px;
+}
+
+/* 좌측 및 우측 정보 영역 */
+.project-info-left,
+.project-info-right {
+  display: flex;
+  flex-direction: column;
+}
+
+.project-info-left p,
+.project-info-right p {
+  margin: 5px 0;
+  font-size: 18px;
+  color: black;
 }
