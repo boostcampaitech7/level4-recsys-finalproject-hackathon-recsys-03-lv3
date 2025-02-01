@@ -1,29 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../style/Selectors.css";
 
-const MultiSelector = ({ title, options, onChange }) => {
+const MultiSelector = ({ title, options, value = [], onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValues, setSelectedValues] = useState(options);
+
+  // 외부에서 value가 변경되면 내부 상태를 업데이트
+  useEffect(() => {
+    if (value !== undefined) {
+      setSelectedValues(value);
+    }
+  }, [value]);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
-  const toggleOption = (value) => {
-    let updatedValues = [...options];
+  const toggleOption = (option) => {
+    let updatedValues = [...selectedValues];
 
-    if (value === "전체") {
+    if (option === "전체") {
       if (selectedValues.length === options.length) {
         updatedValues = [];
       } else {
         updatedValues = [...options];
       }
-    } else if (selectedValues.includes(value)) {
+    } else if (selectedValues.includes(option)) {
       // 이미 선택된 값이면 제거
-      updatedValues = selectedValues.filter((item) => item !== value);
+      updatedValues = selectedValues.filter((item) => item !== option);
     } else {
       // 선택되지 않은 값이면 추가
-      updatedValues = [...selectedValues, value];
+      updatedValues = [...selectedValues, option];
     }
     setSelectedValues(updatedValues);
     onChange(updatedValues); // 선택된 값 리스트 업데이트
@@ -34,11 +41,11 @@ const MultiSelector = ({ title, options, onChange }) => {
       <div className="label-container" onClick={toggleDropdown}>
         {/* <span className="label">{title}</span> */}
         <span className="selected-value">
-          {selectedValues.length === options.length
-            ? title
-            : selectedValues.length > 0
-              ? selectedValues.join(", ")
-              : "선택 없음"}
+          {selectedValues.length === 0
+            ? title // 선택된 값이 없을 때 title 표시
+            : selectedValues.length === options.length
+              ? "전체"
+              : selectedValues.join(", ")}
         </span>
         <span className={`arrow ${isOpen ? "open" : ""}`}>
           <i className="bi bi-caret-down-fill"></i>
