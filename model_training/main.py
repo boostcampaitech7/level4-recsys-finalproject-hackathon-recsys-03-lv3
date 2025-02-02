@@ -10,7 +10,7 @@ from src.dataset import load_data
 from src.utils import set_seed
 from src.Recbole.loader import generate_data, get_data
 from src.Recbole.trainer import train
-from src.CB.catboost_trainer import CatBoostTrainer  # 클래스 임포트 변경
+from src.CB.catboost_trainer import CatBoostTrainer
 from src.CB.xgboost_trainer import XGBoostTrainer
 from src.CB.logistic_trainer import LogisticTrainer
 from src.CB.loader import prepare_data

@@ -41,10 +41,18 @@ def prepare_data(data_path: str, config):
     merged_data = pd.merge(inter_data, project_data, on="project_id", how="inner")
     merged_data = pd.merge(merged_data, freelancer_data, on="freelancer_id", how="inner")
 
-    # Train/Test 데이터 분리
+    # 프로젝트 단위 Train/Test 분리
+    unique_projects = merged_data["project_id"].unique()
+    unique_projects.sort()  # 프로젝트 ID 정렬 (재현성을 위해)
+    
     train_ratio = config.data_params["train_ratio"]
-    train_data = merged_data.sample(frac=train_ratio, random_state=42)
-    test_data = merged_data.drop(train_data.index)
+    num_train = int(len(unique_projects) * train_ratio)
+
+    train_projects = unique_projects[:num_train]  # 앞부분 train_ratio 만큼 사용
+    test_projects = unique_projects[num_train:]  # 나머지 test 사용
+
+    train_data = merged_data[merged_data["project_id"].isin(train_projects)]
+    test_data = merged_data[merged_data["project_id"].isin(test_projects)]
 
     # 저장
     check_path(data_path)
