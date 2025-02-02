@@ -3,11 +3,28 @@ data_path: "datasets/"
 output_path: "output/"
 repo_name: "TaroSin/HRmony"
 
+# CatBoost 모델 설정
 catboost_params:
   iterations: 1000
   depth: 6
   learning_rate: 0.1
-  loss_function: RMSE  # 회귀 모델을 위한 손실 함수
-data_path: datasets/CB  # 데이터 경로
-output_path: output/CB  # 모델 저장 경로
+  loss_function: RMSE # 회귀 모델 손실 함수
+  l2_leaf_reg: 3.0 # L2 정규화 계수
+  eval_metric: RMSE # 검증 평가 지표
+  od_type: Iter # 조기 종료 방식
+  od_wait: 50 # 조기 종료 기준 Iteration 수
+  task_type: "GPU" # GPU 사용 가능할 경우 활성화
 
+# 데이터 관련 설정
+data_params:
+  train_ratio: 0.8 # Train/Test 분할 비율
+  target_column: "matching_score" # 예측할 매칭 점수
+  # categorical_features: ["project_category", "freelancer_category", "project_skills", "freelancer_skills"]
+  numerical_features:
+    [
+      "project_duration",
+      "project_budget",
+      "project_priority",
+      "freelancer_experience",
+      "freelancer_price",
+    ]
