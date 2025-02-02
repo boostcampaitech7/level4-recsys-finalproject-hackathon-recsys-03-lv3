@@ -8,6 +8,6 @@ class LoginRequest(BaseModel):
 
 class LoginResponse(BaseModel):
     token: str
-    user_id: int
-    user_name: str
-    user_type: int
+    userId: int
+    userName: str
+    userType: int
