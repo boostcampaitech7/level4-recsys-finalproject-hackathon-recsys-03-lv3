@@ -1,7 +1,10 @@
 import os
-import pandas as pd
+import json
+from typing import Tuple, List, Dict
 
+import pandas as pd
 from sqlalchemy import text
+from sklearn.preprocessing import MultiLabelBinarizer
 
 from api.db import SessionLocal
 from src.utils import check_path
@@ -72,3 +75,83 @@ def load_data(data_path: str):
 
     finally:
         db.close()
+
+
+def parse_column(value: str) -> Tuple[List[str], Dict[str, float]]:
+    """
+    JSON 형태 또는 리스트 형태의 문자열 데이터를 파싱하여 리스트로 변환하는 함수.
+
+    Args:
+        value(str) : JSON 문자열 또는 리스트 문자열
+    
+    Returns:
+        list : 변환된 리스트
+        dict : 가중치 딕셔너리 (프리랜서 skill_id만 해당, 없으면 빈 딕셔너리)
+    """
+    parsed_list = []
+    weights = {}
+
+    try:
+        parsed = json.loads(value.replace("'", '"')) if "{" in value else eval(value) 
+
+        if isinstance(parsed, list):
+            if all(isinstance(item, dict) for item in parsed):
+                for skill in parsed: 
+                    parsed_list.append(skill["skill_id"])
+                    weights[skill["skill_id"]] = skill.get("skill_score", 1)
+            else:
+                parsed_list = parsed
+    except (json.JSONDecodeError, SyntaxError, TypeError):
+        pass
+    
+    return parsed_list, weights
+
+
+def multi_hot_encoding(
+        df: pd.DataFrame, 
+        label_col: str, 
+        pivot_col: str, 
+        weight_col: str = None
+) -> pd.DataFrame:
+    """
+    프로젝트 및 프리랜서의 스킬을 멀티-핫 인코딩하는 함수
+    (프리랜서의 경우 스킬 온도를 적용)
+
+    Args:
+        df (pd.DataFrame): pivot_col과 label_col을 포함하는 데이터프레임
+        label_col (str): 멀티핫 인코딩할 스킬 컬럼명
+        pivot_col (str): 그룹화할 기준이 되는 컬럼명 (project_id 또는 freelancer_id)
+        weight_col (str, optional): 스킬 가중치를 적용할 경우 제공할 컬럼명 (프리랜서만 해당)
+
+    Returns:
+        pd.DataFrame: 멀티핫 인코딩(및 가중치 적용)이 완료된 데이터프레임 반환
+    """
+    
+    # 스킬 컬럼을 리스트 형태로 변환
+    df[["parsed_values", "parsed_weights"]] = df[label_col].apply(
+        lambda x: pd.Series(parse_column(str(x)))
+    )
+    
+    # pivot_col별 "parsed_values"를 리스트로 묶기
+    grouped_df = df.groupby(pivot_col)["parsed_values"].sum().reset_index()
+    
+    # MultiLabelBinarizer를 사용하여 멀티 핫 인코딩 수행
+    mlb = MultiLabelBinarizer()
+    multi_hot_encoded = mlb.fit_transform(grouped_df["parsed_values"])
+    
+    # 결과를 데이터프레임으로 변환
+    multi_hot_df = pd.DataFrame(multi_hot_encoded, columns=mlb.classes_)
+    multi_hot_df.insert(0, pivot_col, grouped_df[pivot_col])
+    
+    # 가중치 적용 (프리랜서 스킬 온도 적용)
+    if weight_col and "parsed_weights" in df:
+        weight_map = {
+            row[pivot_col]: row["parsed_weights"] for _, row in df.iterrows()
+        }
+        for skill in mlb.classes_:
+            if skill in multi_hot_df.columns:
+                multi_hot_df[skill] = multi_hot_df[pivot_col].map(
+                    lambda x: weight_map.get(x, {}).get(skill, 1)
+                ) * multi_hot_df[skill]
+
+    return multi_hot_df
