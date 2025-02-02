@@ -13,6 +13,7 @@ from src.Recbole.trainer import train
 from src.CB.catboost_trainer import CatBoostTrainer  # 클래스 임포트 변경
 from src.CB.xgboost_trainer import XGBoostTrainer
 from src.CB.logistic_trainer import LogisticTrainer
+from src.CB.loader import prepare_data
 
 logging.basicConfig(level=logging.INFO)
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -93,14 +94,24 @@ if __name__ == "__main__":
 
     # 직접 구현한 모델 (CatBoost 실행)
     else:
+        # 데이터 생성
+        config = OmegaConf.load("config/config.yaml")
+        
+        # 데이터 생성 실행
+        prepare_data("datasets/", config)
+        print("데이터 생성 완료")
+        
+        # CatBoost
         if args.model.lower() == "catboost":
             print("CatBoost 모델 실행 시작")
             catboost_trainer = CatBoostTrainer(args)
             catboost_trainer.run()
+        # XGBoost
         elif args.model.lower() == "xgboost":
             print("XGBoost 모델 실행 시작")
             catboost_trainer = XGBoostTrainer(args)
             catboost_trainer.run()
+        # Logistic
         elif args.model.lower() == "logistic":
             print("Logistic Regression 모델 실행 시작")
             logistic_trainer = LogisticTrainer(args)

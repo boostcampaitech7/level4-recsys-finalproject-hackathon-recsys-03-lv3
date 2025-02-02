@@ -1,11 +1,13 @@
 import os
 import pickle
 import pandas as pd
-import numpy as np  # 🔹 NumPy 추가
-from datetime import datetime  # 🔹 타임스탬프 추가
+import numpy as np
+from datetime import datetime
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from math import sqrt
+from src.utils import recall_at_k, load_true_matches
+
 
 class LogisticTrainer:
     def __init__(self, config):
@@ -66,6 +68,22 @@ class LogisticTrainer:
         print(f"✅ 테스트 RMSE: {rmse:.4f}")
         print(f"✅ 테스트 MAE: {mae:.4f}")
         print(f"✅ 테스트 R^2: {r2:.4f}")
+
+        # 🔹 모델이 예측한 상위 10명 프리랜서 정리
+        test_data["pred_score"] = predictions
+        y_pred = (
+            test_data.sort_values(["project_id", "pred_score"], ascending=[True, False])
+            .groupby("project_id")["freelancer_id"]
+            .apply(lambda x: list(x[:10]))
+            .to_dict()
+        )
+
+        # 🔹 실제 매칭된 프리랜서 데이터 로드 (inter.csv 활용)
+        y_true = load_true_matches(os.path.join(self.config.data_path, "inter.csv"))
+        
+        # ✅ Recall@10 평가
+        recall_10 = recall_at_k(y_true, y_pred, k=10)
+        print(f"✅ Logistic Regression Recall@10: {recall_10:.4f}")
 
         # 🔹 저장 파일명 동적으로 생성
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
