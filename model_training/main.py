@@ -5,12 +5,12 @@ import warnings
 
 from omegaconf import OmegaConf
 from recbole.config import Config
-from src.CB.catboost_trainer import CatBoostTrainer
 
 from src.dataset import load_data
 from src.utils import set_seed
 from src.Recbole.loader import generate_data, get_data
 from src.Recbole.trainer import train
+from src.CB.catboost_trainer import CatBoostTrainer  # 클래스 임포트 변경
 
 logging.basicConfig(level=logging.INFO)
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -53,6 +53,10 @@ if __name__ == "__main__":
     config_args = OmegaConf.create(vars(args))
     config_yaml = OmegaConf.load(args.config)
 
+    # 기본값을 명시적으로 설정하여 KeyError 방지
+    if "type" not in config_yaml:
+        config_yaml.type = None
+    
     # args에 있는 값이 config_yaml에 있는 값보다 우선함. (단, None이 아닌 값일 경우)
     for key in config_args.keys():
         if config_args[key] is not None:
@@ -65,7 +69,7 @@ if __name__ == "__main__":
     if args.data:
         load_data(data_path=args.data_path)
 
-    # Recbole
+    # Recbole 실행
     if args.type:
 
         model_type = {"g": "general_recommender", "s": "sequential_recommender", "c": "context_aware_recommender"}
@@ -85,11 +89,11 @@ if __name__ == "__main__":
         # 4. Train
         train(config=config, model_class=model_class, data_list=[tr_data, val_data, te_data])
 
-    # 직접 구현한 모델
+    # 직접 구현한 모델 (CatBoost 실행)
     else:
         if args.model.lower() == "catboost":
             print("CatBoost 모델 실행 시작")
             catboost_trainer = CatBoostTrainer(args)
             catboost_trainer.run()
         else:
-            print("예외처리")
+            print("예외")

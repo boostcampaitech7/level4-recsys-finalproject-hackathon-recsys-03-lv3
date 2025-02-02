@@ -1,5 +1,7 @@
 import os
+import pickle
 import pandas as pd
+from datetime import datetime  # 🔹 타임스탬프 추가
 from catboost import CatBoostRegressor, Pool
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from math import sqrt
@@ -10,53 +12,38 @@ class CatBoostTrainer:
         self.model = CatBoostRegressor(**config.catboost_params)
 
     def load_data(self):
-        """프로젝트 및 프리랜서 데이터를 결합하여 데이터셋 생성"""
-        project_path = os.path.join(self.config.data_path, "project.csv")
-        freelancer_path = os.path.join(self.config.data_path, "freelancer.csv")
-        inter_path = os.path.join(self.config.data_path, "inter.csv")
+        """저장된 Train/Test 데이터를 로드"""
+        train_path = os.path.join(self.config.data_path, "train.csv")
+        test_path = os.path.join(self.config.data_path, "test.csv")
 
-        project_data = pd.read_csv(project_path)
-        freelancer_data = pd.read_csv(freelancer_path)
-        inter_data = pd.read_csv(inter_path)
+        train_data = pd.read_csv(train_path)
+        test_data = pd.read_csv(test_path)
 
-        # 데이터 결합 (프로젝트와 프리랜서 간 매칭 데이터)
-        merged_data = pd.merge(inter_data, project_data, on="project_id", how="inner")
-        merged_data = pd.merge(merged_data, freelancer_data, on="freelancer_id", how="inner")
+        return train_data, test_data
 
-        return merged_data
+    def prepare_data(self, train_data, test_data):
+        """Train/Test 데이터에서 Feature와 Target을 분리 (Categorical Features 제외)"""
+        features = self.config.data_params["numerical_features"]
+        target_column = self.config.data_params["target_column"]
 
-    def prepare_data(self, data):
-        """CatBoost 모델용 데이터 준비"""
-        features = [
-            "budget", "skills_project", "category_project",  # 프로젝트 Feature
-            "price", "work_exp", "category_freelancer", "skills_freelancer", "skill_temperature"  # 프리랜서 Feature
-        ]
+        X_train = train_data[features]  # Feature만 선택
+        y_train = train_data[target_column]  # Target (matching_score)
+        X_test = test_data[features]
+        y_test = test_data[target_column]
 
-        categorical_features = [
-            "skills_project", "category_project", "category_freelancer", "skills_freelancer"
-        ]
-
-        X = data[features]
-        y = data["matching_score"]  # 매칭 점수
-
-        return X, y, categorical_features
+        return X_train, X_test, y_train, y_test
 
     def run(self):
         """CatBoost 모델 학습 및 평가"""
-        data = self.load_data()
-        X, y, categorical_features = self.prepare_data(data)
-
-        # Train/Test Split
-        train_size = int(len(data) * 0.8)
-        X_train, X_test = X.iloc[:train_size], X.iloc[train_size:]
-        y_train, y_test = y.iloc[:train_size], y.iloc[train_size:]
+        train_data, test_data = self.load_data()
+        X_train, X_test, y_train, y_test = self.prepare_data(train_data, test_data)
 
         # CatBoost 데이터 Pool 생성
-        train_pool = Pool(X_train, y_train, cat_features=categorical_features)
-        test_pool = Pool(X_test, y_test, cat_features=categorical_features)
+        train_pool = Pool(X_train, y_train)
+        test_pool = Pool(X_test, y_test)
 
-        # 모델 학습
-        self.model.fit(train_pool, eval_set=test_pool, verbose=True)
+        print("🔹 CatBoost 모델 학습 시작...")
+        self.model.fit(train_pool, eval_set=test_pool, verbose=100)
 
         # 예측 및 평가
         predictions = self.model.predict(X_test)
@@ -65,11 +52,19 @@ class CatBoostTrainer:
         mae = mean_absolute_error(y_test, predictions)
         r2 = r2_score(y_test, predictions)
 
-        print(f"테스트 RMSE: {rmse:.4f}")
-        print(f"테스트 MAE: {mae:.4f}")
-        print(f"테스트 R^2: {r2:.4f}")
+        print(f"✅ 테스트 RMSE: {rmse:.4f}")
+        print(f"✅ 테스트 MAE: {mae:.4f}")
+        print(f"✅ 테스트 R^2: {r2:.4f}")
 
-        # 모델 저장
-        model_path = os.path.join(self.config.output_path, "catboost_model.cbm")
-        self.model.save_model(model_path)
-        print(f"모델이 저장되었습니다: {model_path}")
+        # 🔹 저장 파일명 동적으로 생성
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")  # 현재 시간
+        model_path_pkl = os.path.join(self.config.output_path, f"catboost_model_{timestamp}.pkl")
+
+        # 저장 디렉토리 생성
+        os.makedirs(self.config.output_path, exist_ok=True)
+
+        # Pickle(.pkl) 형식으로 저장
+        with open(model_path_pkl, "wb") as f:
+            pickle.dump(self.model, f)
+
+        print(f"📢 모델이 저장되었습니다: {model_path_pkl}")
