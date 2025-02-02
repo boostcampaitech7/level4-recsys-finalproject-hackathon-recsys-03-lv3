@@ -8,6 +8,9 @@ frontend/public/css/
 frontend/public/js/
 frontend/public/vendor/
 
+### model_training
+model_training/catboost_info
+
 # dependencies
 /node_modules
 /.pnp
