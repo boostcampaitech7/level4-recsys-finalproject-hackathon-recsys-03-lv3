@@ -11,6 +11,7 @@ from src.utils import set_seed
 from src.Recbole.loader import generate_data, get_data
 from src.Recbole.trainer import train
 from src.CB.catboost_trainer import CatBoostTrainer  # 클래스 임포트 변경
+from src.CB.xgboost_trainer import XGBoostTrainer
 
 logging.basicConfig(level=logging.INFO)
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -94,6 +95,10 @@ if __name__ == "__main__":
         if args.model.lower() == "catboost":
             print("CatBoost 모델 실행 시작")
             catboost_trainer = CatBoostTrainer(args)
+            catboost_trainer.run()
+        elif args.model.lower() == "xgboost":
+            print("XGBoost 모델 실행 시작")
+            catboost_trainer = XGBoostTrainer(args)
             catboost_trainer.run()
         else:
             print("예외")
