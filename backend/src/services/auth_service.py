@@ -30,7 +30,7 @@ class AuthService:
         freelancer_query = db.query(
             Freelancer.id.label("id"),
             Freelancer.name.label("name"),
-            Company.password.label("password"),
+            Freelancer.password.label("password"),
             literal(0).label("type"),
         ).filter(Freelancer.email == email)
 
@@ -59,16 +59,16 @@ class AuthService:
 
         # JWT 토큰 생성
         session_data = {
-            "user_id": user.id,
-            "user_name": user.name,
-            "user_type": user.type,
+            "userId": user.id,
+            "userName": user.name,
+            "userType": user.type,
         }
         token = create_jwt_token(session_data)
 
         # 응답 데이터 반환
         return LoginResponse(
             token=token,
-            user_id=user.id,
-            user_name=user.name,
-            user_type=user.type,
+            userId=user.id,
+            userName=user.name,
+            userType=user.type,
         )
