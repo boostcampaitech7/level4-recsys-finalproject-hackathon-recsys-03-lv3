@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, ForeignKey
 from sqlalchemy.orm import relationship
 from api.db import Base
 
@@ -7,13 +7,13 @@ class Project(Base):
     __tablename__ = "PROJECT"
 
     id = Column("PROJECT_ID", Integer, primary_key=True, index=True)
-    name = Column("PROJECT_NAME", String(100), nullable=False)
+    name = Column("PROJECT_NAME", String(4000), nullable=False)
     duration = Column("DURATION", Integer, nullable=False)
     budget = Column("BUDGET", Integer, nullable=False)
     work_type = Column("WORK_TYPE", Integer, nullable=False)
     contract_type = Column("CONTRACT_TYPE", Integer, nullable=False)
     priority = Column("PRIORITY", Integer, nullable=False)
-    content = Column("PROJECT_CONTENT", String(4000), nullable=False)
+    content = Column("PROJECT_CONTENT", Text, nullable=False)
     status = Column("STATUS", Integer, nullable=False)
     register_date = Column("REGISTER_DATE", String(10), nullable=False)
 
