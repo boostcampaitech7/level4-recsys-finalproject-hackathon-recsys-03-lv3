@@ -15,7 +15,7 @@ catboost_params:
   od_wait: 50 # 조기 종료 기준 Iteration 수
   task_type: "GPU" # GPU 사용 가능할 경우 활성화
 
-# CatBoost 모델 설정
+# XGBoost 모델 설정
 xgboost_params:
   n_estimators: 1000
   max_depth: 6
@@ -23,6 +23,13 @@ xgboost_params:
   eval_metric: rmse
   device: "cuda" # GPU 사용 가능할 경우 활성화
   tree_method: "hist"
+
+# Logistic Regression 모델 설정
+lr_params:
+  penalty: "l2" # 정규화 방식
+  C: 1.0 # 정규화 강도
+  solver: "lbfgs" # 최적화 알고리즘
+  max_iter: 1000 # 최대 반복 횟수
 
 # 데이터 관련 설정
 data_params:
