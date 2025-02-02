@@ -72,3 +72,32 @@ def load_data(data_path: str):
 
     finally:
         db.close()
+
+def prepare_catboost_data(data_path: str):
+    """
+    CatBoost 모델용 데이터 준비 함수 (매칭 점수 예측).
+    기존 프로젝트, 프리랜서, 매칭 데이터를 결합하여 학습 데이터를 생성.
+
+    Args:
+        data_path (str): 데이터 저장 경로
+    """
+    project_path = os.path.join(data_path, "project.csv")
+    freelancer_path = os.path.join(data_path, "freelancer.csv")
+    inter_path = os.path.join(data_path, "inter.csv")
+
+    project_data = pd.read_csv(project_path)
+    freelancer_data = pd.read_csv(freelancer_path)
+    inter_data = pd.read_csv(inter_path)
+
+    # 데이터 결합
+    merged_data = pd.merge(inter_data, project_data, on="project_id", how="inner")
+    merged_data = pd.merge(merged_data, freelancer_data, on="freelancer_id", how="inner")
+
+    # Train/Test 분리
+    train_data = merged_data.sample(frac=0.8, random_state=42)
+    test_data = merged_data.drop(train_data.index)
+
+    # 데이터 저장
+    check_path(data_path)
+    train_data.to_csv(os.path.join(data_path, "train.csv"), index=False)
+    test_data.to_csv(os.path.join(data_path, "test.csv"), index=False)

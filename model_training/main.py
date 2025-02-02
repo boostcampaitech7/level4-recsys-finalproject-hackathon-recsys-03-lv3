@@ -5,6 +5,7 @@ import warnings
 
 from omegaconf import OmegaConf
 from recbole.config import Config
+from src.CB.catboost_trainer import CatBoostTrainer
 
 from src.dataset import load_data
 from src.utils import set_seed
@@ -86,4 +87,9 @@ if __name__ == "__main__":
 
     # 직접 구현한 모델
     else:
-        pass
+        if args.model.lower() == "catboost":
+            print("CatBoost 모델 실행 시작")
+            catboost_trainer = CatBoostTrainer(args)
+            catboost_trainer.run()
+        else:
+            print("예외처리")

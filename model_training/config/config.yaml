@@ -2,3 +2,12 @@ seed: 42
 data_path: "datasets/"
 output_path: "output/"
 repo_name: "TaroSin/HRmony"
+
+catboost_params:
+  iterations: 1000
+  depth: 6
+  learning_rate: 0.1
+  loss_function: RMSE  # 회귀 모델을 위한 손실 함수
+data_path: datasets/CB  # 데이터 경로
+output_path: output/CB  # 모델 저장 경로
+
