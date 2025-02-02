@@ -17,14 +17,3 @@ DATABASE_URL = f"oracle+cx_oracle://{ORACLE_USER}:{ORACLE_PASSWORD}@hrmonydb_hig
 # SQLAlchemy 엔진 및 세션 생성
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-
-def get_db():
-    """
-    데이터베이스 세션을 생성하고, 요청 종료 시 닫음
-    """
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()

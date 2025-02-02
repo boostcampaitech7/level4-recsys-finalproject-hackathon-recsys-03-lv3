@@ -1,12 +1,18 @@
 import argparse
 import importlib
+import logging
+import warnings
 
 from omegaconf import OmegaConf
 from recbole.config import Config
 
+from src.dataset import load_data
 from src.utils import set_seed
 from src.Recbole.loader import generate_data, get_data
 from src.Recbole.trainer import train
+
+logging.basicConfig(level=logging.INFO)
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 
 if __name__ == "__main__":
@@ -19,6 +25,12 @@ if __name__ == "__main__":
         "-c",
         help="Configuration 파일을 설정합니다.",
         default="config/config.yaml"
+    )
+    arg(
+        "--data",
+        "-d",
+        help="DB 데이터 로드 여부를 선택합니다. (DB 데이터 갱신 시 사용)",
+        default=False
     )
     arg(
         "--type",
@@ -49,6 +61,9 @@ if __name__ == "__main__":
 
     set_seed(args.seed)
 
+    if args.data:
+        load_data(data_path=args.data_path)
+
     # Recbole
     if args.type:
 
@@ -61,7 +76,7 @@ if __name__ == "__main__":
         config = Config(model=args.model, config_file_list=[config_path + "Recbole.yaml", config_path + args.model + ".yaml"])
 
         # 2. Recbole 데이터 생성 (/datasets/모델별 폴더에 저장)
-        generate_data(args=args, config=config)
+        generate_data(data_path=args.data_path, config=config)
 
         # 3. Data Split
         tr_data, val_data, te_data = get_data(config)
