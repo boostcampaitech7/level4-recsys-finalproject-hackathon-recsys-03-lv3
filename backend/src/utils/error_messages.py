@@ -17,7 +17,7 @@ ERROR_MESSAGES = {
     },
     "CONFLICT": {
         "status": 409,
-        "message": "요청이 서버 상태와 충돌했습니다. 입력 데이터를 확인하거나 중복된 요청인지 확인하세요."
+        "message": "요청이 서버 상태와 충돌했습니다. 입력 데이터를 확인하거나 중복된 요청인지 확인하세요.({})"
     },
     "UNPROCESSABLE_ENTITY": {
         "status": 422,
