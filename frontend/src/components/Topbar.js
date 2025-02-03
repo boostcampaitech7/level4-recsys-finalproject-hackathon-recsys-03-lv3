@@ -21,13 +21,28 @@ const Topbar = ({ isLoggedIn, setIsLoggedIn }) => {
       <ul>
         {/* Search Dropdown for Mobile */}
         <li>
-          <a href="/find-freelancer">프리랜서 찾기</a>
+          <button
+            className="nav-link-btn"
+            onClick={() => navigate("/search-freelancer")}
+          >
+            프리랜서 찾기
+          </button>
         </li>
         <li>
-          <a href="/find-project">프로젝트 찾기</a>
+          <button
+            className="nav-link-btn"
+            onClick={() => navigate("/find-project")}
+          >
+            프로젝트 찾기
+          </button>
         </li>
         <li>
-          <a href="/manage-project">프로젝트 관리</a>
+          <button
+            className="nav-link-btn"
+            onClick={() => navigate("/manage-project")}
+          >
+            프로젝트 관리
+          </button>
         </li>
         {isLoggedIn ? (
           <li className="nav-item dropdown no-arrow">

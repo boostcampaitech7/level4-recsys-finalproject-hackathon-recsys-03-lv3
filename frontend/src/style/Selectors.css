@@ -19,7 +19,9 @@
   align-items: center;
   justify-content: space-between;
   padding: 8px 12px;
-  width: 240px;
+  min-width: 120px; /* 최소 너비 */
+  width: auto; /* 자동 너비 조정 */
+  max-width: max-content; /* 내용에 따라 너비 조정 */
   border: 1px solid var(--color-secondary);
   border-radius: 4px;
   cursor: pointer;

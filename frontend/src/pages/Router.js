@@ -4,6 +4,9 @@ import Layout from "../components/Layout";
 //import Dashboard from "./Dashboard";
 import LoginPage from "./LoginPage";
 import SearchProjectPage from "./SearchProjectPage";
+import Chat from "./Chat";
+import SearchFreelancer from "./SearchFreelancer";
+import RecommendFreelancer from "./RecommendFreelancer";
 
 const AppRouter = () => {
   return (
@@ -18,6 +21,12 @@ const AppRouter = () => {
           {/* <Route index element={<Dashboard />} /> */}
           {/* 추가 경로 */}
           <Route path="projects" element={<SearchProjectPage />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/search-freelancer" element={<SearchFreelancer />} />
+          <Route
+            path="/recommend-freelancer"
+            element={<RecommendFreelancer />}
+          />
         </Route>
       </Routes>
     </Router>
