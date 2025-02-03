@@ -48,7 +48,7 @@ def recall_at_k(y_true, y_pred, k=10):
     """
     recalls = []
 
-    for project_id in y_true:
+    for project_id in y_true.keys():
         true_freelancers = set(y_true[project_id])  # 실제 매칭된 프리랜서
         predicted_freelancers = set(y_pred.get(project_id, [])[:k])  # 모델이 추천한 상위 K명
 
