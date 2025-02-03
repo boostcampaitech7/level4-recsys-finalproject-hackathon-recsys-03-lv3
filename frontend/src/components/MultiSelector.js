@@ -44,8 +44,12 @@ const MultiSelector = ({ title, options, value = [], onChange }) => {
           {selectedValues.length === 0
             ? title // 선택된 값이 없을 때 title 표시
             : selectedValues.length === options.length
-              ? "전체"
-              : selectedValues.join(", ")}
+              ? title
+              : `${selectedValues[0]} ${
+                  selectedValues.length === 1
+                    ? ""
+                    : `외 ${selectedValues.length - 1}개`
+                }`}
         </span>
         <span className={`arrow ${isOpen ? "open" : ""}`}>
           <i className="bi bi-caret-down-fill"></i>
