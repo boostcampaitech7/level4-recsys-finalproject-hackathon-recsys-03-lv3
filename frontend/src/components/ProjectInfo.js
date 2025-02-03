@@ -25,7 +25,7 @@ const ProjectInfo = ({ content }) => {
 
   return (
     <InfoCard>
-      <div className={"project-container"}>
+      <div className="project-container">
         <div className="status">
           {status === 0 ? (
             <ProjectKeywordIcon color="var(--color-secondary)" text="모집 중" />
@@ -40,7 +40,11 @@ const ProjectInfo = ({ content }) => {
           <ProjectKeywordIcon color="var(--color-primary)" text="NEW" />
         </div>
 
-        <h3 className="project-title">{projectName}</h3>
+        <h3 className="project-title">
+          <a className="project-link" href="#">
+            {projectName}
+          </a>
+        </h3>
         <div className="project-info-grid">
           <div className="project-info-left">
             <p>
