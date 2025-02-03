@@ -1,0 +1,96 @@
+@import "colors.css";
+
+.profile-page,
+.suggest-page {
+  overflow-x: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.suggest-page {
+  width: 100%;
+  max-width: 900px; /* 부모 요소 최대 너비 제한 */
+}
+
+.container-fluid.detail-card {
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 20px;
+  overflow: hidden; /* 부모 너비를 넘어서지 않도록 설정 */
+}
+
+.detail-card {
+  background-color: #ffffff;
+  min-height: 200px;
+  margin: 20px auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+  display: flex;
+  width: 100%;
+  max-width: 900px;
+  margin: auto;
+  overflow: hidden;
+}
+
+.scrollable {
+  min-width: 800px;
+  width: 1000px;
+}
+
+.project-history {
+  height: 600px;
+  display: flex;
+  flex-direction: column; /* ✅ 제목을 상단에 고정 */
+}
+
+.history-list {
+  overflow-y: auto; /* ✅ 내부 스크롤 적용 */
+  flex-grow: 1; /* ✅ 남은 공간을 차지하면서 확장 */
+  padding-right: 20px; /* ✅ 스크롤바가 나타날 경우 오른쪽 여백 */
+  padding-left: 20px;
+}
+
+.profile-stats,
+.project-status {
+  background-color: #f3fbfa;
+}
+
+.btn-suggest {
+  background-color: var(--color-primary);
+  color: black;
+  border: None;
+  border-radius: 100px;
+  width: 100px;
+  height: 40px;
+  font-weight: 550;
+}
+
+.btn-suggest:hover {
+  background-color: var(--color-primary);
+  border: None;
+}
+
+.btn-suggest:active {
+  background-color: var(--color-primary); /* 클릭 시 배경 색상 변경 */
+  transform: scale(0.98); /* 클릭 시 약간 작아지는 효과 */
+  border: None;
+}
+
+.button-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.container-fluid.detail-card {
+  display: flex;
+  flex-direction: column; /* 📌 카드들을 세로로 배치 */
+  gap: 15px; /* 카드 사이 간격 추가 */
+}
+
+.suggest-project {
+  width: 100%; /* 가로폭을 부모 크기에 맞춤 */
+  max-width: 800px; /* 카드의 최대 너비 설정 */
+  margin: 0 auto; /* 가운데 정렬 */
+}

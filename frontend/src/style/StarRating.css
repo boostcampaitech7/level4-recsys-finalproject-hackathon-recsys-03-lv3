@@ -2,7 +2,6 @@
 
 .star-rating-container {
   display: flex;
-  align-items: center;
   gap: 12px;
 }
 
@@ -12,6 +11,13 @@
   cursor: pointer;
   font-size: 24px;
   user-select: none;
+}
+
+.star-rating div {
+  font-size: 20px; /* 별 크기 */
+  color: orange; /* 별 색상 */
+  vertical-align: middle; /* 세로 정렬 */
+  margin-right: 2px; /* 별 사이 여백 */
 }
 
 .star {

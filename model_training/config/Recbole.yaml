@@ -8,7 +8,8 @@ data_path: "datasets/"
 checkpoint_dir: "output/"
 
 # Training Settings_basic
-epochs: 1
+verbose: 1
+epochs: 50
 train_batch_size: 2048
 eval_batch_size: 2048
 learner: 'adam'
@@ -22,7 +23,7 @@ stopping_step: 10         # early stopping threshold
 # Evaluation Settings
 eval_args:
     group_by: user
-    order: TO                   # Timestamp가 없다면 RO
+    order: RO
     split: {"LS": 'valid_and_test'}
     mode: full
 repeatable: False
