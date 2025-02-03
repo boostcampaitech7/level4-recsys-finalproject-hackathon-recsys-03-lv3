@@ -45,6 +45,11 @@ class Freelancer(Base):
         back_populates="freelancer",
         foreign_keys="ProjectRanking.freelancer_id"
     )
+    applicants = relationship(
+        "ProjectApplicants",
+        back_populates="freelancer",
+        foreign_keys="ProjectApplicants.freelancer_id"
+    )
     feedbacks = relationship(
         "Feedback",
         back_populates="freelancer",

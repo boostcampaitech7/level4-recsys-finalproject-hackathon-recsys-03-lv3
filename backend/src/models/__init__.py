@@ -7,6 +7,7 @@ from src.models.freelancerSkill import FreelancerSkill
 from src.models.location import Location
 from src.models.project import Project
 from src.models.projectRanking import ProjectRanking
+from src.models.projectApplicants import ProjectApplicants
 from src.models.projectSkill import ProjectSkill
 from src.models.skill import Skill
 
@@ -20,6 +21,7 @@ __all__ = [
     "Location",
     "Project",
     "ProjectRanking",
+    "ProjectApplicants",
     "ProjectSkill",
     "Skill"
 ]
