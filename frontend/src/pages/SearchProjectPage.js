@@ -299,53 +299,52 @@ const SearchProjectPage = () => {
   return (
     <div className="search-project-container">
       <div className="header-container">
-        <h3>프리랜서 리스트</h3>
+        <h3 className="header">프로젝트 리스트</h3>
         <p>총 {projects.length}개의 프로젝트가 있습니다.</p>
+      </div>
+      <div className="filters">
+        {/* 필터 UI */}
+        <div className="filter-group-left">
+          <SingleSelector
+            options={[
+              "직군",
+              "소프트웨어/IT",
+              "금융",
+              "소매/소비자",
+              "미디어/광고",
+              "제조업",
+              "운송/공급망",
+              "정부",
+              "에너지",
+              "헬스케어",
+              "교육",
+            ]}
+            onChange={setCategoryFilterOption}
+            value={categoryFilterOption}
+          />
+          <MultiSelector
+            title="스킬"
+            options={skillList}
+            onChange={setSkillFilterOption}
+            value={skillFilterOption}
+          />
 
-        <div className="filters">
-          {/* 필터 UI */}
-          <div className="filter-group-left">
-            <SingleSelector
-              options={[
-                "직군",
-                "소프트웨어/IT",
-                "금융",
-                "소매/소비자",
-                "미디어/광고",
-                "제조업",
-                "운송/공급망",
-                "정부",
-                "에너지",
-                "헬스케어",
-                "교육",
-              ]}
-              onChange={setCategoryFilterOption}
-              value={categoryFilterOption}
-            />
-            <MultiSelector
-              title="스킬"
-              options={skillList}
-              onChange={setSkillFilterOption}
-              value={skillFilterOption}
-            />
+          {/* 필터 초기화 버튼 */}
+          <button className="reset-button" onClick={resetFilters}>
+            <i className="bi bi-arrow-counterclockwise"></i> 필터 초기화
+          </button>
+        </div>
+        <div className="filter-group-right">
+          <SwitchButton
+            text="모집 중인 프로젝트만 표시"
+            onChange={setShowOnlyRecruiting}
+            value={showOnlyRecruiting}
+          />
 
-            {/* 필터 초기화 버튼 */}
-            <button className="reset-button" onClick={resetFilters}>
-              <i className="bi bi-arrow-counterclockwise"></i> 필터 초기화
-            </button>
-          </div>
-          <div className="filter-group-right">
-            <SwitchButton
-              text="모집 중인 프로젝트만 표시"
-              onChange={setShowOnlyRecruiting}
-              value={showOnlyRecruiting}
-            />
-
-            <SingleSelector
-              options={["최신순", "금액 높은순"]}
-              onChange={setSortOption}
-            />
-          </div>
+          <SingleSelector
+            options={["최신순", "금액 높은순"]}
+            onChange={setSortOption}
+          />
         </div>
       </div>
 

@@ -20,7 +20,7 @@ const AppRouter = () => {
           {/* Layout 내부의 하위 경로 */}
           {/* <Route index element={<Dashboard />} /> */}
           {/* 추가 경로 */}
-          <Route path="projects" element={<SearchProjectPage />} />
+          <Route path="/search-project" element={<SearchProjectPage />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/search-freelancer" element={<SearchFreelancer />} />
           <Route

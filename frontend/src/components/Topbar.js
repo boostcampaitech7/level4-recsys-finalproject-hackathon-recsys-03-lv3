@@ -31,7 +31,7 @@ const Topbar = ({ isLoggedIn, setIsLoggedIn }) => {
         <li>
           <button
             className="nav-link-btn"
-            onClick={() => navigate("/find-project")}
+            onClick={() => navigate("/search-project")}
           >
             프로젝트 찾기
           </button>
