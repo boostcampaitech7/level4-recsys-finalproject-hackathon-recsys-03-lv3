@@ -52,19 +52,15 @@ def load_data(data_path: str):
             SELECT  F.FREELANCER_ID AS freelancer_id,
                     F.WORK_EXP AS work_exp,
                     F.PRICE AS price,
-                    (SELECT JSON_ARRAYAGG(JSON_OBJECT(
-                        'skill_id' VALUE FS.SKILL_ID,
-                        'skill_score' VALUE FS.SKILL_SCORE) RETURNING CLOB) AS skill_id
+                    (SELECT JSON_ARRAYAGG(FS.SKILL_ID) AS SKILL_ID
                      FROM FREELANCER_SKILL FS
                      WHERE FS.FREELANCER_ID = F.FREELANCER_ID) AS skill_id,
+                    (SELECT JSON_ARRAYAGG(FS.SKILL_ID) AS SKILL_TEMP
+                     FROM FREELANCER_SKILL FS
+                     WHERE FS.FREELANCER_ID = F.FREELANCER_ID) AS skill_temp,
                     (SELECT JSON_ARRAYAGG(FC.CATEGORY_ID)
                      FROM FREELANCER_CATEGORY FC
-                     WHERE FC.FREELANCER_ID = F.FREELANCER_ID) AS category_id,
-                    (SELECT LISTAGG(C.CATEGORY_NAME, ', ') WITHIN GROUP (ORDER BY C.CATEGORY_NAME)
-                     FROM FREELANCER_CATEGORY FC
-                     JOIN CATEGORY C ON FC.CATEGORY_ID = C.CATEGORY_ID
-                     WHERE FC.FREELANCER_ID = F.FREELANCER_ID
-                    ) AS category_name
+                     WHERE FC.FREELANCER_ID = F.FREELANCER_ID) AS category_id
             FROM    FREELANCER F
             """
 
