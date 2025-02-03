@@ -97,8 +97,8 @@ def get_project_similar(
         raise e
 
 
-@project.patch("/{projectId}/apply")
-def update_project_apply(
+@project.post("/{projectId}/apply")
+def create_project_apply(
     request: Request,
     project_id: int = Path(..., alias="projectId"),
     db: Session = Depends(get_db)
@@ -125,6 +125,6 @@ def update_project_apply(
                             detail=ERROR_MESSAGES["FORBIDDEN"]["message"])
 
     try:
-        return ProjectService.update_project_apply(project_id, user_id, db)
+        return ProjectService.create_project_apply(project_id, user_id, db)
     except HTTPException as e:
         raise e

@@ -5,7 +5,7 @@ from sqlalchemy import func, case, select, and_, update
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
-from src.models import Project, Category, ProjectSkill, Skill, Company, Location, ProjectRanking, Feedback, FreelancerSkill
+from src.models import Project, Category, ProjectSkill, Skill, Company, Location, ProjectRanking, ProjectApplicants, Feedback, FreelancerSkill
 from src.schemas.project import ProjectRequest, FeedbackRequest, ProjectListResponse, ProjectDetailResponse, ProjectFeedbackResponse, CompanyResponse
 from src.utils.error_messages import ERROR_MESSAGES
 
@@ -121,8 +121,14 @@ class ProjectService:
                 func.json_arrayagg(Skill.id).label("skillIdList"),
                 func.json_arrayagg(Skill.name).label("skillNameList"),
                 Location.name.label("locationName"),
-                ProjectRanking.matching_score.label("matchingScore"),
-                ProjectRanking.applied.label("applied")
+                case(
+                    (Project.status == 0, ProjectRanking.matching_score),
+                    else_=None
+                ).label("matchingScore"),
+                case(
+                    (ProjectApplicants.freelancer_id.isnot(None), 1),
+                    else_=0
+                ).label("applied")
             )
             .join(Category, Project.category_id == Category.id)
             .join(ProjectSkill, Project.id == ProjectSkill.project_id)
@@ -130,10 +136,11 @@ class ProjectService:
             .join(Company, Project.company_id == Company.id)
             .join(Location, Company.location_id == Location.id)
             .outerjoin(ProjectRanking, and_(Project.id == ProjectRanking.project_id, ProjectRanking.freelancer_id == user_id))
+            .outerjoin(ProjectApplicants, and_(Project.id == ProjectApplicants.project_id, ProjectApplicants.freelancer_id == user_id))
         )
 
         if applied:
-            query = query.filter(ProjectRanking.applied == 1)
+            query = query.filter(ProjectApplicants.freelancer_id == user_id)
 
         projects = (
             query.group_by(
@@ -145,10 +152,11 @@ class ProjectService:
                 Project.contract_type,
                 Project.status,
                 Project.register_date,
+                Category.id,
                 Category.name,
                 Location.name,
                 ProjectRanking.matching_score,
-                ProjectRanking.applied
+                ProjectApplicants.freelancer_id
             )
             .order_by(Project.register_date.desc())
             .limit(MAX_CNT)
@@ -329,7 +337,7 @@ class ProjectService:
 
         return [ProjectListResponse(**dict(project._mapping)) for project in projects]
 
-    def update_project_apply(
+    def create_project_apply(
         project_id: int,
         user_id: int,
         db: Session
@@ -344,29 +352,28 @@ class ProjectService:
         """
         # 프로젝트 지원 여부 확인
         project_ranking = (
-            db.query(ProjectRanking)
-            .filter(ProjectRanking.project_id == project_id)
-            .filter(ProjectRanking.freelancer_id == user_id)
+            db.query(ProjectApplicants)
+            .filter(ProjectApplicants.project_id == project_id)
+            .filter(ProjectApplicants.freelancer_id == user_id)
             .first()
         )
 
-        if not project_ranking:
-            raise HTTPException(
-                status_code=ERROR_MESSAGES["NOT_FOUND"]["status"],
-                detail=ERROR_MESSAGES["NOT_FOUND"]["message"].format("프로젝트 매칭 정보")
-            )
-
-        if project_ranking.applied == 1:
+        if project_ranking:
             raise HTTPException(
                 status_code=ERROR_MESSAGES["CONFLICT"]["status"],
                 detail=ERROR_MESSAGES["CONFLICT"]["message"].format("이미 지원한 프로젝트 입니다.")
             )
 
         try:
-            project_ranking.applied = 1
+            new_project_applicant = ProjectApplicants(
+                project_id=project_id,
+                freelancer_id=user_id
+            )
+            db.add(new_project_applicant)
             db.commit()
         except Exception:
             db.rollback()
+            raise
 
     def create_project(
         user_id: int,
