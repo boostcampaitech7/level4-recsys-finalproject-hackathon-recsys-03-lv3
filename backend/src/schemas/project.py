@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Any
 from pydantic import BaseModel, validator
 
 from src.utils.utils import parse_json_to_list
@@ -47,7 +47,7 @@ class ProjectListResponse(BaseModel):
     priority: Optional[int] = None
 
     @validator("skillIdList", "skillNameList", pre=True)
-    def parse_json_field(cls, value):
+    def parse_skill_list(cls, value: Any) -> Any:
         return parse_json_to_list(value)
 
 
@@ -70,7 +70,7 @@ class ProjectDetailResponse(BaseModel):
     locationName: str
 
     @validator("skillList", pre=True)
-    def parse_json_field(cls, value):
+    def parse_skill_list(cls, value: Any) -> Any:
         return parse_json_to_list(value)
 
 
