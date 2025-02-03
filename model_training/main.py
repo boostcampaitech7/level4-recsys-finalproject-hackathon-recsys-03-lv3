@@ -14,6 +14,7 @@ from src.CB.catboost_trainer import CatBoostTrainer
 from src.CB.xgboost_trainer import XGBoostTrainer
 from src.CB.logistic_trainer import LogisticTrainer
 from src.CB.loader import prepare_data
+from src.CB.optuna_optimizer import OptunaOptimizer
 
 logging.basicConfig(level=logging.INFO)
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -49,6 +50,12 @@ if __name__ == "__main__":
         "-m",
         type=str,
         help="추천 모델의 이름을 설정합니다. (참고: https://recbole.io/model_list.html)"
+    )
+    arg(
+        "--optuna",
+        "-o",
+        help="트리 모델 사용 시, optuna를 이용하여 최적화를 먼저 수행할지 결정합니다. False 선택 시 저장된 하이퍼파라미터로 모델을 학습합니다.",
+        default=False
     )
 
     args = parser.parse_args()
@@ -96,13 +103,17 @@ if __name__ == "__main__":
     else:
         # 데이터 생성
         config = OmegaConf.load("config/config.yaml")
-        
+
         # 데이터 생성 실행
         prepare_data("datasets/", config)
         print("데이터 생성 완료")
-        
+
+        if args.optuna:
+            print(f"Optuna 최적화 시작: {args.model}")
+            optimizer = OptunaOptimizer(args, model_type=args.model.lower(), n_trials=50)
+            optimizer.run()
         # CatBoost
-        if args.model.lower() == "catboost":
+        elif args.model.lower() == "catboost":
             print("CatBoost 모델 실행 시작")
             catboost_trainer = CatBoostTrainer(args)
             catboost_trainer.run()
