@@ -270,7 +270,7 @@ const SearchProjectPage = () => {
   const workTypeMapping = { 0: "상주", 1: "원격" };
 
   // 필터링 로직
-  const filteredprojects = projects
+  const filteredProjects = projects
     .filter((project) => {
       return (
         (!showOnlyRecruiting || project.status === 0) &&
@@ -300,7 +300,7 @@ const SearchProjectPage = () => {
     <div className="search-project-container">
       <div className="header-container">
         <h3 className="header">프로젝트 리스트</h3>
-        <p>총 {projects.length}개의 프로젝트가 있습니다.</p>
+        <p>총 {filteredProjects.length}개의 프로젝트가 있습니다.</p>
       </div>
       <div className="filters">
         {/* 필터 UI */}
@@ -349,7 +349,7 @@ const SearchProjectPage = () => {
       </div>
 
       {/* 필터링된 프로젝트 리스트 */}
-      {filteredprojects.map((project) => (
+      {filteredProjects.map((project) => (
         <ProjectInfo
           key={project.projectId}
           content={{

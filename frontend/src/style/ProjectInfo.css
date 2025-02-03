@@ -4,7 +4,7 @@
 .info-card {
   position: relative;
   height: auto;
-  min-height: 200px;
+  min-height: 320px;
   overflow-x: auto;
   max-width: 1200px;
   white-space: nowrap;
