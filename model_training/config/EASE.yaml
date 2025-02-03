@@ -2,7 +2,6 @@
 USER_ID_FIELD: user_id
 ITEM_ID_FIELD: item_id
 RATING_FIELD: rating
-
 local_col: # 모델이 실제로 학습할 때 사용하는 특정 컬럼
     inter: [user_id, item_id, rating]
     user: [user_id]

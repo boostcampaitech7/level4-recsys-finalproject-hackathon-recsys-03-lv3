@@ -2,8 +2,8 @@ import React from "react";
 import "../style/SkillTag.css";
 
 const getBackgroundColor = (score) => {
-  // 점수에 따라 색상을 계산 (0 ~ 10 사이의 score)
-  const percentage = Math.min(Math.max(score / 10, 0), 1); // 0 ~ 1로 정규화
+  // 점수에 따라 색상을 계산 (0 ~ 5 사이의 score)
+  const percentage = Math.min(Math.max(score / 5, 0), 1); // 0 ~ 1로 정규화
 
   // 시작 색상 (#D9D9D9)와 끝 색상 (#17B294)을 RGB로 변환
   const startColor = { r: 255, g: 235, b: 107 }; //rgb(255, 235, 107)
