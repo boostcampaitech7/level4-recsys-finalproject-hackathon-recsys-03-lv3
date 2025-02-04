@@ -6,7 +6,7 @@ from datetime import datetime  # 🔹 타임스탬프 추가
 from xgboost import XGBRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from math import sqrt
-from src.utils import recall_at_k
+from src.utils import recall_at_k, ndcg_at_k
 
 
 class XGBoostTrainer:
@@ -74,7 +74,11 @@ class XGBoostTrainer:
 
         # ✅ Recall@10 평가
         recall_10 = recall_at_k(y_true, y_pred, k=10)
-        print(f"✅ XGBoost Recall@10: {recall_10:.4f}")
+        print(f"✅ Test Recall@10: {recall_10:.4f}")
+        recall_5 = recall_at_k(y_true, y_pred, k=5)
+        print(f"✅ Test Recall@5: {recall_5:.4f}")
+        ndcg_5 = ndcg_at_k(y_true, y_pred, k=10)
+        print(f"✅ Test NDCG@5: {ndcg_5:.4f}")
 
         # 🔹 저장 파일명 동적으로 생성
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")  # 현재 시간

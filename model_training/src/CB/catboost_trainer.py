@@ -5,7 +5,7 @@ from datetime import datetime
 from catboost import CatBoostRegressor, Pool
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from math import sqrt
-from src.utils import recall_at_k
+from src.utils import recall_at_k, ndcg_at_k
 
 
 class CatBoostTrainer:
@@ -57,9 +57,9 @@ class CatBoostTrainer:
         mae = mean_absolute_error(y_test, predictions)
         r2 = r2_score(y_test, predictions)
 
-        print(f"✅ 테스트 RMSE: {rmse:.4f}")
-        print(f"✅ 테스트 MAE: {mae:.4f}")
-        print(f"✅ 테스트 R^2: {r2:.4f}")
+        print(f"✅ Test RMSE: {rmse:.4f}")
+        print(f"✅ Test MAE: {mae:.4f}")
+        print(f"✅ Test R^2: {r2:.4f}")
 
         # 🔹 모델이 예측한 상위 10명 프리랜서 정리
         test_data["pred_score"] = predictions
@@ -80,7 +80,11 @@ class CatBoostTrainer:
 
         # ✅ Recall@10 평가
         recall_10 = recall_at_k(y_true, y_pred, k=10)
-        print(f"✅ CatBoost Recall@10: {recall_10:.4f}")
+        print(f"✅ Test Recall@10: {recall_10:.4f}")
+        recall_5 = recall_at_k(y_true, y_pred, k=5)
+        print(f"✅ Test Recall@5: {recall_5:.4f}")
+        ndcg_5 = ndcg_at_k(y_true, y_pred, k=10)
+        print(f"✅ Test NDCG@5: {ndcg_5:.4f}")
 
         # 🔹 저장 파일명 동적으로 생성
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")  # 현재 시간
