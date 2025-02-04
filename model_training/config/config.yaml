@@ -4,14 +4,12 @@ output_path: output/
 repo_name: TaroSin/HRmony
 config_path: config/
 catboost_params:
-  iterations: 191
-  depth: 7
-  learning_rate: 0.17651189332140255
+  iterations: 874
+  depth: 4
+  learning_rate: 0.03189367860145962
   loss_function: RMSE
-  l2_leaf_reg: 0.13954473620418056
+  l2_leaf_reg: 0.45452375412903995
   eval_metric: RMSE
-  od_type: Iter
-  od_wait: 50
   task_type: GPU
 xgboost_params:
   n_estimators: 737
@@ -39,4 +37,6 @@ data_params:
   - freelancer_price
   categorical_features:
   - project_skills
+  - project_category
   - freelancer_skills
+  - freelancer_category

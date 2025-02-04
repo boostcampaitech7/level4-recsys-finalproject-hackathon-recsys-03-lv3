@@ -38,10 +38,11 @@ def prepare_data(data_path: str, config):
         "work_exp": "freelancer_experience"
     })
     
-    # 🔹 스킬 리스트를 문자열에서 리스트로 변환
+    # 리스트를 문자열에서 리스트로 변환
     project_data["project_skills"] = project_data["project_skills"].apply(lambda x: ",".join(map(str, literal_eval(x))))
     freelancer_data["freelancer_skills"] = freelancer_data["freelancer_skills"].apply(lambda x: ",".join(map(str, literal_eval(x))))
-
+    freelancer_data["freelancer_category"] = freelancer_data["freelancer_category"].apply(lambda x: ",".join(map(str, literal_eval(x))))
+    
     # 데이터 결합 (매칭 점수를 포함)
     merged_data = pd.merge(inter_data, project_data, on="project_id", how="inner")
     merged_data = pd.merge(merged_data, freelancer_data, on="freelancer_id", how="inner")

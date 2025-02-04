@@ -4,7 +4,8 @@ import yaml
 import pandas as pd
 from catboost import CatBoostRegressor, Pool
 from xgboost import XGBRegressor
-from src.utils import recall_at_k
+from sklearn.metrics import mean_squared_error
+from math import sqrt
 
 
 class OptunaOptimizer:
@@ -77,29 +78,16 @@ class OptunaOptimizer:
 
         # 예측값 가져오기
         y_pred_scores = model.predict(X_test)
-        test_data["pred_score"] = y_pred_scores
-        y_pred = (
-            test_data.sort_values(["project_id", "pred_score"], ascending=[True, False])
-            .groupby("project_id")["freelancer_id"]
-            .apply(lambda x: list(x[:10]))
-            .to_dict()
-        )
-        y_true = (
-            test_data.sort_values(["project_id", "matching_score"], ascending=[True, False])
-            .groupby("project_id")["freelancer_id"]
-            .apply(lambda x: list(x[:10]))
-            .to_dict()
-        )
 
-        # Recall@10 계산
-        recall_at_10 = recall_at_k(y_true, y_pred, k=10)
+        # RMSE 계산
+        rmse = sqrt(mean_squared_error(y_test, y_pred_scores))
 
-        return recall_at_10  # Optuna가 Recall@10 값을 최대화하도록 설정
+        return rmse  # Optuna가 RMSE 값을 최소화하도록 설정
 
     def run(self):
         """Optuna 최적화 실행"""
         print(f"Optuna를 이용한 {self.model_type} 하이퍼파라미터 튜닝 시작...")
-        study = optuna.create_study(direction="maximize")
+        study = optuna.create_study(direction="minimize")
         study.optimize(self.objective, n_trials=self.n_trials)
 
         print(f"✅ 최적의 하이퍼파라미터: {study.best_params}")

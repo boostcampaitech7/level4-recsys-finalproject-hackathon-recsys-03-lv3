@@ -105,8 +105,8 @@ if __name__ == "__main__":
         config = OmegaConf.load("config/config.yaml")
 
         # # 데이터 생성 실행
-        # prepare_data("datasets/", config)
-        # print("데이터 생성 완료")
+        prepare_data("datasets/", config)
+        print("데이터 생성 완료")
 
         if args.optuna:
             print(f"Optuna 최적화 시작: {args.model}")
