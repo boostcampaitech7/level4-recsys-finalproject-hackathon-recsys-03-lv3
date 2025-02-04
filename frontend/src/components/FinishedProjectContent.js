@@ -1,7 +1,7 @@
 import React from "react";
 import InfoCard from "./InfoCard";
 import ProjectSkillTag from "./ProjectSkillTag";
-import StarRating from "./StarRating";
+import ScoreDisplay from "./ScoreDisplay";
 import RadarChart from "./RadarChart";
 import "../style/FinishedProjectContent.css";
 
@@ -89,7 +89,7 @@ const FinishedProjectContent = ({ content, onReview }) => {
             <>
               <div className="rating">
                 <div>
-                  <StarRating /> {feedbackScore}
+                  <ScoreDisplay score={content.feedbackScore} reviewCount={5} />
                 </div>
               </div>
               <div className="radar-chart">
