@@ -1,5 +1,6 @@
 import React from "react";
 import ProjectInfo from "../components/ProjectInfo";
+import { useNavigate } from "react-router-dom";
 
 const RegisteredProjects = () => {
   const projects = [
@@ -71,11 +72,28 @@ const RegisteredProjects = () => {
     },
   ];
 
+  const navigate = useNavigate();
+
+  const handleRegisterClick = () => {
+    navigate("/chat");
+  };
+
   return (
     <div className="search-project-container">
       <div className="header-container">
-        <h3 className="header">프로젝트 리스트</h3>
-        <p>총 {projects.length}개의 프로젝트가 있습니다.</p>
+        <div className="register-header">
+          <div className="register-left">
+            <div>
+              <h3 className="header">프로젝트 리스트</h3>
+              <p>총 {projects.length}개의 프로젝트가 있습니다.</p>
+            </div>
+          </div>
+          <div className="register-right">
+            <button className="btn-register" onClick={handleRegisterClick}>
+              등록하기
+            </button>
+          </div>
+        </div>
         {projects.map((project) => (
           <ProjectInfo
             key={project.projectId}
