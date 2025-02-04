@@ -31,7 +31,7 @@ class OptunaOptimizer:
         categorical_features = None
         if model_type == "catboost":
             categorical_features = self.config.data_params["categorical_features"]
-            features += categorical_features
+            features = numerical_features + categorical_features
         target_column = self.config.data_params["target_column"]
         
         X_train = train_data[features]  # Feature만 선택
