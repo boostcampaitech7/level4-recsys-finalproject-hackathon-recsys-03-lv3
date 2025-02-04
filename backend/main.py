@@ -30,10 +30,10 @@ async def root():
 
 # 라우터 등록
 app.include_router(auth_router, prefix="/api/auth", tags=["Auth"])
-app.include_router(filter_router, prefix="/api/filter", tags=["Filter"])
-app.include_router(mymony_router, prefix="/api/mymony", tags=["Mymony"])
-app.include_router(project_router, prefix="/api/project", tags=["Project"])
 app.include_router(resource_router, prefix="/api/resource", tags=["Resource"])
+app.include_router(project_router, prefix="/api/project", tags=["Project"])
+app.include_router(mymony_router, prefix="/api/mymony", tags=["Mymony"])
+app.include_router(filter_router, prefix="/api/filter", tags=["Filter"])
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
