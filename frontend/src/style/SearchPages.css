@@ -32,7 +32,8 @@
   margin-bottom: 10px;
 }
 
-.filters {
+.filters,
+.register-header {
   display: flex; /* 자식 요소들을 가로로 배치 */
   justify-content: flex-start;
   align-items: center;
@@ -41,10 +42,18 @@
   font-size: 12px;
 }
 
-.filter-group-left {
+.filter-group-left,
+.register-left {
   display: flex;
   gap: 10px; /* 필터 간 간격 */
   flex-grow: 1; /* 왼쪽 필터 그룹이 가능한 공간을 차지 */
+}
+
+.filter-group-right,
+.register-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .reset-button {
@@ -61,12 +70,6 @@
 
 .reset-button:hover {
   font-weight: 500;
-}
-
-.filter-group-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
 }
 
 .filters > * {

@@ -5,7 +5,7 @@ import ProjectSkillTag from "./ProjectSkillTag";
 import "../style/ProjectInfo.css";
 import "../style/colors.css";
 
-const ProjectInfo = ({ content }) => {
+const ProjectInfo = ({ content, className = "" }) => {
   const formatDateUsingMath = (dateNumber) => {
     let year = Math.floor(dateNumber / 10000); // 2025
     let month = Math.floor((dateNumber % 10000) / 100); // 2
@@ -32,7 +32,7 @@ const ProjectInfo = ({ content }) => {
   } = content;
 
   return (
-    <InfoCard>
+    <InfoCard className={className}>
       <div className="project-container">
         <div className="status">
           {status === 0 ? (
