@@ -1,0 +1,24 @@
+@import "colors.css";
+
+.score-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.star-icon {
+  font-size: 24px;
+  color: var(--color-star); /* 별 색상 */
+}
+
+.score-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  position: relative;
+}
+
+.review-count {
+  font-size: 16px;
+  color: #666;
+}

@@ -1,7 +1,7 @@
 import React from "react";
 import InfoCard from "./InfoCard";
 import ProjectSkillTag from "./ProjectSkillTag";
-import StarRating from "./StarRating";
+import ScoreDisplay from "./ScoreDisplay";
 import RadarChart from "./RadarChart";
 import "../style/FinishedProjectContent.css";
 
@@ -89,19 +89,17 @@ const FinishedProjectContent = ({ content, onReview }) => {
             <>
               <div className="rating">
                 <div>
-                  <StarRating /> {feedbackScore}
+                  <ScoreDisplay score={content.feedbackScore} />
                 </div>
               </div>
               <div className="radar-chart">
                 <RadarChart data={radarData ?? [0, 0, 0, 0, 0]} />
               </div>
-              {feedbackContent && (
-                <p className="review-comment">"{feedbackContent}"</p>
-              )}
             </>
           )}
         </div>
       </div>
+      {feedbackContent && <p className="review-comment">"{feedbackContent}"</p>}
     </InfoCard>
   );
 };

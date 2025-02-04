@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { Box, Modal } from "@mui/material";
 import SwitchButton from "../components/SwitchButton";
 import SingleSelector from "../components/SingleSelector";
 import FinishedProjectContent from "../components/FinishedProjectContent";
+import ProjectFeedback from "./ProjectFeedback";
 import "../style/FinishedProjectPage.css";
 
 const FinishedProjectPage = () => {
@@ -9,6 +11,9 @@ const FinishedProjectPage = () => {
   const [filterOption, setFilterOption] = useState("전체");
   const [showOnlyUnreviewed, setShowOnlyUnreviewed] = useState(false);
   const [displayedProjects, setDisplayedProjects] = useState([]);
+
+  const [selectedProject, setSelectedProject] = useState(null); // 선택한 프로젝트 저장
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false); // 모달 상태 관리
 
   const [projects, setProjects] = useState([
     {
@@ -20,18 +25,18 @@ const FinishedProjectPage = () => {
       // contractType: ,
       status: 0, // 진행 상태(시작 전: 0, 진행 중: 1, 완료: 2)
       registerDate: "20250113",
-      // endDate: "20250212",
       categoryRole: "개발", // 직군
       categoryName: "소프트웨어/IT",
       // skillIdList: ,
       skillNameList: ["React", "TypeScript", "Next.js"],
-      expertise: 5, // 전문성
-      proactiveness: 4, // 적극성
-      punctuality: 3, // 일정준수
-      maintainability: 2, // 유지보수
-      communication: 1, // 의사소통
-      feedbackContent: "일정 내 원하는대로 구현해주셔서 감사합니다.",
+      expertise: null, // 전문성
+      proactiveness: null, // 적극성
+      punctuality: null, // 일정준수
+      maintainability: null, // 유지보수
+      communication: null, // 의사소통
+      feedbackContent: "",
       isReviewed: false, // 스위치에 사용할 속성
+      locationName: "서울특별시 강남구",
     },
     {
       projectID: 2,
@@ -39,7 +44,6 @@ const FinishedProjectPage = () => {
       duration: 30,
       budget: 4000000,
       workType: 1, // 근무 형태(상주: 0, 원격: 1), 필터링에 사용할 속성
-      // contractType: ,
       status: 2, // 진행 상태(시작 전: 0, 진행 중: 1, 완료: 2)
       registerDate: "20241213",
       // endDate: "20250112",
@@ -47,13 +51,14 @@ const FinishedProjectPage = () => {
       categoryName: "소프트웨어/IT", // 직군
       // skillIdList: ,
       skillNameList: ["Python", "Machine Learning", "Deep Learning"],
-      expertise: 4.5, // 전문성
-      proactiveness: 4.0, // 적극성
-      punctuality: 4.2, // 일정준수
-      maintainability: 4.0, // 유지보수
-      communication: 4.3, // 의사소통
-      feedbackContent: "일정 내 원하는대로 구현해주셔서 감사합니다.",
+      expertise: null, // 전문성
+      proactiveness: null, // 적극성
+      punctuality: null, // 일정준수
+      maintainability: null, // 유지보수
+      communication: null, // 의사소통
+      feedbackContent: "",
       isReviewed: false, // 스위치에 사용할 속성
+      locationName: "서울특별시 서초구",
     },
   ]);
 
@@ -78,20 +83,16 @@ const FinishedProjectPage = () => {
     let updatedProjects = projects.map((project) => ({
       ...project,
       endDate: calculateEndDate(project.registerDate, project.duration),
-      feedbackScore:
-        (project.expertise +
-          project.proactiveness +
-          project.punctuality +
-          project.maintainability +
-          project.communication) /
-        5,
-      radarData: [
-        project.expertise,
-        project.proactiveness,
-        project.punctuality,
-        project.maintainability,
-        project.communication,
-      ],
+      radarData:
+        project.expertise !== null
+          ? [
+              project.expertise,
+              project.proactiveness,
+              project.punctuality,
+              project.maintainability,
+              project.communication,
+            ]
+          : [],
     }));
 
     // 평가하지 않은 프로젝트만 보기 기능 적용
@@ -121,15 +122,32 @@ const FinishedProjectPage = () => {
     setDisplayedProjects(updatedProjects);
   }, [sortOption, filterOption, showOnlyUnreviewed, projects]); // 옵션(정렬/필터/스위치) 변경 시 실행
 
-  // 평가하기 버튼을 클릭하면 프로젝트의 isReviewed 상태를 변경
-  const handleReview = (projectID) => {
+  // 평가하기 버튼을 클릭 시 프로젝트의 isReviewed 상태를 변경하고 팝업 창 오픈
+  const handleReview = (project) => {
+    setSelectedProject(project);
+    setIsFeedbackOpen(true); // 모달 열기
+  };
+
+  const handleFeedbackSubmit = (projectID, feedbackData) => {
     setProjects((prevProjects) =>
       prevProjects.map((project) =>
         project.projectID === projectID
-          ? { ...project, isReviewed: true }
+          ? {
+              ...project,
+              ...feedbackData,
+              isReviewed: true,
+              feedbackScore:
+                (feedbackData.expertise +
+                  feedbackData.proactiveness +
+                  feedbackData.punctuality +
+                  feedbackData.maintainability +
+                  feedbackData.communication) /
+                5, // ✅ 평균 점수 계산
+            }
           : project
       )
     );
+    setIsFeedbackOpen(false); // 모달 닫기
   };
 
   return (
@@ -149,18 +167,19 @@ const FinishedProjectPage = () => {
               setFilterOption(mapping[value]);
             }}
           />
+        </div>
+        <div className="filter-group-right">
+          {/* SwitchButton을 클릭하면 setShowOnlyUnreviewed 값 변경 */}
+          <SwitchButton
+            text="평가하지 않은 프로젝트만 표시"
+            onChange={setShowOnlyUnreviewed}
+          />
 
           {/* 정렬용 SingleSelector */}
           <SingleSelector
             title="정렬 기준"
             options={["최신순", "금액 높은순"]}
             onChange={setSortOption}
-          />
-
-          {/* SwitchButton을 클릭하면 setShowOnlyUnreviewed 값 변경 */}
-          <SwitchButton
-            text="평가하지 않은 프로젝트만 표시"
-            onChange={setShowOnlyUnreviewed}
           />
         </div>
         {/* <div className="filter-group-right"> </div> */}
@@ -170,12 +189,37 @@ const FinishedProjectPage = () => {
       <div className="project-list-container">
         {displayedProjects.map((project) => (
           <FinishedProjectContent
-            key={project.projectName}
+            key={project.projectID}
             content={project}
-            onReview={() => handleReview(project.projectID)}
+            onReview={() => handleReview(project)}
           /> // 평가 버튼 클릭 시 호출
         ))}
       </div>
+
+      {/* 평가 모달 (기존 페이지 위에 오버레이) */}
+      <Modal open={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)}>
+        <Box
+          sx={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "80%",
+            bgcolor: "white",
+            p: 3,
+            borderRadius: 2,
+            boxShadow: 3,
+          }}
+        >
+          {selectedProject && (
+            <ProjectFeedback
+              project={selectedProject}
+              onClose={() => setIsFeedbackOpen(false)}
+              onSubmit={handleFeedbackSubmit}
+            />
+          )}
+        </Box>
+      </Modal>
     </div>
   );
 };
