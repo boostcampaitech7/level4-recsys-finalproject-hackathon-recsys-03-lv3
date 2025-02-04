@@ -89,19 +89,17 @@ const FinishedProjectContent = ({ content, onReview }) => {
             <>
               <div className="rating">
                 <div>
-                  <ScoreDisplay score={content.feedbackScore} reviewCount={5} />
+                  <ScoreDisplay score={content.feedbackScore} />
                 </div>
               </div>
               <div className="radar-chart">
                 <RadarChart data={radarData ?? [0, 0, 0, 0, 0]} />
               </div>
-              {feedbackContent && (
-                <p className="review-comment">"{feedbackContent}"</p>
-              )}
             </>
           )}
         </div>
       </div>
+      {feedbackContent && <p className="review-comment">"{feedbackContent}"</p>}
     </InfoCard>
   );
 };

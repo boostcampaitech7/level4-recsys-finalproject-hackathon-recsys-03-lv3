@@ -76,7 +76,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-left: 2px solid #ddd;
+  /* border-left: 2px solid #ddd; */
   min-width: 35%;
   height: 300px;
   text-align: center;
@@ -129,11 +129,12 @@
 }
 
 .review-comment {
-  margin-top: 20px;
-  max-width: 300px;
+  border-top: 2px solid #ddd;
+  margin-top: 10px;
+  padding-top: 15px;
   font-size: 18px;
   font-style: italic;
-  text-align: center;
+  text-align: start;
   word-wrap: break-word;
   white-space: normal;
   overflow-wrap: break-word;
