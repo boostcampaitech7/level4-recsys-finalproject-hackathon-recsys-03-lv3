@@ -227,7 +227,7 @@ const ProfilePage = () => {
   return (
     <div className="profile-page container-fluid">
       <ProfileHeader freelancerInfo={freelancerInfo} />
-      <div className="container-fluid detail-card scrollable bg-light mt-4">
+      <div className="container-fluid detail-card bg-light mt-4">
         <div className="row">
           <h3>프로젝트 히스토리</h3>
           <div className="col-md-6 d-flex">

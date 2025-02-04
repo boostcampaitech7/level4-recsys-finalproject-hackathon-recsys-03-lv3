@@ -8,6 +8,7 @@ import Chat from "./Chat";
 import SearchFreelancer from "./SearchFreelancer";
 import RecommendFreelancer from "./RecommendFreelancer";
 import RegisteredProjects from "./Registered_Projects";
+import FreelancerDetailPage from "./FreelancerDetailPage";
 
 const AppRouter = () => {
   return (
@@ -28,6 +29,7 @@ const AppRouter = () => {
             path="/recommend-freelancer"
             element={<RecommendFreelancer />}
           />
+          <Route path="/freelancer-detail" element={<FreelancerDetailPage />} />
           <Route path="/registered-projects" element={<RegisteredProjects />} />
         </Route>
       </Routes>
