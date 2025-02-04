@@ -37,7 +37,7 @@ def prepare_data(data_path: str, config):
         "price": "freelancer_price",
         "work_exp": "freelancer_experience"
     })
-    
+
     # 리스트를 문자열에서 리스트로 변환
     project_data["project_skills"] = project_data["project_skills"].apply(lambda x: ",".join(map(str, literal_eval(x))))
     freelancer_data["freelancer_skills"] = freelancer_data["freelancer_skills"].apply(lambda x: ",".join(map(str, literal_eval(x))))

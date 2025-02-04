@@ -64,7 +64,7 @@ class XGBoostTrainer:
             .to_dict()
         )
 
-        # 🔹 실제 매칭된 프리랜서 데이터 로드 (inter.csv 활용)
+        # 🔹 실제 매칭된 프리랜서 데이터
         y_true = (
             test_data.sort_values(["project_id", "matching_score"], ascending=[True, False])
             .groupby("project_id")["freelancer_id"]

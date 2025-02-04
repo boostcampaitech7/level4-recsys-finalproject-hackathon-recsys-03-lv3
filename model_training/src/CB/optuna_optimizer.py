@@ -24,13 +24,15 @@ class OptunaOptimizer:
 
         return train_data, test_data
 
-    def prepare_data(self, train_data, test_data):
+    def prepare_data(self, train_data, test_data, model_type="catboost"):
         """Train/Test 데이터에서 Feature와 Target을 분리 (Categorical Features 제외)"""
         numerical_features = self.config.data_params["numerical_features"]
-        categorical_features = self.config.data_params["categorical_features"]
+        features = numerical_features
+        categorical_features = None
+        if model_type == "catboost":
+            categorical_features = self.config.data_params["categorical_features"]
+            features += categorical_features
         target_column = self.config.data_params["target_column"]
-
-        features = numerical_features + categorical_features
         
         X_train = train_data[features]  # Feature만 선택
         y_train = train_data[target_column]  # Target (matching_score)
@@ -42,7 +44,7 @@ class OptunaOptimizer:
     def objective(self, trial):
         """Optuna 최적화 목표 함수"""
         train_data, test_data = self.load_data()
-        X_train, X_test, y_train, y_test, categorical_features = self.prepare_data(train_data, test_data)
+        X_train, X_test, y_train, y_test, categorical_features = self.prepare_data(train_data, test_data, model_type=self.model_type.lower())
         
         if self.model_type == "catboost":
             params = {

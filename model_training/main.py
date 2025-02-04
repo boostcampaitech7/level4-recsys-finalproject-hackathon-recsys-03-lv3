@@ -104,7 +104,7 @@ if __name__ == "__main__":
         # 데이터 생성
         config = OmegaConf.load("config/config.yaml")
 
-        # # 데이터 생성 실행
+        # 데이터 생성 실행
         prepare_data("datasets/", config)
         print("데이터 생성 완료")
 
