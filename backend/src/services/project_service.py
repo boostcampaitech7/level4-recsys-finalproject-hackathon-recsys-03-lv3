@@ -65,24 +65,26 @@ class ProjectService:
         if status is not None:
             query = query.filter(Project.status.in_(status))
 
-        projects = (
-            query.group_by(
-                Project.id,
-                Project.name,
-                Project.duration,
-                Project.budget,
-                Project.work_type,
-                Project.contract_type,
-                Project.status,
-                Project.register_date,
-                Category.name,
-                Location.name
-            )
-            .order_by(Project.register_date.desc())
-            .limit(MAX_CNT)
-            .all()
-        )
+        group_by_columns = [
+            Project.id,
+            Project.name,
+            Project.duration,
+            Project.budget,
+            Project.work_type,
+            Project.contract_type,
+            Project.status,
+            Project.register_date,
+            Category.name,
+            Location.name,
+        ]
+        if include_priority:
+            group_by_columns.append(Project.priority)
 
+        query = query.group_by(*group_by_columns).order_by(Project.register_date.desc())
+        if not include_priority:
+            query = query.limit(MAX_CNT)
+
+        projects = query.all()
         if not projects:
             raise HTTPException(
                 status_code=ERROR_MESSAGES["NOT_FOUND"]["status"],
@@ -371,9 +373,12 @@ class ProjectService:
             )
             db.add(new_project_applicant)
             db.commit()
-        except Exception:
+        except Exception as e:
             db.rollback()
-            raise
+            raise HTTPException(
+                status_code=ERROR_MESSAGES["UNPROCESSABLE_ENTITY"]["status"],
+                detail=ERROR_MESSAGES["UNPROCESSABLE_ENTITY"]["message"].format(str(e))
+            )
 
     def create_project(
         user_id: int,
@@ -471,18 +476,19 @@ class ProjectService:
                 func.json_arrayagg(Skill.id).label("skillIdList"),
                 func.json_arrayagg(Skill.name).label("skillNameList"),
                 func.round(
-                    (func.coalesce(Feedback.expertise, 0)
-                     + func.coalesce(Feedback.proactiveness, 0)
-                     + func.coalesce(Feedback.punctuality, 0)
-                     + func.coalesce(Feedback.communication, 0)
-                     + func.coalesce(Feedback.maintainability, 0)) / 5, 1
+                    func.avg(
+                        func.coalesce(Feedback.expertise, 0)
+                        + func.coalesce(Feedback.proactiveness, 0)
+                        + func.coalesce(Feedback.punctuality, 0)
+                        + func.coalesce(Feedback.communication, 0)
+                        + func.coalesce(Feedback.maintainability, 0)
+                    ), 1
                 ).label("feedbackScore"),
                 func.round(func.avg(Feedback.expertise), 1).label("expertise"),
                 func.round(func.avg(Feedback.proactiveness), 1).label("proactiveness"),
                 func.round(func.avg(Feedback.punctuality), 1).label("punctuality"),
                 func.round(func.avg(Feedback.communication), 1).label("communication"),
-                func.round(func.avg(Feedback.maintainability), 1).label("maintainability"),
-                Feedback.content.label("feedbackContent")
+                func.round(func.avg(Feedback.maintainability), 1).label("maintainability")
             )
             .join(Category, Project.category_id == Category.id)
             .join(Company, Project.company_id == Company.id)
@@ -512,8 +518,7 @@ class ProjectService:
                 Project.status,
                 Project.register_date,
                 Category.name,
-                Company.name,
-                Feedback.content
+                Company.name
             )
             .order_by(Project.register_date.desc())
             .limit(MAX_CNT)
@@ -525,6 +530,28 @@ class ProjectService:
                 status_code=ERROR_MESSAGES["NOT_FOUND"]["status"],
                 detail=ERROR_MESSAGES["NOT_FOUND"]["message"].format(error_message)
             )
+
+        project_ids = [project._mapping["projectId"] for project in projects]
+        feedback_rows = (
+            db.query(Feedback.project_id, Feedback.content)
+            .filter(Feedback.project_id.in_(project_ids))
+            .all()
+        )
+        feedback_dict = {row.project_id: row.content for row in feedback_rows}
+
+        # CLOB -> str
+        processed_projects = []
+        for project in projects:
+            project_dict = dict(project._mapping)
+            fc = feedback_dict.get(project_dict["projectId"])
+            if fc is not None and hasattr(fc, "read"):
+                project_dict["feedbackContent"] = fc.read()
+            else:
+                project_dict["feedbackContent"] = fc
+            project_dict["feedbackContent"] = project_dict["feedbackContent"].replace("\\n", "\n")
+            processed_projects.append(ProjectFeedbackResponse(**project_dict))
+
+        return processed_projects
 
     def create_project_feedback(
         feedback_data: FeedbackRequest,
@@ -553,7 +580,7 @@ class ProjectService:
             db.add(new_feedback)
 
             # FREELANCER_SKILL의 SKILL_SCORE 수정
-            for skill_id in feedback_data.skillList:
+            for skill_id in feedback_data.skillIdList:
                 db.execute(
                     update(FreelancerSkill)
                     .where(
@@ -611,4 +638,4 @@ class ProjectService:
                 detail=ERROR_MESSAGES["NOT_FOUND"]["message"].format(f"기업 정보({company_id})")
             )
 
-        return CompanyResponse(**dict(company))
+        return CompanyResponse(**dict(company._mapping))

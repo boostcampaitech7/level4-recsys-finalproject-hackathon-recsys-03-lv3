@@ -1,4 +1,4 @@
-from typing import List, Optional, Any
+from typing import List, Optional, Union
 from pydantic import BaseModel, validator
 
 from src.utils.utils import parse_json_to_list
@@ -47,7 +47,7 @@ class ProjectListResponse(BaseModel):
     priority: Optional[int] = None
 
     @validator("skillIdList", "skillNameList", pre=True)
-    def parse_skill_list(cls, value: Any) -> Any:
+    def parse_skill_list(cls, value: str) -> List[Union[int, float, str]]:
         return parse_json_to_list(value)
 
 
@@ -70,7 +70,7 @@ class ProjectDetailResponse(BaseModel):
     locationName: str
 
     @validator("skillList", pre=True)
-    def parse_skill_list(cls, value: Any) -> Any:
+    def parse_skill_list(cls, value: str) -> List[Union[int, float, str]]:
         return parse_json_to_list(value)
 
 
@@ -87,15 +87,20 @@ class ProjectFeedbackResponse(BaseModel):
     skillIdList: List[int]
     skillNameList: List[str]
     feedbackScore: float
-    expertise: Optional[float]
-    proactiveness: Optional[float]
-    punctuality: Optional[float]
-    communication: Optional[float]
-    maintainability: Optional[float]
-    feedbackContent: Optional[str]
+    expertise: Optional[float] = None
+    proactiveness: Optional[float] = None
+    punctuality: Optional[float] = None
+    communication: Optional[float] = None
+    maintainability: Optional[float] = None
+    feedbackContent: Optional[str] = None
+
+    @validator("skillIdList", "skillNameList", pre=True)
+    def parse_skill_list(cls, value: str) -> List[Union[int, float, str]]:
+        return parse_json_to_list(value)
 
 
 class CompanyResponse(BaseModel):
     companyId: int
     companyName: str
+    companyContent: str
     locationName: str
