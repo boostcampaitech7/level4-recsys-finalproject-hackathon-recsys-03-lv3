@@ -8,11 +8,6 @@ import profile2 from "../assets/profile_example2.jpg";
 import profile3 from "../assets/profile_example3.jpg";
 
 const SearchFreelancer = () => {
-  const [filterRoles, setFilterRoles] = useState([]);
-  const [filterWorkType, setFilterWorkType] = useState("근무 형태");
-  const [filterSkillList, setFilterSkillList] = useState([]);
-  const [sortOption, setSortOption] = useState("최신순");
-
   const freelancers = [
     {
       photo: profile1,
@@ -111,17 +106,245 @@ const SearchFreelancer = () => {
       5;
   });
 
+  const skillList = [
+    "Bash/Shell (all shells)",
+    "Go",
+    "HTML/CSS",
+    "Java",
+    "JavaScript",
+    "Python",
+    "TypeScript",
+    "Dynamodb",
+    "MongoDB",
+    "PostgreSQL",
+    "Amazon Web Services (AWS)",
+    "Heroku",
+    "Netlify",
+    "Express",
+    "Next.js",
+    "Node.js",
+    "React",
+    "Docker",
+    "Homebrew",
+    "Kubernetes",
+    "npm",
+    "Vite",
+    "Webpack",
+    "C#",
+    "Firebase Realtime Database",
+    "Google Cloud",
+    "ASP.NET CORE",
+    ".NET (5+) ",
+    ".NET Framework (1.0 - 4.8)",
+    ".NET MAUI",
+    "MSBuild",
+    "MySQL",
+    "Redis",
+    "Digital Ocean",
+    "Firebase",
+    "Vercel",
+    "C",
+    "C++",
+    "Delphi",
+    "PowerShell",
+    "SQL",
+    "VBA",
+    "Visual Basic (.Net)",
+    "Microsoft Access",
+    "Microsoft SQL Server",
+    "SQLite",
+    "Cloudflare",
+    "ASP.NET",
+    "jQuery",
+    "RabbitMQ",
+    "Xamarin",
+    "Yarn",
+    "Hetzner",
+    "VMware",
+    "Ansible",
+    "Chocolatey",
+    "Make",
+    "NuGet",
+    "Pacman",
+    "Pip",
+    "Terraform",
+    "Oracle",
+    "Blazor",
+    "Roslyn",
+    "React Native",
+    "PHP",
+    "Microsoft Azure",
+    "MariaDB",
+    "Apache Kafka",
+    "Godot",
+    "Maven (build tool)",
+    "F#",
+    "Django",
+    "WordPress",
+    "Pandas",
+    "Clojure",
+    "Snowflake",
+    "Cordova",
+    "DirectX",
+    "OpenCL",
+    "Opencv",
+    "Visual Studio Solution",
+    "Scala",
+    "Presto",
+    "Apache Spark",
+    "Lua",
+    "Nix",
+    "AngularJS",
+    "Perl",
+    "Angular",
+    "Flask",
+    "Keras",
+    "NumPy",
+    "Scikit-Learn",
+    "TensorFlow",
+    "Databricks SQL",
+    "DuckDB",
+    "Databricks",
+    "Elasticsearch",
+    "CodeIgniter",
+    "NestJS",
+    "Cassandra",
+    "FastAPI",
+    "Ruff",
+    "OCaml",
+    "H2",
+    "Oracle Cloud Infrastructure (OCI)",
+    "Spring Boot",
+    "Spring Framework",
+    "Torch/PyTorch",
+    "Gradle",
+    "Neo4J",
+    "PythonAnywhere",
+    "CUDA",
+    "Hugging Face Transformers",
+    "mlflow",
+    "Ruby",
+    "Ruby on Rails",
+    "Vue.js",
+    "pnpm",
+    "Fly.io",
+    "Render",
+    "OpenGL",
+    "Rust",
+    "Fastify",
+    "Tauri",
+    "Bun",
+    "Assembly",
+    "MATLAB",
+    "Unity 3D",
+    "Unreal Engine",
+    "Cosmos DB",
+    "Dart",
+    "Fortran",
+    "Julia",
+    "BigQuery",
+    "Qt",
+    "Ninja",
+    "Crystal",
+    "R",
+    "Tidyverse",
+    "Firebird",
+    "Clickhouse",
+    "Cloud Firestore",
+    "Supabase",
+    "Solid.js",
+    "Electron",
+    "Kotlin",
+    "Managed Hosting",
+    "Laravel",
+    "OpenShift",
+    "Flutter",
+    "Haskell",
+    "Hadoop",
+    "Ada",
+    "Elixir",
+    "Erlang",
+    "Groovy",
+    "Lisp",
+    "Zig",
+    "InfluxDB",
+    "Deno",
+    "Htmx",
+    "Phoenix",
+    "Remix",
+    "Svelte",
+    "Capacitor",
+    "Ionic",
+    "Composer",
+    "APT",
+    "Google Test",
+    "Quarkus",
+    "Ant",
+    "GDScript",
+    "Symfony",
+    "SwiftUI",
+    "IBM DB2",
+    "Drupal",
+    "OVH",
+    "Elm",
+    "Gatsby",
+    "Nuxt.js",
+    "Objective-C",
+    "Swift",
+    "Strapi",
+    "Yii 2",
+    "GTK",
+    "Podman",
+    "Astro",
+    "Ktor",
+    "Dagger",
+    "Prolog",
+    "Solr",
+    "MFC",
+    "Vultr",
+    "EventStoreDB",
+    "RavenDB",
+    "Couch DB",
+    "JAX",
+    "Cockroachdb",
+    "IBM Cloud Or Watson",
+    "Pulumi",
+    "Couchbase",
+    "Cobol",
+    "Puppet",
+    "Linode, now Akamai",
+    "Scaleway",
+    "Play Framework",
+    "Nim",
+    "Apex",
+    "OpenStack",
+    "Solidity",
+    "Colocation",
+    "MicroPython",
+    "Chef",
+    "Alibaba Cloud",
+    "Zephyr",
+    "TiDB",
+    "Datomic",
+  ];
+
+  const roleList = ["백엔드 개발자", "프론트엔드 개발자"];
+
+  const [filterRoles, setFilterRoles] = useState(roleList);
+  const [filterWorkType, setFilterWorkType] = useState("근무 형태");
+  const [filterSkillList, setFilterSkillList] = useState(skillList);
+  const [sortOption, setSortOption] = useState("최신순");
+
   // 필터링 로직
   const filteredFreelancers = freelancers
     .filter((freelancer) => {
       return (
-        (filterRoles.length === 0 || filterRoles.includes(freelancer.role)) &&
+        filterRoles.includes(freelancer.role) &&
         (filterWorkType === "근무 형태" ||
           freelancer.workType === filterWorkType) &&
-        (filterSkillList.length === 0 ||
-          freelancer.skillList.some((skill) =>
-            filterSkillList.includes(skill.skillName)
-          ))
+        freelancer.skillList.some((skill) =>
+          filterSkillList.includes(skill.skillName)
+        )
       );
     })
     .sort((a, b) => {
@@ -133,9 +356,9 @@ const SearchFreelancer = () => {
     });
 
   const resetFilters = () => {
-    setFilterRoles([]);
+    setFilterRoles(roleList);
     setFilterWorkType("근무 형태");
-    setFilterSkillList([]);
+    setFilterSkillList(skillList);
     setSortOption("최신순");
   };
 
@@ -150,7 +373,7 @@ const SearchFreelancer = () => {
           {/* 직군 필터 */}
           <MultiSelector
             title="직군/직무"
-            options={["백엔드 개발자", "프론트엔드 개발자"]}
+            options={roleList}
             onChange={setFilterRoles}
             value={filterRoles}
           />
@@ -166,7 +389,7 @@ const SearchFreelancer = () => {
           {/* 스킬 필터 */}
           <MultiSelector
             title="스킬"
-            options={["Java", "SQL", "Spring Boot"]}
+            options={skillList}
             onChange={setFilterSkillList}
             value={filterSkillList}
           />
