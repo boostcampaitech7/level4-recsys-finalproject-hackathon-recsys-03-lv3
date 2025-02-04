@@ -1,11 +1,13 @@
 import os
 import pickle
+from datetime import datetime
+from math import sqrt
+
 import pandas as pd
 import numpy as np
-from datetime import datetime  # 🔹 타임스탬프 추가
 from xgboost import XGBRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-from math import sqrt
+
 from src.utils import recall_at_k, ndcg_at_k
 
 
@@ -29,8 +31,8 @@ class XGBoostTrainer:
         features = self.config.data_params["numerical_features"]
         target_column = self.config.data_params["target_column"]
 
-        X_train = np.array(train_data[features])  # Feature만 선택
-        y_train = np.array(train_data[target_column])  # Target (matching_score)
+        X_train = np.array(train_data[features])
+        y_train = np.array(train_data[target_column])
         X_test = np.array(test_data[features])
         y_test = np.array(test_data[target_column])
 
@@ -41,7 +43,7 @@ class XGBoostTrainer:
         train_data, test_data = self.load_data()
         X_train, X_test, y_train, y_test = self.prepare_data(train_data, test_data)
 
-        print("🔹 XGBoost 모델 학습 시작...")
+        print("XGBoost 모델 학습 시작...")
         self.model.fit(X_train, y_train, eval_set=[(X_test, y_test)], verbose=100)
 
         # 예측 및 평가
@@ -51,11 +53,11 @@ class XGBoostTrainer:
         mae = mean_absolute_error(y_test, predictions)
         r2 = r2_score(y_test, predictions)
 
-        print(f"✅ 테스트 RMSE: {rmse:.4f}")
-        print(f"✅ 테스트 MAE: {mae:.4f}")
-        print(f"✅ 테스트 R^2: {r2:.4f}")
+        print(f"🔍테스트 RMSE: {rmse:.4f}")
+        print(f"🔍테스트 MAE: {mae:.4f}")
+        print(f"🔍테스트 R^2: {r2:.4f}")
 
-        # 🔹 모델이 예측한 상위 10명 프리랜서 정리
+        # 모델이 예측한 상위 10명 프리랜서 정리
         test_data["pred_score"] = predictions
         y_pred = (
             test_data.sort_values(["project_id", "pred_score"], ascending=[True, False])
@@ -64,7 +66,7 @@ class XGBoostTrainer:
             .to_dict()
         )
 
-        # 🔹 실제 매칭된 프리랜서 데이터
+        # 실제 매칭된 프리랜서 데이터
         y_true = (
             test_data.sort_values(["project_id", "matching_score"], ascending=[True, False])
             .groupby("project_id")["freelancer_id"]
@@ -72,16 +74,16 @@ class XGBoostTrainer:
             .to_dict()
         )
 
-        # ✅ Recall@10 평가
+        # Recall@10 평가
         recall_10 = recall_at_k(y_true, y_pred, k=10)
-        print(f"✅ Test Recall@10: {recall_10:.4f}")
+        print(f"🔍Test Recall@10: {recall_10:.4f}")
         recall_5 = recall_at_k(y_true, y_pred, k=5)
-        print(f"✅ Test Recall@5: {recall_5:.4f}")
-        ndcg_5 = ndcg_at_k(y_true, y_pred, k=10)
-        print(f"✅ Test NDCG@5: {ndcg_5:.4f}")
+        print(f"🔍Test Recall@5: {recall_5:.4f}")
+        ndcg_5 = ndcg_at_k(y_true, y_pred, k=5)
+        print(f"🔍Test NDCG@5: {ndcg_5:.4f}")
 
-        # 🔹 저장 파일명 동적으로 생성
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")  # 현재 시간
+        # 저장 파일명 동적으로 생성
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         model_path_pkl = os.path.join(self.config.output_path, f"xgboost_model_{timestamp}.pkl")
 
         # 저장 디렉토리 생성
@@ -91,4 +93,4 @@ class XGBoostTrainer:
         with open(model_path_pkl, "wb") as f:
             pickle.dump(self.model, f)
 
-        print(f"📢 모델이 저장되었습니다: {model_path_pkl}")
+        print(f"✔️ 모델이 저장되었습니다: {model_path_pkl}")

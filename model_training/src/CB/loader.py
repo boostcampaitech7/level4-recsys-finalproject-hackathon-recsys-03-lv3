@@ -1,6 +1,8 @@
 import os
-import pandas as pd
 from ast import literal_eval
+
+import pandas as pd
+
 from src.utils import check_path
 
 
@@ -38,29 +40,28 @@ def prepare_data(data_path: str, config):
         "work_exp": "freelancer_experience"
     })
 
-    # 리스트를 문자열에서 리스트로 변환
+    # 리스트 변환
     project_data["project_skills"] = project_data["project_skills"].apply(lambda x: ",".join(map(str, literal_eval(x))))
     freelancer_data["freelancer_skills"] = freelancer_data["freelancer_skills"].apply(lambda x: ",".join(map(str, literal_eval(x))))
     freelancer_data["freelancer_category"] = freelancer_data["freelancer_category"].apply(lambda x: ",".join(map(str, literal_eval(x))))
-    
-    # 데이터 결합 (매칭 점수를 포함)
+
+    # 데이터 결합
     merged_data = pd.merge(inter_data, project_data, on="project_id", how="inner")
     merged_data = pd.merge(merged_data, freelancer_data, on="freelancer_id", how="inner")
 
     # 프로젝트 단위 Train/Test 분리
     unique_projects = merged_data["project_id"].unique()
-    unique_projects.sort()  # 프로젝트 ID 정렬 (재현성을 위해)
-    
+    unique_projects.sort()
+
     train_ratio = config.data_params["train_ratio"]
     num_train = int(len(unique_projects) * train_ratio)
 
-    train_projects = unique_projects[:num_train]  # 앞부분 train_ratio 만큼 사용
-    test_projects = unique_projects[num_train:]  # 나머지 test 사용
+    train_projects = unique_projects[:num_train]
+    test_projects = unique_projects[num_train:]
 
     train_data = merged_data[merged_data["project_id"].isin(train_projects)]
     test_data = merged_data[merged_data["project_id"].isin(test_projects)]
 
-    # 저장
     check_path(data_path)
     train_data.to_csv(os.path.join(data_path, "train.csv"), index=False)
     test_data.to_csv(os.path.join(data_path, "test.csv"), index=False)

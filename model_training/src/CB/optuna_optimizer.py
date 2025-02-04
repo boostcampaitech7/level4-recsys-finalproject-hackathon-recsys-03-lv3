@@ -1,11 +1,12 @@
 import os
-import optuna
 import yaml
+from math import sqrt
+
+import optuna
 import pandas as pd
 from catboost import CatBoostRegressor, Pool
 from xgboost import XGBRegressor
 from sklearn.metrics import mean_squared_error
-from math import sqrt
 
 
 class OptunaOptimizer:
@@ -34,8 +35,8 @@ class OptunaOptimizer:
             features = numerical_features + categorical_features
         target_column = self.config.data_params["target_column"]
         
-        X_train = train_data[features]  # Feature만 선택
-        y_train = train_data[target_column]  # Target (matching_score)
+        X_train = train_data[features]
+        y_train = train_data[target_column]
         X_test = test_data[features]
         y_test = test_data[target_column]
 
@@ -54,8 +55,8 @@ class OptunaOptimizer:
                 "l2_leaf_reg": trial.suggest_loguniform("l2_leaf_reg", 1e-3, 10),
                 "random_seed": 42,
                 "verbose": 0,
-                "od_type": "Iter",  # 조기 종료 옵션 추가
-                "od_wait": 50,  # 50번 이상 개선되지 않으면 종료
+                "od_type": "Iter",
+                "od_wait": 50,
                 "task_type": "GPU"
             }
             train_pool = Pool(X_train, y_train, cat_features=categorical_features)
@@ -78,42 +79,40 @@ class OptunaOptimizer:
         else:
             raise ValueError("지원되지 않는 모델입니다. 'catboost' 또는 'xgboost'를 선택하세요.")
 
-        # 예측값 가져오기
         y_pred_scores = model.predict(X_test)
 
-        # RMSE 계산
         rmse = sqrt(mean_squared_error(y_test, y_pred_scores))
 
-        return rmse  # Optuna가 RMSE 값을 최소화하도록 설정
+        return rmse
 
     def run(self):
-        """Optuna 최적화 실행"""
+        """Optuna 실행"""
         print(f"Optuna를 이용한 {self.model_type} 하이퍼파라미터 튜닝 시작...")
         study = optuna.create_study(direction="minimize")
         study.optimize(self.objective, n_trials=self.n_trials)
 
-        print(f"✅ 최적의 하이퍼파라미터: {study.best_params}")
+        print(f"🎉 최적의 하이퍼파라미터: {study.best_params}")
         self.save_best_params(study.best_params)
 
     def save_best_params(self, best_params):
         """config.yaml의 xgboost/catboost 부분만 업데이트"""
-        config_path = "config/config.yaml"  # 기존 config 파일 경로
+        config_path = "config/config.yaml"
 
-        # 1️⃣ 기존 YAML 파일 로드
+        # 기존 YAML 파일 로드
         if os.path.exists(config_path):
             with open(config_path, "r") as f:
-                config_data = yaml.safe_load(f)  # 기존 설정 불러오기
+                config_data = yaml.safe_load(f)
         else:
-            config_data = {}  # 파일이 없으면 빈 딕셔너리 생성
+            config_data = {}
 
-        # 2️⃣ catboost_params 부분 업데이트
+        # catboost_params 업데이트
         if f"{self.model_type}_params" not in config_data:
             config_data["catboost_params"] = {}
 
         config_data[f"{self.model_type}_params"].update(best_params)
 
-        # 3️⃣ 업데이트된 설정을 다시 저장
+        # 업데이트된 설정 저장
         with open(config_path, "w") as f:
             yaml.dump(config_data, f, default_flow_style=False, sort_keys=False)
 
-        print(f"📢 {self.model_type}_params 업데이트 완료: {config_path}")
+        print(f"✔️ {self.model_type}_params 업데이트 완료: {config_path}")

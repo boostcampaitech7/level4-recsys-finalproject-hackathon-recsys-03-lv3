@@ -81,7 +81,6 @@ if __name__ == "__main__":
 
     # Recbole 실행
     if args.type:
-
         model_type = {"g": "general_recommender", "s": "sequential_recommender", "c": "context_aware_recommender"}
         recbole_model = importlib.import_module("recbole.model." + model_type.get(args.type))
         model_class = getattr(recbole_model, args.model)
@@ -99,33 +98,38 @@ if __name__ == "__main__":
         # 4. Train
         train(config=config, model_class=model_class, data_list=[tr_data, val_data, te_data])
 
-    # 직접 구현한 모델 (CatBoost 실행)
+    # 직접 구현한 모델
     else:
-        # 데이터 생성
         config = OmegaConf.load("config/config.yaml")
 
-        # 데이터 생성 실행
+        # 데이터 생성
+        print("======== 데이터 생성 시작 ========")
         prepare_data("datasets/", config)
-        print("데이터 생성 완료")
+        print("======== 데이터 생성 완료 ========")
 
+        # Optuna
         if args.optuna:
-            print(f"Optuna 최적화 시작: {args.model}")
+            print(f"======== Optuna 최적화 시작: {args.model} ========")
             optimizer = OptunaOptimizer(args, model_type=args.model.lower(), n_trials=50)
             optimizer.run()
+
         # CatBoost
         elif args.model.lower() == "catboost":
-            print("CatBoost 모델 실행 시작")
+            print("======== CatBoost 모델 실행 시작 ========")
             catboost_trainer = CatBoostTrainer(args)
             catboost_trainer.run()
+
         # XGBoost
         elif args.model.lower() == "xgboost":
-            print("XGBoost 모델 실행 시작")
+            print("======== XGBoost 모델 실행 시작 ========")
             catboost_trainer = XGBoostTrainer(args)
             catboost_trainer.run()
+
         # Logistic
         elif args.model.lower() == "logistic":
-            print("Logistic Regression 모델 실행 시작")
+            print("======== Logistic Regression 모델 실행 시작 ========")
             logistic_trainer = LogisticTrainer(args)
             logistic_trainer.run()
+
         else:
             print("예외")

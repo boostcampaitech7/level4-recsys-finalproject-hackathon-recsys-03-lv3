@@ -30,13 +30,11 @@ data_params:
   train_ratio: 0.8
   target_column: matching_score
   numerical_features:
-  - project_duration
-  - project_budget
-  - project_priority
-  - freelancer_experience
-  - freelancer_price
+    - project_budget
+    - freelancer_experience
+    - freelancer_price
   categorical_features:
-  - project_skills
-  - project_category
-  - freelancer_skills
-  - freelancer_category
+    - project_skills
+    - project_category
+    - freelancer_skills
+    - freelancer_category
