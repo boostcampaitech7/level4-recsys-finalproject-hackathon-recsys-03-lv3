@@ -1,7 +1,6 @@
 import os
 import random
 import numpy as np
-import pandas as pd
 import torch
 
 
@@ -60,24 +59,45 @@ def recall_at_k(y_true, y_pred, k=10):
     return np.mean(recalls) if recalls else 0.0  # 평균 Recall@K 반환
 
 
-def load_true_matches(inter_path):
+def dcg_at_k(y_true, y_pred, k=5):
     """
-    `inter.csv`에서 실제 매칭된 상위 10개 프리랜서 리스트 로드
-
+    DCG@K 계산 함수
     Args:
-        inter_path (str): inter.csv 파일 경로
-
+        y_true (set): 실제 매칭된 프리랜서 ID 목록
+        y_pred (list): 모델이 예측한 상위 K명의 프리랜서 ID 목록
+        k (int): DCG@K의 K 값 (기본값 5)
     Returns:
-        dict: {project_id: set(freelancer_ids)}
+        float: DCG@K 값
     """
-    inter_data = pd.read_csv(inter_path)
+    dcg = 0.0
+    for i, pred in enumerate(y_pred[:k]):
+        if pred in y_true:
+            dcg += 1 / np.log2(i + 2)  # log2(i+2) -> 인덱스 0부터 시작하므로 i+2
+    return dcg
 
-    # 프로젝트별로 상위 10개 매칭된 프리랜서만 선택
-    y_true = (
-        inter_data.sort_values(["project_id", "matching_score"], ascending=[True, False])
-        .groupby("project_id")["freelancer_id"]
-        .apply(lambda x: set(x.head(10)))  # 상위 10개만 선택
-        .to_dict()
-    )
 
-    return y_true
+def ndcg_at_k(y_true, y_pred, k=10):
+    """
+    NDCG@K 계산 함수
+    Args:
+        y_true (dict): 실제 매칭된 프리랜서 목록 (key=project_id, value=set(freelancer_ids))
+        y_pred (dict): 모델이 예측한 프리랜서 목록 (key=project_id, value=list(freelancer_ids))
+        k (int): NDCG@K의 K 값 (기본 10)
+    Returns:
+        float: NDCG@K 평균 값
+    """
+    ndcg_scores = []
+    for project_id in y_true.keys():
+        true_freelancers = set(y_true[project_id])
+        predicted_freelancers = y_pred.get(project_id, [])[:k]
+        
+        if not true_freelancers:
+            continue  # 실제 매칭이 없는 경우 제외
+        
+        dcg = dcg_at_k(true_freelancers, predicted_freelancers, k)
+        idcg = dcg_at_k(true_freelancers, list(true_freelancers)[:k], k)  # 이상적인 DCG 계산
+        
+        ndcg = dcg / idcg if idcg > 0 else 0.0
+        ndcg_scores.append(ndcg)
+    
+    return np.mean(ndcg_scores) if ndcg_scores else 0.0  # 평균 NDCG@K 반환
