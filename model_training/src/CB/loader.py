@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+from ast import literal_eval
 from src.utils import check_path
 
 
@@ -36,6 +37,10 @@ def prepare_data(data_path: str, config):
         "price": "freelancer_price",
         "work_exp": "freelancer_experience"
     })
+    
+    # 🔹 스킬 리스트를 문자열에서 리스트로 변환
+    project_data["project_skills"] = project_data["project_skills"].apply(lambda x: ",".join(map(str, literal_eval(x))))
+    freelancer_data["freelancer_skills"] = freelancer_data["freelancer_skills"].apply(lambda x: ",".join(map(str, literal_eval(x))))
 
     # 데이터 결합 (매칭 점수를 포함)
     merged_data = pd.merge(inter_data, project_data, on="project_id", how="inner")

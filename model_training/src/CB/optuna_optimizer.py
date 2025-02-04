@@ -3,10 +3,28 @@ import optuna
 import yaml
 from math import sqrt
 import pandas as pd
-from sklearn.metrics import mean_squared_error
+import numpy as np
+from sklearn.metrics import mean_squared_error, recall_score
 from catboost import CatBoostRegressor, Pool
 from xgboost import XGBRegressor
+from src.utils import recall_at_k, load_true_matches
 
+
+def compute_recall_at_k(y_true, y_pred, k=10):
+    """
+    Recall@K 계산 함수
+    y_true: 실제 매칭된 freelancer_id 목록 (Set)
+    y_pred: 예측된 freelancer_id 목록 (Top-K)
+    """
+    recall_scores = []
+    
+    for true, pred in zip(y_true, y_pred):
+        true_set = set(true)  # 실제 매칭된 freelancer_id
+        pred_set = set(pred[:k])  # 예측된 Top-K freelancer_id
+        recall = len(true_set & pred_set) / len(true_set)  # TP / (TP + FN)
+        recall_scores.append(recall)
+    
+    return np.mean(recall_scores)  # 평균 Recall@K
 
 class OptunaOptimizer:
     def __init__(self, config, model_type="catboost", n_trials=5):
@@ -25,22 +43,25 @@ class OptunaOptimizer:
         return train_data, test_data
 
     def prepare_data(self, train_data, test_data):
-        """Feature 및 Target 분리"""
-        features = self.config.data_params["numerical_features"]
+        """Train/Test 데이터에서 Feature와 Target을 분리 (Categorical Features 제외)"""
+        numerical_features = self.config.data_params["numerical_features"]
+        categorical_features = self.config.data_params["categorical_features"]
         target_column = self.config.data_params["target_column"]
 
-        X_train = train_data[features]
-        y_train = train_data[target_column]
+        features = numerical_features + categorical_features
+        
+        X_train = train_data[features]  # Feature만 선택
+        y_train = train_data[target_column]  # Target (matching_score)
         X_test = test_data[features]
         y_test = test_data[target_column]
 
-        return X_train, X_test, y_train, y_test
+        return X_train, X_test, y_train, y_test, categorical_features
 
     def objective(self, trial):
         """Optuna 최적화 목표 함수"""
         train_data, test_data = self.load_data()
-        X_train, X_test, y_train, y_test = self.prepare_data(train_data, test_data)
-
+        X_train, X_test, y_train, y_test, categorical_features = self.prepare_data(train_data, test_data)
+        
         if self.model_type == "catboost":
             params = {
                 "iterations": trial.suggest_int("iterations", 100, 1000),
@@ -48,11 +69,14 @@ class OptunaOptimizer:
                 "learning_rate": trial.suggest_loguniform("learning_rate", 0.01, 0.3),
                 "l2_leaf_reg": trial.suggest_loguniform("l2_leaf_reg", 1e-3, 10),
                 "random_seed": 42,
-                "verbose": 0
+                "verbose": 0,
+                "od_type": "Iter",  # 조기 종료 옵션 추가
+                "od_wait": 50,  # 50번 이상 개선되지 않으면 종료
+                "task_type": "GPU"
             }
+            train_pool = Pool(X_train, y_train, cat_features=categorical_features)
             model = CatBoostRegressor(**params)
-            train_pool = Pool(X_train, y_train)
-            model.fit(train_pool)
+            model.fit(train_pool, early_stopping_rounds=50)
 
         elif self.model_type == "xgboost":
             params = {
@@ -70,21 +94,29 @@ class OptunaOptimizer:
         else:
             raise ValueError("지원되지 않는 모델입니다. 'catboost' 또는 'xgboost'를 선택하세요.")
 
-        predictions = model.predict(X_test)
-        rmse = sqrt(mean_squared_error(y_test, predictions))
-        return rmse
+        # 예측값 가져오기
+        y_pred_scores = model.predict(X_test)
+
+        # 🔥 해결 방법 적용: 1차원 배열 → 2차원 변환 후 argsort 수행
+        y_pred_scores = np.array(y_pred_scores).reshape(-1, 1)  # (N,) → (N,1) 변환
+        y_pred_top10 = np.argsort(-y_pred_scores, axis=0)[:10]  # ✅ 수정된 정렬 코드
+
+        # Recall@10 계산
+        recall_at_10 = compute_recall_at_k(y_test, y_pred_top10, k=10)
+
+        return recall_at_10  # Optuna가 Recall@10 값을 최대화하도록 설정
 
     def run(self):
         """Optuna 최적화 실행"""
         print(f"Optuna를 이용한 {self.model_type} 하이퍼파라미터 튜닝 시작...")
-        study = optuna.create_study(direction="minimize")
+        study = optuna.create_study(direction="maximize")
         study.optimize(self.objective, n_trials=self.n_trials)
 
         print(f"✅ 최적의 하이퍼파라미터: {study.best_params}")
         self.save_best_params(study.best_params)
 
     def save_best_params(self, best_params):
-        f"""config.yaml의 xgboost/catboost 부분만 업데이트"""
+        """config.yaml의 xgboost/catboost 부분만 업데이트"""
         config_path = "config/config.yaml"  # 기존 config 파일 경로
 
         # 1️⃣ 기존 YAML 파일 로드

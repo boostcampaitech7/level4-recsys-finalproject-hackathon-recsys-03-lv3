@@ -25,24 +25,27 @@ class CatBoostTrainer:
 
     def prepare_data(self, train_data, test_data):
         """Train/Test 데이터에서 Feature와 Target을 분리 (Categorical Features 제외)"""
-        features = self.config.data_params["numerical_features"]
+        numerical_features = self.config.data_params["numerical_features"]
+        categorical_features = self.config.data_params["categorical_features"]
         target_column = self.config.data_params["target_column"]
 
+        features = numerical_features + categorical_features
+        
         X_train = train_data[features]  # Feature만 선택
         y_train = train_data[target_column]  # Target (matching_score)
         X_test = test_data[features]
         y_test = test_data[target_column]
 
-        return X_train, X_test, y_train, y_test
+        return X_train, X_test, y_train, y_test, categorical_features
 
     def run(self):
         """CatBoost 모델 학습 및 평가"""
         train_data, test_data = self.load_data()
-        X_train, X_test, y_train, y_test = self.prepare_data(train_data, test_data)
+        X_train, X_test, y_train, y_test, categorical_features = self.prepare_data(train_data, test_data)
 
-        # CatBoost 데이터 Pool 생성
-        train_pool = Pool(X_train, y_train)
-        test_pool = Pool(X_test, y_test)
+        # 🔹 CatBoost 데이터 Pool 생성 (범주형 Feature 지정)
+        train_pool = Pool(X_train, y_train, cat_features=categorical_features)
+        test_pool = Pool(X_test, y_test, cat_features=categorical_features)
 
         print("🔹 CatBoost 모델 학습 시작...")
         self.model.fit(train_pool, eval_set=test_pool, verbose=100)
