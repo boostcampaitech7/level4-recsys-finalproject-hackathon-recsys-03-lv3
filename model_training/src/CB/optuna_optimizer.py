@@ -1,30 +1,11 @@
 import os
 import optuna
 import yaml
-from math import sqrt
 import pandas as pd
-import numpy as np
-from sklearn.metrics import mean_squared_error, recall_score
 from catboost import CatBoostRegressor, Pool
 from xgboost import XGBRegressor
-from src.utils import recall_at_k, load_true_matches
+from src.utils import recall_at_k
 
-
-def compute_recall_at_k(y_true, y_pred, k=10):
-    """
-    Recall@K 계산 함수
-    y_true: 실제 매칭된 freelancer_id 목록 (Set)
-    y_pred: 예측된 freelancer_id 목록 (Top-K)
-    """
-    recall_scores = []
-    
-    for true, pred in zip(y_true, y_pred):
-        true_set = set(true)  # 실제 매칭된 freelancer_id
-        pred_set = set(pred[:k])  # 예측된 Top-K freelancer_id
-        recall = len(true_set & pred_set) / len(true_set)  # TP / (TP + FN)
-        recall_scores.append(recall)
-    
-    return np.mean(recall_scores)  # 평균 Recall@K
 
 class OptunaOptimizer:
     def __init__(self, config, model_type="catboost", n_trials=5):
@@ -96,13 +77,22 @@ class OptunaOptimizer:
 
         # 예측값 가져오기
         y_pred_scores = model.predict(X_test)
-
-        # 🔥 해결 방법 적용: 1차원 배열 → 2차원 변환 후 argsort 수행
-        y_pred_scores = np.array(y_pred_scores).reshape(-1, 1)  # (N,) → (N,1) 변환
-        y_pred_top10 = np.argsort(-y_pred_scores, axis=0)[:10]  # ✅ 수정된 정렬 코드
+        test_data["pred_score"] = y_pred_scores
+        y_pred = (
+            test_data.sort_values(["project_id", "pred_score"], ascending=[True, False])
+            .groupby("project_id")["freelancer_id"]
+            .apply(lambda x: list(x[:10]))
+            .to_dict()
+        )
+        y_true = (
+            test_data.sort_values(["project_id", "matching_score"], ascending=[True, False])
+            .groupby("project_id")["freelancer_id"]
+            .apply(lambda x: list(x[:10]))
+            .to_dict()
+        )
 
         # Recall@10 계산
-        recall_at_10 = compute_recall_at_k(y_test, y_pred_top10, k=10)
+        recall_at_10 = recall_at_k(y_true, y_pred, k=10)
 
         return recall_at_10  # Optuna가 Recall@10 값을 최대화하도록 설정
 

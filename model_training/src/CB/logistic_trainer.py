@@ -6,7 +6,7 @@ from datetime import datetime
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from math import sqrt
-from src.utils import recall_at_k, load_true_matches
+from src.utils import recall_at_k
 
 
 class LogisticTrainer:
@@ -79,7 +79,12 @@ class LogisticTrainer:
         )
 
         # 🔹 실제 매칭된 프리랜서 데이터 로드 (inter.csv 활용)
-        y_true = load_true_matches(os.path.join(self.config.data_path, "inter.csv"))
+        y_true = (
+            test_data.sort_values(["project_id", "matching_score"], ascending=[True, False])
+            .groupby("project_id")["freelancer_id"]
+            .apply(lambda x: list(x[:10]))
+            .to_dict()
+        )
         
         # ✅ Recall@10 평가
         recall_10 = recall_at_k(y_true, y_pred, k=10)
