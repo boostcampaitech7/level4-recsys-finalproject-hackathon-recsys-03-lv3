@@ -48,6 +48,11 @@ class Project(Base):
         back_populates="project",
         foreign_keys="ProjectRanking.project_id"
     )
+    applicants = relationship(
+        "ProjectApplicants",
+        back_populates="project",
+        foreign_keys="ProjectApplicants.project_id"
+    )
     feedbacks = relationship(
         "Feedback",
         back_populates="project",
