@@ -6,6 +6,14 @@ import "../style/ProjectInfo.css";
 import "../style/colors.css";
 
 const ProjectInfo = ({ content }) => {
+  const formatDateUsingMath = (dateNumber) => {
+    let year = Math.floor(dateNumber / 10000); // 2025
+    let month = Math.floor((dateNumber % 10000) / 100); // 2
+    let day = dateNumber % 100; // 12
+
+    return `${year}년 ${month}월 ${day}일`;
+  };
+
   const {
     projectId, // 프로젝트 ID
     projectName, // 프로젝트 이름
@@ -54,7 +62,7 @@ const ProjectInfo = ({ content }) => {
               <strong>예상 기간:</strong> {duration}일
             </p>
             <p>
-              <strong>근무 시작일:</strong> {registerDate}
+              <strong>근무 시작일:</strong> {formatDateUsingMath(registerDate)}
             </p>
             <div className="project-location">
               <i className="fas fa-map-marker-alt"></i>
