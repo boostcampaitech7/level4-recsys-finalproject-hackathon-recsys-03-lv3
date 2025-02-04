@@ -25,16 +25,15 @@ def load_data(data_path: str):
         sql_project_info = """
             SELECT  P.PROJECT_ID AS project_id,
                     P.DURATION AS duration,
-                    P.BUDGET AS budget,
+                    ROUND(P.BUDGET / P.DURATION, 0) AS budget,
                     P.PRIORITY AS priority,
                     P.COMPANY_ID AS company_id,
                     (SELECT JSON_ARRAYAGG(PC.CATEGORY_ID)
-                    FROM PROJECT PC
-                    WHERE PC.PROJECT_ID = P.PROJECT_ID) AS category_id,
-                    C.CATEGORY_NAME AS category_name,
+                     FROM PROJECT PC
+                     WHERE PC.PROJECT_ID = P.PROJECT_ID) AS category_id,
                     (SELECT JSON_ARRAYAGG(PS.SKILL_ID)
-                    FROM PROJECT_SKILL PS
-                    WHERE PS.PROJECT_ID = P.PROJECT_ID) AS skill_id,
+                     FROM PROJECT_SKILL PS
+                     WHERE PS.PROJECT_ID = P.PROJECT_ID) AS skill_id,
                     P.FREELANCER_ID AS freelancer_id
             FROM    PROJECT P
             JOIN    CATEGORY C ON P.CATEGORY_ID = C.CATEGORY_ID
@@ -51,11 +50,11 @@ def load_data(data_path: str):
         sql_freelancer = """
             SELECT  F.FREELANCER_ID AS freelancer_id,
                     F.WORK_EXP AS work_exp,
-                    F.PRICE AS price,
+                    ROUND(F.PRICE / 365, 0) AS price,
                     (SELECT JSON_ARRAYAGG(FS.SKILL_ID) AS SKILL_ID
                      FROM FREELANCER_SKILL FS
                      WHERE FS.FREELANCER_ID = F.FREELANCER_ID) AS skill_id,
-                    (SELECT JSON_ARRAYAGG(FS.SKILL_ID) AS SKILL_TEMP
+                    (SELECT JSON_ARRAYAGG(FS.SKILL_SCORE) AS SKILL_TEMP
                      FROM FREELANCER_SKILL FS
                      WHERE FS.FREELANCER_ID = F.FREELANCER_ID) AS skill_temp,
                     (SELECT JSON_ARRAYAGG(FC.CATEGORY_ID)
@@ -71,10 +70,26 @@ def load_data(data_path: str):
             FROM (
                 SELECT  PROJECT_ID,
                         FREELANCER_ID,
-                        MATCHING_SCORE,
+                        MATCHING_SCORE / 100 AS MATCHING_SCORE,
                         ROW_NUMBER() OVER (PARTITION BY PROJECT_ID ORDER BY MATCHING_SCORE DESC) AS RANKING
                 FROM    PROJECT_RANKING
             )
+            ORDER BY PROJECT_ID, RANKING
+            """
+
+        sql_inter_implicit = """
+            SELECT  PROJECT_ID AS project_id,
+                    FREELANCER_ID AS freelancer_id,
+                    (CASE WHEN RANKING <= 10 THEN 1
+                          ELSE 0
+                    END) AS matching_score
+            FROM (
+                SELECT  PROJECT_ID,
+                        FREELANCER_ID,
+                        ROW_NUMBER() OVER (PARTITION BY PROJECT_ID ORDER BY MATCHING_SCORE DESC) AS RANKING
+                FROM    PROJECT_RANKING
+            )
+            ORDER BY PROJECT_ID, RANKING
             """
 
         project_info_df = pd.read_sql(text(sql_project_info), db.bind)
@@ -82,11 +97,13 @@ def load_data(data_path: str):
         project_df = project_info_df.merge(project_content_df, on="project_id", how="left")
         freelancer_df = pd.read_sql(text(sql_freelancer), db.bind)
         inter_df = pd.read_sql(text(sql_inter), db.bind)
+        inter_implicit_df = pd.read_sql(text(sql_inter_implicit), db.bind)
 
         check_path(data_path)
         project_df.to_csv(os.path.join(data_path, "project.csv"), index=False)
         freelancer_df.to_csv(os.path.join(data_path, "freelancer.csv"), index=False)
         inter_df.to_csv(os.path.join(data_path, "inter.csv"), index=False)
+        inter_implicit_df.to_csv(os.path.join(data_path, "inter_implicit.csv"), index=False)
 
     except Exception as e:
         print(f"데이터 로드 중 오류 발생: {e}")
@@ -108,12 +125,12 @@ def preprocess_data(data_path: str):
     freelancer_df = freelancer_df.head(5)
 
     print("📍 preprocessing project ==============================")
-    project_df = Preprocessing.text_embedding(project_df, "project_content")
+    # project_df = Preprocessing.text_embedding(project_df, "project_content")
 
     print("📍 preprocessing freelancer ===========================")
 
-    project_df.to_csv(os.path.join(data_path, "project_test.csv"), index=False)
-    freelancer_df.to_csv(os.path.join(data_path, "freelancer_test.csv"), index=False)
+    # project_df.to_csv(os.path.join(data_path, "project_test.csv"), index=False)
+    # freelancer_df.to_csv(os.path.join(data_path, "freelancer_test.csv"), index=False)
 
 
 class Preprocessing:
