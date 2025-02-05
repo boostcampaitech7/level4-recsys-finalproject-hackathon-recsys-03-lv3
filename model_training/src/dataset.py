@@ -2,7 +2,7 @@ import os
 import numpy as np
 import pandas as pd
 import torch
-from typing import Optional, Union
+from typing import Optional, Tuple, Union
 
 from sqlalchemy import text
 from api.db import SessionLocal
@@ -114,7 +114,7 @@ def preprocess_data(
         n_components: int,
         embed: bool = False,
         similarity: Optional[str] = None
-) -> Optional[Union[np.ndarray, torch.Tensor]]:
+) -> Optional[Tuple[Union[np.ndarray, torch.Tensor], Union[np.ndarray, torch.Tensor]]]:
     """
     데이터 전처리 함수
 
@@ -126,7 +126,7 @@ def preprocess_data(
                                     ("cosine", "dot_product", "elementwise_product", "jaccard")
 
     Returns:
-        Optional[Union[np.ndarray, torch.Tensor]]: similarity를 선택하면 유사도 출력. 기본값은 None
+        Optional[Tuple[Union[np.ndarray, torch.Tensor], Union[np.ndarray, torch.Tensor]]]: similarity를 선택하면 유사도 출력. 기본값은 None
     """
     project_df = pd.read_csv(os.path.join(data_path, "project.csv"))
     freelancer_df = pd.read_csv(os.path.join(data_path, "freelancer.csv"))
