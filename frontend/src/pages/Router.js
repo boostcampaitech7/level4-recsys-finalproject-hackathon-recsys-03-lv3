@@ -35,6 +35,7 @@ const AppRouter = () => {
           <Route path="/freelancer-detail" element={<FreelancerDetailPage />} />
           <Route path="/registered-projects" element={<RegisteredProjects />} />
           <Route path="/suggest" element={<FreelancerSuggestPage />} />
+          <Route path="/mypage" element={<FreelancerDetailPage />} />
         </Route>
       </Routes>
     </Router>
