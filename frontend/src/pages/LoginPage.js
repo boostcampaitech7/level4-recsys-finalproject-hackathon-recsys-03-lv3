@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import logo from "../assets/logo_primary.png";
+import "../style/LoginPage.css";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -54,87 +57,56 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="login-page" style={{ minHeight: "100vh" }}>
-      <div className="container">
-        <div className="row justify-content-center">
-          <div className="col-xl-10 col-lg-12 col-md-9">
-            <div className="card o-hidden border-0 shadow-lg my-5">
-              <div className="card-body p-0">
-                <div className="row">
-                  <div className="col-lg-6 d-none d-lg-block bg-login-image"></div>
-                  <div className="col-lg-6">
-                    <div className="p-5">
-                      <div className="text-center">
-                        <h1 className="h4 text-gray-900 mb-4">Welcome Back!</h1>
-                      </div>
-                      {error && (
-                        <div className="alert alert-danger">{error}</div>
-                      )}
-                      <form className="user" onSubmit={handleLogin}>
-                        <div className="form-group">
-                          <input
-                            type="email"
-                            className="form-control form-control-user"
-                            id="exampleInputEmail"
-                            placeholder="Enter Email Address..."
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                          />
-                        </div>
-                        <div className="form-group">
-                          <input
-                            type="password"
-                            className="form-control form-control-user"
-                            id="exampleInputPassword"
-                            placeholder="Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                          />
-                        </div>
-                        <div className="form-group">
-                          <div className="custom-control custom-checkbox small">
-                            <input
-                              type="checkbox"
-                              className="custom-control-input"
-                              id="customCheck"
-                              checked={rememberMe}
-                              onChange={() => setRememberMe(!rememberMe)}
-                            />
-                            <label
-                              className="custom-control-label"
-                              htmlFor="customCheck"
-                            >
-                              Remember Me
-                            </label>
-                          </div>
-                        </div>
-                        <button
-                          type="submit"
-                          className="btn btn-primary btn-user btn-block"
-                        >
-                          Login
-                        </button>
-                      </form>
-                      <hr />
-                      <div className="text-center">
-                        <a className="small" href="forgot-password.html">
-                          Forgot Password?
-                        </a>
-                      </div>
-                      <div className="text-center">
-                        <a className="small" href="register.html">
-                          Create an Account!
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+    <div className="login-container">
+      <div className="login-card">
+        {/* 로고 */}
+        <div className="login-logo">
+          <img src={logo} alt="Harmony Logo" />
         </div>
+
+        {/* 캐치프레이즈 */}
+        <p className="login-caption">HRmony</p>
+
+        {/* 로그인 폼 */}
+        <form onSubmit={handleLogin} className="login-form">
+          <input
+            type="email"
+            placeholder="이메일"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="비밀번호"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+
+          <div className="login-options">
+            <label className="remember-me">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={() => setRememberMe((prev) => !prev)}
+              />
+              로그인 상태 유지
+            </label>
+            <a href="/forgot-password" className="forgot-password">
+              비밀번호 찾기
+            </a>
+          </div>
+
+          <button type="submit" className="login-button">
+            로그인
+          </button>
+        </form>
+
+        {/* 회원가입 링크 */}
+        <p className="register-text">
+          아직 회원이 아니신가요? <a href="/register">회원가입</a>
+        </p>
       </div>
     </div>
   );

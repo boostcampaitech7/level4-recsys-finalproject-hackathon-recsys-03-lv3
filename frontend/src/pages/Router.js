@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import Layout from "../components/Layout";
-//import Dashboard from "./Dashboard";
 import LoginPage from "./LoginPage";
-import SearchProjectPage from "./SearchProjectPage";
-import Chat from "./ChatPage";
+import MainPage from "./MainPage";
 import SearchFreelancer from "./SearchFreelancerPage";
 import RecommendFreelancer from "./RecommendFreelancerPage";
+import SearchProjectPage from "./SearchProjectPage";
 import RegisteredProjects from "./RegisteredProjectsPage";
+import Chat from "./ChatPage";
 import FreelancerDetailPage from "./FreelancerDetailPage";
+import AppliedProjectPage from "./AppliedProjectPage";
+import FinishedProjectPage from "./FinishedProjectPage";
 import FreelancerSuggestPage from "./FreelancerSuggestPage";
 import MainPage from "./MainPage";
 import CompanyMyPage from "./CompanyMyPage";
@@ -62,9 +69,7 @@ const AppRouter = () => {
         {/* Layout 적용된 경로 */}
         <Route path="/" element={<Layout />}>
           {/* Layout 내부의 하위 경로 */}
-          {/* <Route index element={<Dashboard />} /> */}
-          {/* 추가 경로 */}
-          <Route path="/main-page" element={<MainPage />} />
+          <Route index element={<MainPage />} />
           <Route path="/search-project" element={<SearchProjectPage />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/search-freelancer" element={<SearchFreelancer />} />
@@ -75,12 +80,15 @@ const AppRouter = () => {
           <Route path="/freelancer-detail" element={<FreelancerDetailPage />} />
           <Route path="/registered-projects" element={<RegisteredProjects />} />
           <Route path="/suggest" element={<FreelancerSuggestPage />} />
+          <Route path="/finished" element={<FinishedProjectPage />} />
+          <Route path="/applied" element={<AppliedProjectPage />} />
           <Route
             path="/mypage"
             element={
               userType === "0" ? <FreelancerDetailPage /> : <CompanyMyPage />
             }
           />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
     </Router>

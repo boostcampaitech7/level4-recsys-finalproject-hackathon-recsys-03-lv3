@@ -55,8 +55,8 @@ const Topbar = () => {
     localStorage.removeItem("expiresAt");
     sessionStorage.removeItem("token");
 
-    // 로그인 페이지로 이동
-    window.location.href = "/login";
+    // 메인 페이지로 이동
+    window.location.href = "/";
   };
 
   const toggleDropdown = (dropdownName) => {
@@ -92,7 +92,7 @@ const Topbar = () => {
   return (
     <nav className="navbar">
       {/* 로고 영역 */}
-      <img src={logo} alt="Main Logo" onClick={() => navigate("/main-page")} />
+      <img src={logo} alt="Main Logo" onClick={() => navigate("/mainpage")} />
 
       {/* 메뉴 영역 */}
       <ul className="nav-menu">
@@ -155,42 +155,44 @@ const Topbar = () => {
             </button>
           </li>
         )}
-        {token ? (
-          <li className="nav-item dropdown no-arrow">
-            <button
-              className="nav-link-btn dropdown-toggle"
-              id="freelancerDropdown"
-              onClick={() => toggleDropdown("freelancer")} // 클릭 시 토글
+
+        <li className="nav-item dropdown no-arrow">
+          <button
+            className="nav-link-btn dropdown-toggle"
+            id="freelancerDropdown"
+            onClick={() => toggleDropdown("freelancer")} // 클릭 시 토글
+          >
+            <ProfileIcon
+              profileImage={photo}
+              style={{ width: "35px", height: "35px", margin: "0" }}
+            />
+          </button>
+          {dropdownState.freelancerDropdownOpen && (
+            <div
+              className="custom-dropdown-menu"
+              aria-labelledby="userDropdown"
             >
-              <ProfileIcon
-                profileImage={photo}
-                style={{ width: "35px", height: "35px", margin: "0" }}
-              />
-            </button>
-            {dropdownState.freelancerDropdownOpen && (
-              <div
-                className="custom-dropdown-menu"
-                aria-labelledby="userDropdown"
+              <button
+                className="dropdown-item"
+                onClick={() => navigate("/mypage")}
               >
-                <button
-                  className="dropdown-item"
-                  onClick={() => navigate("/mypage")}
-                >
-                  <i className="fas fa-user fa-sm fa-fw mr-3 text-gray-400"></i>
-                  마이페이지
-                </button>
-                <button className="dropdown-item" onClick={handleLogout}>
-                  <i className="fas fa-sign-out-alt fa-sm fa-fw mr-3 text-gray-400"></i>
-                  로그아웃
-                </button>
-              </div>
-            )}
-          </li>
+                <i className="fas fa-user fa-sm fa-fw mr-3 text-gray-400"></i>
+                마이페이지
+              </button>
+              <button className="dropdown-item" onClick={handleLogout}>
+                <i className="fas fa-sign-out-alt fa-sm fa-fw mr-3 text-gray-400"></i>
+                로그아웃
+              </button>
+            </div>
+          )}
+        </li>
+        {/* 로그인 구현 완료 시 연결  
+        {isLoggedIn ? (
         ) : (
           <li>
-            <a href="/login" className="login-btn">
+            <button className="login-btn" onClick={() => navigate("/login")}>
               로그인
-            </a>
+            </button>
           </li>
         )}
       </ul>
