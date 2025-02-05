@@ -29,7 +29,7 @@ const Layout = () => {
             minHeight: "95vh",
           }}
         >
-          <Topbar userType={1} />
+          <Topbar />
           <div className="container-fluid">
             <Outlet />
           </div>

@@ -11,14 +11,17 @@ const LoginPage = () => {
     setError(null); // 기존 에러 초기화
 
     try {
-      const response = await fetch("http://localhost:8000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       const data = await response.json();
 
@@ -35,8 +38,10 @@ const LoginPage = () => {
 
       const expiresAt = new Date().getTime() + 60 * 60 * 1000; // 1시간 후 (밀리초 단위)
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("expiresAt", expiresAt); // 만료 시간 저장
+      sessionStorage.setItem("userId", data.userId);
+      sessionStorage.setItem("userName", data.userName);
+      sessionStorage.setItem("userType", data.userType);
+      sessionStorage.setItem("expiresAt", expiresAt); // 만료 시간 저장
 
       console.log("Login Success:", data);
 

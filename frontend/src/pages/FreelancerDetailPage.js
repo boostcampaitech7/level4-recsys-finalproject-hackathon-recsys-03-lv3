@@ -53,7 +53,7 @@ const ProfileHeader = ({ freelancerInfo }) => {
   );
 };
 
-const ProjectRates = ({ freelancerInfo, prograss }) => {
+const ProjectRates = ({ freelancerInfo, progress }) => {
   return (
     <div className="profile-stats container-fluid detail-card">
       <div className="row">
@@ -67,7 +67,7 @@ const ProjectRates = ({ freelancerInfo, prograss }) => {
               freelancerInfo.maintainability) /
             5
           }
-          numRates={prograss.projectCount}
+          numRates={progress.projectCount}
         />
         <RadarChart
           data={[
@@ -83,16 +83,16 @@ const ProjectRates = ({ freelancerInfo, prograss }) => {
   );
 };
 
-const ProjectStatus = ({ prograss }) => {
+const ProjectStatus = ({ progress }) => {
   return (
     <div className="project-status container-fluid detail-card">
       <div className="row">
         <div>
           <h4>프로젝트 진행 상황</h4>
-          {prograss.projectCount}건
+          {progress.projectCount}건
         </div>
         <DoughnutChart
-          data={[prograss.completedCount, prograss.ongoingCount]}
+          data={[progress.completedCount, progress.ongoingCount]}
         />
       </div>
     </div>
@@ -175,7 +175,7 @@ const ProfilePage = () => {
     maintainability: 4.0,
   };
 
-  const prograss = {
+  const progress = {
     projectCount: 20,
     ongoingCount: 5,
     completedCount: 10,
@@ -231,10 +231,10 @@ const ProfilePage = () => {
         <div className="row">
           <h3>프로젝트 히스토리</h3>
           <div className="col-md-6 d-flex">
-            <ProjectRates freelancerInfo={freelancerInfo} prograss={prograss} />
+            <ProjectRates freelancerInfo={freelancerInfo} progress={progress} />
           </div>
           <div className="col-md-6 d-flex">
-            <ProjectStatus prograss={prograss} />
+            <ProjectStatus progress={progress} />
           </div>
           <ProjectHistory history={history} />
         </div>

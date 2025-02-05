@@ -30,13 +30,16 @@ const Topbar = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/api/auth/logout", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`, // JWT 토큰 포함
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/api/auth/logout`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`, // JWT 토큰 포함
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.ok) {
         console.log("✅ 서버 로그아웃 성공");

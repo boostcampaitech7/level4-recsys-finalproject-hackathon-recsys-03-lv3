@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Layout from "../components/Layout";
 //import Dashboard from "./Dashboard";
@@ -11,8 +11,48 @@ import RegisteredProjects from "./RegisteredProjectsPage";
 import FreelancerDetailPage from "./FreelancerDetailPage";
 import FreelancerSuggestPage from "./FreelancerSuggestPage";
 import MainPage from "./MainPage";
+import CompanyMyPage from "./CompanyMyPage";
 
 const AppRouter = () => {
+  // 로그인 정보 상태(state) 저장
+  const [token, setToken] = useState(
+    sessionStorage.getItem("token") || localStorage.getItem("token")
+  );
+  const [userId, setUserId] = useState(
+    sessionStorage.getItem("userId") || localStorage.getItem("userId")
+  );
+  const [userName, setUserName] = useState(
+    sessionStorage.getItem("userName") || localStorage.getItem("userName")
+  );
+  const [userType, setUserType] = useState(
+    sessionStorage.getItem("userType") || localStorage.getItem("userType")
+  );
+
+  // sessionStorage 값 변경 감지
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setToken(
+        sessionStorage.getItem("token") || localStorage.getItem("token")
+      );
+      setUserId(
+        sessionStorage.getItem("userId") || localStorage.getItem("userId")
+      );
+      setUserName(
+        sessionStorage.getItem("userName") || localStorage.getItem("userName")
+      );
+      setUserType(
+        sessionStorage.getItem("userType") || localStorage.getItem("userType")
+      );
+    };
+
+    // window 이벤트 리스너 추가 (로그인 후 변경 감지)
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
   return (
     <Router>
       <Routes>
@@ -35,7 +75,12 @@ const AppRouter = () => {
           <Route path="/freelancer-detail" element={<FreelancerDetailPage />} />
           <Route path="/registered-projects" element={<RegisteredProjects />} />
           <Route path="/suggest" element={<FreelancerSuggestPage />} />
-          <Route path="/mypage" element={<FreelancerDetailPage />} />
+          <Route
+            path="/mypage"
+            element={
+              userType === "0" ? <FreelancerDetailPage /> : <CompanyMyPage />
+            }
+          />
         </Route>
       </Routes>
     </Router>
