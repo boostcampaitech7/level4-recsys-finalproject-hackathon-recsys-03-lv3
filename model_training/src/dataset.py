@@ -1,17 +1,13 @@
-import json
 import os
-
 import numpy as np
 import pandas as pd
 import torch
-import torch.nn as nn
+from typing import Optional, Union
 
 from sqlalchemy import text
 from api.db import SessionLocal
 from src.utils import check_path
 from src.preprocessing import Preprocessing
-
-from typing import Optional, Union
 
 
 def load_data(data_path: str):
@@ -114,11 +110,11 @@ def load_data(data_path: str):
 
 
 def preprocess_data(
-        data_path: str, 
-        n_components: int, 
-        embed: bool = False, 
+        data_path: str,
+        n_components: int,
+        embed: bool = False,
         similarity: Optional[str] = None
-    ) -> Optional[Union[np.ndarray, torch.Tensor]]:
+) -> Optional[Union[np.ndarray, torch.Tensor]]:
     """
     데이터 전처리 함수
 
@@ -128,7 +124,7 @@ def preprocess_data(
         embed (bool): 전처리 방식. 임베딩을 사용할 경우 True. 기본값은 False (인코딩)
         similarity (Optional[str]): 유사도를 추가 피처로 사용할 경우 종류 선택. 기본값은 None
                                     ("cosine", "dot_product", "elementwise_product", "jaccard")
-    
+
     Returns:
         Optional[Union[np.ndarray, torch.Tensor]]: similarity를 선택하면 유사도 출력. 기본값은 None
     """
@@ -138,28 +134,28 @@ def preprocess_data(
     print("📍 preprocessing project data ==============================")
     # 텍스트 임베딩 (Upstage Embeddings -> PCA)
     project_df = Preprocessing.text_embedding(project_df, "project_content", n_components)
-    
+
     # 범주형 변수 인코딩 (멀티-핫)
     project_df = Preprocessing.encode_categorical_features(
-        project_df, 
+        project_df,
         categorical_cols=["category_id", "skill_id"]
     )
 
     if embed:
         project_category_df = project_df.iloc[:, 6:16]
         project_skill_df = project_df.iloc[:, 16:]
-        
+
         # 범주형 변수 임베딩 (torch.nn.Embedding)
         project_category_df = Preprocessing.embed_categorical_features(
-            project_category_df, 
+            project_category_df,
             num_features=project_category_df.shape[1],
             embedding_dim=16,
             name="project",
             feature="category",
         )
         project_skill_df = Preprocessing.embed_categorical_features(
-            project_skill_df, 
-            num_features=project_skill_df.shape[1], 
+            project_skill_df,
+            num_features=project_skill_df.shape[1],
             embedding_dim=16,
             name="project",
             feature="skill",
@@ -172,8 +168,8 @@ def preprocess_data(
     print("📍 preprocessing freelancer data ===========================")
     # 범주형 변수 인코딩 (멀티-핫)
     freelancer_df = Preprocessing.encode_categorical_features(
-        freelancer_df, 
-        categorical_cols=["category_id", "skill_id"], 
+        freelancer_df,
+        categorical_cols=["category_id", "skill_id"],
         skill_col="skill_id",
         expertise_col="skill_temp"
     )
@@ -181,18 +177,18 @@ def preprocess_data(
     if embed:
         freelancer_category_df = freelancer_df.iloc[:, 3:13]
         freelancer_skill_df = freelancer_df.iloc[:, 13:]
-        
+
         # 범주형 변수 임베딩 (torch.nn.Embedding)
         freelancer_category_df = Preprocessing.embed_categorical_features(
             freelancer_category_df,
-            num_features=freelancer_category_df.shape[1], 
+            num_features=freelancer_category_df.shape[1],
             embedding_dim=16,
             name="freelancer",
             feature="category",
         )
         freelancer_skill_df = Preprocessing.embed_categorical_features(
             freelancer_skill_df,
-            num_features=freelancer_skill_df.shape[1], 
+            num_features=freelancer_skill_df.shape[1],
             embedding_dim=16,
             name="freelancer",
             feature="skill",
@@ -207,66 +203,18 @@ def preprocess_data(
     freelancer_df.to_csv(os.path.join(data_path, "freelancer.csv"), index=False)
 
     # 유사도 계산 (인코딩/임베딩 둘 다 사용 가능. 단, 자카드 유사도는 인코딩만 사용 가능)
-    match similarity:
-        case "cosine":
-            print(f"📍 calculating {similarity} similiarities ==============================")
-            category_similarity = Preprocessing.calculate_similarity_matrix(
-                project_category_df,
-                freelancer_category_df,
-                method="cosine"
-            )
-            skill_similarity = Preprocessing.calculate_similarity_matrix(
-                project_skill_df,
-                freelancer_skill_df,
-                method="cosine"
-            )
+    if similarity:
+        print(f"📍 calculating {similarity} similiarities ==============================")
 
-            return category_similarity, skill_similarity
-        
-        case "dot_product":
-            print(f"📍 calculating {similarity} similiarities ==============================")
-            category_similarity = Preprocessing.calculate_similarity_matrix(
-                project_category_df,
-                freelancer_category_df,
-                method="dot_product"
-            )
-            skill_similarity = Preprocessing.calculate_similarity_matrix(
-                project_skill_df,
-                freelancer_skill_df,
-                method="dot_product"
-            )
+        category_similarity = Preprocessing.calculate_similarity_matrix(
+            project_category_df,
+            freelancer_category_df,
+            method=similarity
+        )
+        skill_similarity = Preprocessing.calculate_similarity_matrix(
+            project_skill_df,
+            freelancer_skill_df,
+            method=similarity
+        )
 
-            return category_similarity, skill_similarity
-        
-        case "elementwise_product":
-            print(f"📍 calculating {similarity} similiarities ==============================")
-            category_similarity = Preprocessing.calculate_similarity_matrix(
-                project_category_df,
-                freelancer_category_df,
-                method="elementwise_product"
-            )
-            skill_similarity = Preprocessing.calculate_similarity_matrix(
-                project_skill_df,
-                freelancer_skill_df,
-                method="elementwise_product"
-            )
-
-            return category_similarity, skill_similarity
-        
-        case "jaccard":
-            print(f"📍 calculating {similarity} similiarities ==============================")
-            category_similarity = Preprocessing.calculate_similarity_matrix(
-                project_category_df,
-                freelancer_category_df,
-                method="jaccard"
-            )
-            skill_similarity = Preprocessing.calculate_similarity_matrix(
-                project_skill_df,
-                freelancer_skill_df,
-                method="jaccard"
-            )
-
-            return category_similarity, skill_similarity
-        
-        case _: 
-            raise ValueError("Invalid input: Similarity should be 'cosine', 'dot_product', 'elementwise-product' and 'jaccard'.")
+        return category_similarity, skill_similarity

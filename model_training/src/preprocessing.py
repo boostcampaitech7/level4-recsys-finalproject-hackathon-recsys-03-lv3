@@ -14,12 +14,12 @@ from sklearn.preprocessing import StandardScaler
 from typing import List, Optional, Set, Union
 
 
-class Preprocessing:        
+class Preprocessing:
     def text_embedding(
-            df: pd.DataFrame, 
-            col_name: str, 
-            n_components: int
-        ) -> pd.DataFrame:
+        df: pd.DataFrame,
+        col_name: str,
+        n_components: int
+    ) -> pd.DataFrame:
         """
         텍스트 데이터를 임베딩 후 PCA로 차원 축소를 적용하는 함수 (Upstage Embeddings 사용)
 
@@ -34,7 +34,7 @@ class Preprocessing:
         load_dotenv()
         UPSTAGE_TOKEN = os.getenv("UPSTAGE_TOKEN")
 
-        embeddings = UpstageEmbeddings(api_key=UPSTAGE_TOKEN,model="embedding-passage")
+        embeddings = UpstageEmbeddings(api_key=UPSTAGE_TOKEN, model="embedding-passage")
 
         embed_results = embeddings.embed_documents(df[col_name].tolist())
         embed_col = pd.DataFrame(np.array(embed_results))
@@ -48,21 +48,21 @@ class Preprocessing:
 
         # 새로운 컬럼 이름 생성 후 변경 (예: project_content_0, project_content_1, ...)
         X_pca_df = pd.DataFrame(
-            X_pca, 
+            X_pca,
             columns=[f"{col_name}_{i}" for i in range(n_components)]
         )
 
         # 원본 데이터프레임에 PCA 결과 병합
-        result_df =  pd.concat([df, X_pca_df], axis=1).drop(columns=[col_name])
+        result_df = pd.concat([df, X_pca_df], axis=1).drop(columns=[col_name])
 
         return result_df
 
     def encode_categorical_features(
-            df: pd.DataFrame, 
-            categorical_cols: List[str], 
-            skill_col: Optional[str] = None, 
-            expertise_col: Optional[str] = None
-        ) -> pd.DataFrame:
+        df: pd.DataFrame,
+        categorical_cols: List[str],
+        skill_col: Optional[str] = None,
+        expertise_col: Optional[str] = None
+    ) -> pd.DataFrame:
         """
         주어진 범주형 변수를 멀티-핫 인코딩하고, 프리랜서 스킬의 경우 스킬 숙련도까지 반영하는 함수
 
@@ -79,15 +79,15 @@ class Preprocessing:
         for col in categorical_cols + ([expertise_col] if expertise_col else []):
             if df[col].dtype == object:
                 df[col] = df[col].apply(json.loads)
-        
+
         # 범주형 변수 중 int로 저장된 값이 있으면 리스트로 변환
         for col in categorical_cols:
             if df[col].dtype == int:
                 df[col] = df[col].apply(lambda x: [x])
-        
+
         # 멀티-핫 벡터의 차원이 될 각 범주형 컬럼의 유니크한 값 저장
         all_unique_values = {col: np.unique(np.concatenate(df[col].values)) for col in categorical_cols}
-        
+
         # 멀티-핫 벡터로 변환 (프리랜서 스킬에 숙련도를 반영하고 싶은 경우 따로 처리)
         def multi_hot_encode(values: List[int], all_values: np.ndarray) -> np.ndarray:
             return np.isin(all_values, values).astype(int)  # True → 1 변환
@@ -113,13 +113,13 @@ class Preprocessing:
         return result_df
 
     def embed_categorical_features(
-            df: pd.DataFrame,
-            num_features: int, 
-            embedding_dim: int,
-            name: str = None, 
-            feature: str = None,
-            weight: bool = False
-        ) -> pd.DataFrame:
+        df: pd.DataFrame,
+        num_features: int,
+        embedding_dim: int,
+        name: str = None,
+        feature: str = None,
+        weight: bool = False
+    ) -> pd.DataFrame:
         """
         멀티-핫 인코딩된 범주형 데이터를 임베딩하는 함수 (torch.nn.Embedding 사용)
 
@@ -136,13 +136,13 @@ class Preprocessing:
         """
         # 멀티-핫 벡터를 텐서로 변환
         multi_hot_vectors = torch.tensor(df.to_numpy(), dtype=torch.float32)  # (batch_size, num_features)
-        
+
         # 범주별 임베딩 벡터 생성
         embedding_layer = nn.Embedding(num_features, embedding_dim)
-        
+
         # 임베딩 벡터 추출 (batch_size, num_features, embedding_dim)
         embedded_vectors = embedding_layer(torch.arange(num_features))
-        
+
         # 스킬 숙련도를 가중치로 사용
         if weight:
             embedded_result = multi_hot_vectors.unsqueeze(-1) * embedded_vectors
@@ -151,7 +151,7 @@ class Preprocessing:
         else:
             embedded_result = (multi_hot_vectors > 0).unsqueeze(-1) * embedded_vectors  # 0 또는 1 처리
             embedded_result = embedded_result.mean(dim=1)  # 평균 풀링 (batch_size, embedding_dim)
-        
+
         embedded_array = embedded_result.detach().cpu().numpy()  # 텐서를 다시 넘파이 배열로 변환
 
         if name not in {"freelancer", "project"} and feature not in {"category", "skill"}:
@@ -162,7 +162,7 @@ class Preprocessing:
                 columns=[f"{name}_{feature}_embedding_{i+1}" for i in range(embedded_array.shape[1])]
             )
             return embedding_df
-        
+
     def calculate_similarity_matrix(
         matrix_1: Union[pd.DataFrame, np.ndarray],
         matrix_2: Union[pd.DataFrame, np.ndarray],
@@ -202,7 +202,7 @@ class Preprocessing:
 
             intersection = np.bitwise_and(matrix_1[:, np.newaxis, :], matrix_2[np.newaxis, :, :]).sum(axis=2)
             union = np.bitwise_or(matrix_1[:, np.newaxis, :], matrix_2[np.newaxis, :, :]).sum(axis=2)
-        
+
             return intersection / (union + 1e-8)
 
         else:
