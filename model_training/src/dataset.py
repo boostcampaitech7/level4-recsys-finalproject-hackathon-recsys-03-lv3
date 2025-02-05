@@ -35,8 +35,7 @@ def load_data(data_path: str):
                      WHERE PC.PROJECT_ID = P.PROJECT_ID) AS category_id,
                     (SELECT JSON_ARRAYAGG(PS.SKILL_ID)
                      FROM PROJECT_SKILL PS
-                     WHERE PS.PROJECT_ID = P.PROJECT_ID) AS skill_id,
-                    P.FREELANCER_ID AS freelancer_id
+                     WHERE PS.PROJECT_ID = P.PROJECT_ID) AS skill_id
             FROM    PROJECT P
             JOIN    CATEGORY C ON P.CATEGORY_ID = C.CATEGORY_ID
             WHERE   P.STATUS IN (1, 2)
