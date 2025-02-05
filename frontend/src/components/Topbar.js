@@ -114,7 +114,7 @@ const Topbar = () => {
           </button>
         </li>
         {/* userType에 따라 프로젝트 관리 버튼 */}
-        {userType === 1 ? (
+        {userType === "1" ? (
           <li className="nav-item dropdown">
             <button
               className="nav-link-btn dropdown-toggle"
