@@ -66,7 +66,7 @@ if __name__ == "__main__":
     # 기본값을 명시적으로 설정하여 KeyError 방지
     if "type" not in config_yaml:
         config_yaml.type = None
-    
+
     # args에 있는 값이 config_yaml에 있는 값보다 우선함. (단, None이 아닌 값일 경우)
     for key in config_args.keys():
         if config_args[key] is not None:
@@ -122,8 +122,8 @@ if __name__ == "__main__":
         # XGBoost
         elif args.model.lower() == "xgboost":
             print("======== XGBoost 모델 실행 시작 ========")
-            catboost_trainer = XGBoostTrainer(args)
-            catboost_trainer.run()
+            xgboost_trainer = XGBoostTrainer(args)
+            xgboost_trainer.run()
 
         # Logistic
         elif args.model.lower() == "logistic":

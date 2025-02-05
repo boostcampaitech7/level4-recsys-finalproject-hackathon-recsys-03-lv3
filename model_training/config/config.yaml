@@ -12,15 +12,15 @@ catboost_params:
   eval_metric: RMSE
   task_type: GPU
 xgboost_params:
-  n_estimators: 737
-  max_depth: 6
-  learning_rate: 0.12589133076014447
+  n_estimators: 942
+  max_depth: 8
+  learning_rate: 0.012784992144220556
   eval_metric: rmse
   device: cuda
   tree_method: hist
-  subsample: 0.5491600210980101
-  colsample_bytree: 0.590668632226121
-  reg_lambda: 4.809585178239605
+  subsample: 0.841112648392071
+  colsample_bytree: 0.5578740901015404
+  reg_lambda: 0.5607474414911422
 lr_params:
   penalty: l2
   C: 1.0
@@ -30,11 +30,11 @@ data_params:
   train_ratio: 0.8
   target_column: matching_score
   numerical_features:
-    - project_budget
-    - freelancer_experience
-    - freelancer_price
+  - project_budget
+  - freelancer_experience
+  - freelancer_price
   categorical_features:
-    - project_skills
-    - project_category
-    - freelancer_skills
-    - freelancer_category
+  - project_skills
+  - project_category
+  - freelancer_skills
+  - freelancer_category

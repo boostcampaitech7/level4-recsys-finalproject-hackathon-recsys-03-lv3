@@ -28,12 +28,41 @@ class XGBoostTrainer:
 
     def prepare_data(self, train_data, test_data):
         """Train/Test 데이터에서 Feature와 Target을 분리 (Categorical Features 제외)"""
-        features = self.config.data_params["numerical_features"]
+        train_data = train_data.drop([
+            "freelancer_id",
+            "project_id",
+            "Unnamed: 0_x",
+            "project_duration",
+            "project_priority",
+            "project_company",
+            "project_category",
+            "category_name",
+            "project_skills",
+            "Unnamed: 0_y",
+            "freelancer_skills",
+            "skill_temp",
+            "freelancer_category",
+        ], axis=1)
+        test_data = test_data.drop([
+            "freelancer_id",
+            "project_id",
+            "Unnamed: 0_x",
+            "project_duration",
+            "project_priority",
+            "project_company",
+            "project_category",
+            "category_name",
+            "project_skills",
+            "Unnamed: 0_y",
+            "freelancer_skills",
+            "skill_temp",
+            "freelancer_category",
+        ], axis=1)
         target_column = self.config.data_params["target_column"]
 
-        X_train = np.array(train_data[features])
+        X_train = np.array(train_data.drop(target_column, axis=1))
         y_train = np.array(train_data[target_column])
-        X_test = np.array(test_data[features])
+        X_test = np.array(test_data.drop(target_column, axis=1))
         y_test = np.array(test_data[target_column])
 
         return X_train, X_test, y_train, y_test
