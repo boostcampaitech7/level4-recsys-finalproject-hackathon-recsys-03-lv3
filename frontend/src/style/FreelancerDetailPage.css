@@ -59,7 +59,7 @@
 .btn-suggest,
 .btn-register {
   background-color: var(--color-primary);
-  color: black;
+  color: var(--color-secondary);
   border: None;
   border-radius: 100px;
   width: 100px;

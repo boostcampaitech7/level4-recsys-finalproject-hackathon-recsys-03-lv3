@@ -84,8 +84,8 @@ const RegisteredProjects = () => {
         <div className="register-header">
           <div className="register-left">
             <div>
-              <h3 className="header">프로젝트 리스트</h3>
-              <p>총 {projects.length}개의 프로젝트가 있습니다.</p>
+              <h3 className="header">내가 등록한 프로젝트</h3>
+              <p>총 {projects.length}개의 등록한 프로젝트가 있습니다.</p>
             </div>
           </div>
           <div className="register-right">
