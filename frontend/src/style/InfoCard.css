@@ -1,6 +1,7 @@
 .info-card {
   background-color: #ffffff;
-  max-width: 1000;
+  min-width: 1000px;
+  max-width: 1000px;
   min-height: 200px;
   margin: 20px auto;
   border-radius: 12px;

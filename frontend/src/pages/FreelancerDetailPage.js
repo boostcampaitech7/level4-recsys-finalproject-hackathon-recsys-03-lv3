@@ -6,6 +6,7 @@ import RadarChart from "../components/RadarChart";
 import FreelancerSkillTag from "../components/FreelancerSkillTag";
 import DoughnutChart from "../components/DoughnutChart";
 import StaticStarRating from "../components/StaticStarRating";
+import ScoreDisplay from "../components/ScoreDisplay";
 
 const ProfileHeader = ({ freelancerInfo }) => {
   return (
@@ -111,35 +112,29 @@ const ProjectHistory = ({ history }) => {
             <div className="card mb-3 d-flex">
               <div className="card-body">
                 <div className="row">
-                  <div className="col-md-9">
+                  <div className="col-md-8">
                     <h5 className="card-title">{project.projectName}</h5>
-                    <p className="card-text">금액: {project.budget}원</p>
+                    <p className="card-text">
+                      금액: {project.budget.toLocaleString()}원
+                    </p>
                     <p className="card-text">기간: {project.duration}일</p>
                   </div>
-                  <div className="col-md-3">
-                    평가{" "}
-                    <StaticStarRating
-                      rating={
-                        (project.expertise +
-                          project.proactiveness +
-                          project.punctuality +
-                          project.communication +
-                          project.maintainability) /
-                        5
-                      }
-                    />
-                    <br />
-                    <div className="row">
-                      <div className="col-md-6">전문성</div>
-                      <div className="col-md-6">{project.expertise}</div>
-                      <div className="col-md-6">적극성</div>
-                      <div className="col-md-6">{project.proactiveness}</div>
-                      <div className="col-md-6">일정 준수</div>
-                      <div className="col-md-6">{project.punctuality}</div>
-                      <div className="col-md-6">의사소통</div>
-                      <div className="col-md-6">{project.communication}</div>
-                      <div className="col-md-6">유지보수</div>
-                      <div className="col-md-6">{project.maintainability}</div>
+                  <div className="col-md-4">
+                    <div className="rating">
+                      <div>
+                        <ScoreDisplay score={project.feedbackScore} />
+                      </div>
+                    </div>
+                    <div className="radar-chart">
+                      <RadarChart
+                        data={[
+                          project.expertise,
+                          project.proactiveness,
+                          project.punctuality,
+                          project.communication,
+                          project.maintainability,
+                        ]}
+                      />
                     </div>
                   </div>
                 </div>
@@ -214,7 +209,7 @@ const ProfilePage = () => {
       companyName: "ShopEase",
       skillIdList: [1, 2, 3],
       skillNameList: ["Python", "Machine Learning", "Deep Learning"],
-      feedbackScore: null,
+      feedbackScore: 4,
       expertise: 4,
       proactiveness: 5,
       punctuality: 3,

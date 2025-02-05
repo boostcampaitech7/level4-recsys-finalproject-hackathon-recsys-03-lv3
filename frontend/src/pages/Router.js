@@ -15,6 +15,8 @@ import RecommendFreelancer from "./RecommendFreelancerPage";
 import RegisteredProjects from "./RegisteredProjectsPage";
 import FreelancerDetailPage from "./FreelancerDetailPage";
 import FreelancerSuggestPage from "./FreelancerSuggestPage";
+import FinishedProjectPage from "./FinishedProjectPage";
+import MainPage from "./MainPage";
 
 const AppRouter = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -56,6 +58,10 @@ const AppRouter = () => {
           {/* 메인 페이지를 기본으로 설정 */}
           <Route index element={<MainPage />} />
 
+        {/* Layout 적용된 경로 */}
+        <Route path="/" element={<Layout />}>
+          {/* Layout 내부의 하위 경로 */}
+          <Route index element={<MainPage />} />
           {/* 추가 경로 */}
           <Route path="/search-project" element={<SearchProjectPage />} />
           <Route path="/chat" element={<Chat />} />
@@ -64,6 +70,7 @@ const AppRouter = () => {
             path="/recommend-freelancer"
             element={<RecommendFreelancer />}
           />
+          <Route path="finished" element={<FinishedProjectPage />} />
           <Route path="/freelancer-detail" element={<FreelancerDetailPage />} />
           <Route path="/registered-projects" element={<RegisteredProjects />} />
           <Route path="/suggest" element={<FreelancerSuggestPage />} />
