@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
     if args.data:
         # load_data(data_path=args.data_path)
-        preprocess_data(data_path=args.data_path, n_components=args.n_components)
+        preprocess_data(data_path=args.data_path, n_components=args.n_components, embed=True, similarity="cosine")
 
     # Recbole
     if args.type:
