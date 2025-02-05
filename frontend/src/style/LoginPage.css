@@ -1,0 +1,106 @@
+@import "colors.css";
+
+/* 전체 페이지 스타일 */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4f6f9;
+}
+
+/* 로그인 카드 */
+.login-card {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 450px;
+}
+
+/* 로고 */
+.login-logo img {
+  width: 80px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+/* 캐치프레이즈 */
+.login-caption {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* 로그인 폼 */
+.login-form input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.login-form input:focus {
+  border-color: var(--color-primary);
+}
+
+/* 로그인 옵션 (체크박스 & 비밀번호 찾기) */
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-bottom: 5px;
+}
+
+.remember-me input {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  margin-bottom: 0px;
+  cursor: pointer;
+}
+
+.forgot-password {
+  text-decoration: none;
+  color: var(--color-primary);
+  margin-bottom: 5px;
+}
+
+/* 로그인 버튼 */
+.login-button {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* 회원가입 텍스트 */
+.register-text {
+  font-size: 14px;
+  margin-top: 15px;
+}
+
+.register-text a {
+  color: var(--color-primary);
+  font-weight: bold;
+  text-decoration: none;
+}
