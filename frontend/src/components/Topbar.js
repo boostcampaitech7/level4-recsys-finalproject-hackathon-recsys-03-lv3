@@ -53,7 +53,7 @@ const Topbar = ({ isLoggedIn, setIsLoggedIn, userType }) => {
   return (
     <nav className="navbar">
       {/* 로고 영역 */}
-      <img src={logo} alt="Main Logo" onClick={() => navigate("/mainpage")} />
+      <img src={logo} alt="Main Logo" onClick={() => navigate("/")} />
 
       {/* 메뉴 영역 */}
       <ul className="nav-menu">
