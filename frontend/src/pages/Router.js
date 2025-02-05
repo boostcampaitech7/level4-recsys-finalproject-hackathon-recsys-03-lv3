@@ -7,7 +7,8 @@ import SearchProjectPage from "./SearchProjectPage";
 import Chat from "./Chat";
 import SearchFreelancer from "./SearchFreelancer";
 import RecommendFreelancer from "./RecommendFreelancer";
-import ProjectInput from "./ProjectInput";
+import ProjectInputPage from "./ProjectInputPage";
+import ProjectRegisterPage from "./ProjectRegisterPage";
 
 const AppRouter = () => {
   return (
@@ -28,7 +29,8 @@ const AppRouter = () => {
             path="/recommend-freelancer"
             element={<RecommendFreelancer />}
           />
-          <Route path="register-input" element={<ProjectInput />} />
+          <Route path="register-input" element={<ProjectInputPage />} />
+          <Route path="register-result" element={<ProjectRegisterPage />} />
         </Route>
       </Routes>
     </Router>

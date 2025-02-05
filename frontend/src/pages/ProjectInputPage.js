@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
-import "../style/ProjectInput.css";
+import "../style/ProjectInputPage.css";
 import ProfileIcon from "../components/ProfileIcon";
 import botphoto from "../assets/chat_logo.png";
 
@@ -65,7 +65,7 @@ const DropdownSelector = ({
   );
 };
 
-const ProjectInput = () => {
+const ProjectInputPage = () => {
   const navigate = useNavigate();
 
   const [chatHistory, setChatHistory] = useState([]);
@@ -140,7 +140,7 @@ const ProjectInput = () => {
       setChatHistory(updatedChat);
 
       setTimeout(() => {
-        navigate("/register");
+        navigate("/register-result", { state: { projectData } });
       }, 2000);
     } else {
       updatedChat.push({ sender: "bot", text: questions[step + 1] });
@@ -331,4 +331,4 @@ const ProjectInput = () => {
   );
 };
 
-export default ProjectInput;
+export default ProjectInputPage;
