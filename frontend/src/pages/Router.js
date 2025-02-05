@@ -4,9 +4,12 @@ import Layout from "../components/Layout";
 //import Dashboard from "./Dashboard";
 import LoginPage from "./LoginPage";
 import SearchProjectPage from "./SearchProjectPage";
-import Chat from "./Chat";
-import SearchFreelancer from "./SearchFreelancer";
-import RecommendFreelancer from "./RecommendFreelancer";
+import Chat from "./ChatPage";
+import SearchFreelancer from "./SearchFreelancerPage";
+import RecommendFreelancer from "./RecommendFreelancerPage";
+import RegisteredProjects from "./RegisteredProjectsPage";
+import FreelancerDetailPage from "./FreelancerDetailPage";
+import FreelancerSuggestPage from "./FreelancerSuggestPage";
 
 const AppRouter = () => {
   return (
@@ -27,6 +30,9 @@ const AppRouter = () => {
             path="/recommend-freelancer"
             element={<RecommendFreelancer />}
           />
+          <Route path="/freelancer-detail" element={<FreelancerDetailPage />} />
+          <Route path="/registered-projects" element={<RegisteredProjects />} />
+          <Route path="/suggest" element={<FreelancerSuggestPage />} />
         </Route>
       </Routes>
     </Router>
