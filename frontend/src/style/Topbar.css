@@ -1,0 +1,104 @@
+@import "colors.css";
+
+.navbar {
+  background-color: white;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 3px 30px;
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  position: relative;
+  transition: all 0.1s ease;
+}
+
+.navbar img {
+  height: 65px;
+  margin-left: 50px;
+  cursor: pointer;
+}
+
+.navbar ul {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0 30px;
+  list-style: none;
+  position: relative;
+  top: 5px;
+}
+
+.navbar li {
+  margin: 0 10px;
+}
+
+.nav-link-btn {
+  color: black;
+  text-decoration: none;
+  font-weight: 400;
+  padding: 10px 10px;
+  transition: all 0.3s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.nav-link-btn:hover {
+  font-weight: 500;
+}
+
+.login-btn {
+  width: 55px;
+  height: 55px;
+}
+
+.custom-dropdown-menu {
+  display: block;
+  position: absolute;
+  right: 0;
+  margin-top: 4px;
+  background-color: white;
+  border: 1px solid var(--color-secondary);
+  border-radius: 4px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+  margin: 5px 2px;
+  text-align: left;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: var(--color-bg);
+}
+
+.dropdown-item i {
+  font-size: 14px; /* 아이콘 크기 */
+  width: 20px; /* 아이콘이 정렬되도록 고정된 너비 */
+  text-align: center;
+  color: var(--color-secondary); /* 기존 text-gray-400과 유사한 색상 */
+}
+
+@media (max-width: 1200px) {
+  .navbar {
+    padding: 3px 10px;
+    font-size: 13px;
+  }
+
+  .navbar img {
+    height: 50px;
+    margin-left: 30px;
+  }
+
+  .navbar li {
+    margin: 10px 5px;
+  }
+}

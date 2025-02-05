@@ -1,0 +1,4 @@
+seed: 42
+data_path: "datasets/"
+output_path: "output/"
+repo_name: "TaroSin/HRmony"

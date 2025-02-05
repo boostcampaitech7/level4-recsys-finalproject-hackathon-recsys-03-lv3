@@ -1,0 +1,55 @@
+@import "colors.css";
+
+.star-rating-container {
+  display: flex;
+  gap: 12px;
+}
+
+.star-rating {
+  display: flex;
+  gap: 4px;
+  cursor: pointer;
+  font-size: 24px;
+  user-select: none;
+}
+
+.star-rating div {
+  font-size: 20px; /* 별 크기 */
+  color: orange; /* 별 색상 */
+  vertical-align: middle; /* 세로 정렬 */
+  margin-right: 2px; /* 별 사이 여백 */
+}
+
+.star {
+  position: relative;
+  width: 24px;
+  height: 30px;
+  overflow: hidden;
+  color: var(--color-secondary);
+}
+
+.star.full {
+  color: var(--color-star);
+}
+
+.star.half::before {
+  content: "★";
+  position: absolute;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  color: var(--color-star);
+  overflow: hidden;
+}
+
+.star.empty {
+  color: var(--color-secondary);
+}
+
+.score-display {
+  font-size: 18px;
+  color: #333;
+  font-weight: bold;
+  position: relative;
+  top: 5px;
+}
