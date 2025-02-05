@@ -1,19 +1,18 @@
-import os
-import pandas as pd
 import json
-
-from sqlalchemy import text
-from dotenv import load_dotenv
-from langchain_upstage import UpstageEmbeddings
-from typing import Tuple, List, Dict
-from sklearn.preprocessing import MultiLabelBinarizer
-
-from api.db import SessionLocal
-from src.utils import check_path
+import os
 
 import numpy as np
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
+import pandas as pd
+import torch
+import torch.nn as nn
+
+from sqlalchemy import text
+from api.db import SessionLocal
+from src.utils import check_path
+from src.preprocessing import Preprocessing
+
+from typing import Optional, Union
+
 
 def load_data(data_path: str):
     """
@@ -115,159 +114,160 @@ def load_data(data_path: str):
         db.close()
 
 
-def preprocess_data(data_path: str, n_components: int):
+def preprocess_data(
+        data_path: str, 
+        n_components: int, 
+        embed: bool = False, 
+        similarity: Optional[str] = None
+    ) -> Optional[Union[np.ndarray, torch.Tensor]]:
     """
     데이터 전처리 함수
 
     Args:
         data_path (str): 데이터 저장 경로
-        n_components (int): 주성분 개수
+        n_components (int): 텍스트 임베딩 벡터에 사용할 PCA 주성분 개수
+        embed (bool): 전처리 방식. 임베딩을 사용할 경우 True. 기본값은 False (인코딩)
+        similarity (Optional[str]): 유사도를 추가 피처로 사용할 경우 종류 선택. 기본값은 None
+                                    ("cosine", "dot_product", "elementwise_product", "jaccard")
+    
+    Returns:
+        Optional[Union[np.ndarray, torch.Tensor]]: similarity를 선택하면 유사도 출력. 기본값은 None
     """
     project_df = pd.read_csv(os.path.join(data_path, "project.csv"))
     freelancer_df = pd.read_csv(os.path.join(data_path, "freelancer.csv"))
-    project_df = project_df.head(5)
-    freelancer_df = freelancer_df.head(5)
 
-    print("📍 preprocessing project ==============================")
+    print("📍 preprocessing project data ==============================")
+    # 텍스트 임베딩 (Upstage Embeddings -> PCA)
     project_df = Preprocessing.text_embedding(project_df, "project_content", n_components)
+    
+    # 범주형 변수 인코딩 (멀티-핫)
+    project_df = Preprocessing.encode_categorical_features(
+        project_df, 
+        categorical_cols=["category_id", "skill_id"]
+    )
 
-    print("📍 preprocessing freelancer ===========================")
-
-    # project_df.to_csv(os.path.join(data_path, "project_test.csv"), index=False)
-    # freelancer_df.to_csv(os.path.join(data_path, "freelancer_test.csv"), index=False)
-
-
-class Preprocessing:
-    def text_embedding(df: pd.DataFrame, col_name: str, n_components: int) -> pd.DataFrame:
-        """
-        텍스트 임베딩 함수 (Upstage Embeddings 사용)
-
-        Args
-            df (pd.DataFrame): 임베딩할 텍스트 컬럼이 있는 데이터프레임
-            col_name (str): 임베딩할 텍스트 컬럼명
-            n_components (int): 주성분 개수
-
-        Returns:
-            pd.DataFrame: 임베딩된 텍스트 컬럼이 포함된 데이터프레임
-        """
-        load_dotenv()
-        UPSTAGE_TOKEN = os.getenv("UPSTAGE_TOKEN")
-
-        embeddings = UpstageEmbeddings(
-            api_key=UPSTAGE_TOKEN,
-            model="embedding-passage"
+    if embed:
+        project_category_df = project_df.iloc[:, 6:16]
+        project_skill_df = project_df.iloc[:, 16:]
+        
+        # 범주형 변수 임베딩 (torch.nn.Embedding)
+        project_category_df = Preprocessing.embed_categorical_features(
+            project_category_df, 
+            num_features=project_category_df.shape[1],
+            embedding_dim=16,
+            name="project",
+            feature="category",
+        )
+        project_skill_df = Preprocessing.embed_categorical_features(
+            project_skill_df, 
+            num_features=project_skill_df.shape[1], 
+            embedding_dim=16,
+            name="project",
+            feature="skill",
         )
 
-        emb_results = embeddings.embed_documents(df[col_name].tolist())
-        df[col_name] = emb_results
+        # 기존 인코딩 변수 제거 후 임베딩 변수 추가
+        project_df = project_df.drop(columns=project_df.columns[6:])
+        project_df = pd.concat([project_df, project_category_df, project_skill_df], axis=1)
 
-        # 특정 컬럼의 데이터를 numpy 배열로 변환하고, 각 배열을 reshape하여 1행 n열 형태로 변환
-        df_col_name = df[col_name].apply(lambda x: np.array(x).reshape(1,-1))
+    print("📍 preprocessing freelancer data ===========================")
+    # 범주형 변수 인코딩 (멀티-핫)
+    freelancer_df = Preprocessing.encode_categorical_features(
+        freelancer_df, 
+        categorical_cols=["category_id", "skill_id"], 
+        skill_col="skill_id",
+        expertise_col="skill_temp"
+    )
 
-        # 변환된 배열들을 하나의 numpy 배열로 합침 (axis=0을 기준으로 합침)
-        df_col_name = np.concatenate(df_col_name.values, axis=0)
-
-        # numpy 배열을 다시 pandas DataFrame으로 변환
-        df_col_name = pd.DataFrame(df_col_name)
-
-        # StandardScaler를 사용하여 데이터를 표준화 (평균 0, 표준편차 1로 조정)
-        scaler = StandardScaler()
-        X_scaled = scaler.fit_transform(df_col_name)
-
-        #  PCA 모델 생성 및 학습
-        np.random.seed(42)
-        pca = PCA(n_components=n_components, random_state=42)
-        X_pca = pca.fit_transform(X_scaled)
-
-        # PCA 결과를 pandas DataFrame으로 변환
-        x_pca_df = pd.DataFrame(X_pca)
-
-        # 새로운 컬럼 이름 생성 후 변경 (예: project_content_0, project_content_1, ...)
-        new_columns = [f"project_content_{i}" for i in range(len(x_pca_df.columns))]
-        x_pca_df.columns = new_columns
-
-        # 원본 DataFrame에 PCA 결과를 병합 (인덱스를 기준으로 병합)
-        df = pd.merge(df, x_pca_df, left_index=True, right_index=True)
-
-        # 원래의 "project_content" 컬럼을 삭제
-        df = df.drop("project_content", axis=1)
-
-        return df
-
-    def parse_column(value: str) -> Tuple[List[str], Dict[str, float]]:
-        """
-        JSON 형태 또는 리스트 형태의 문자열 데이터를 파싱하여 리스트로 변환하는 함수.
-
-        Args:
-            value(str) : JSON 문자열 또는 리스트 문자열
-
-        Returns:
-            list : 변환된 리스트
-            dict : 가중치 딕셔너리 (프리랜서 skill_id만 해당, 없으면 빈 딕셔너리)
-        """
-        parsed_list = []
-        weights = {}
-
-        try:
-            parsed = json.loads(value.replace("'", '"')) if "{" in value else eval(value)
-
-            if isinstance(parsed, list):
-                if all(isinstance(item, dict) for item in parsed):
-                    for skill in parsed:
-                        parsed_list.append(skill["skill_id"])
-                        weights[skill["skill_id"]] = skill.get("skill_score", 1)
-                else:
-                    parsed_list = parsed
-        except (json.JSONDecodeError, SyntaxError, TypeError):
-            pass
-
-        return parsed_list, weights
-
-    def multi_hot_encoding(
-            df: pd.DataFrame,
-            label_col: str,
-            pivot_col: str,
-            weight_col: str = None
-    ) -> pd.DataFrame:
-        """
-        프로젝트 및 프리랜서의 스킬을 멀티-핫 인코딩하는 함수
-        (프리랜서의 경우 스킬 온도를 적용)
-
-        Args:
-            df (pd.DataFrame): pivot_col과 label_col을 포함하는 데이터프레임
-            label_col (str): 멀티핫 인코딩할 스킬 컬럼명
-            pivot_col (str): 그룹화할 기준이 되는 컬럼명 (project_id 또는 freelancer_id)
-            weight_col (str, optional): 스킬 가중치를 적용할 경우 제공할 컬럼명 (프리랜서만 해당)
-
-        Returns:
-            pd.DataFrame: 멀티핫 인코딩(및 가중치 적용)이 완료된 데이터프레임 반환
-        """
-
-        # 스킬 컬럼을 리스트 형태로 변환
-        df[["parsed_values", "parsed_weights"]] = df[label_col].apply(
-            lambda x: pd.Series(Preprocessing.parse_column(str(x)))
+    if embed:
+        freelancer_category_df = freelancer_df.iloc[:, 3:13]
+        freelancer_skill_df = freelancer_df.iloc[:, 13:]
+        
+        # 범주형 변수 임베딩 (torch.nn.Embedding)
+        freelancer_category_df = Preprocessing.embed_categorical_features(
+            freelancer_category_df,
+            num_features=freelancer_category_df.shape[1], 
+            embedding_dim=16,
+            name="freelancer",
+            feature="category",
+        )
+        freelancer_skill_df = Preprocessing.embed_categorical_features(
+            freelancer_skill_df,
+            num_features=freelancer_skill_df.shape[1], 
+            embedding_dim=16,
+            name="freelancer",
+            feature="skill",
+            weight=True
         )
 
-        # pivot_col별 "parsed_values"를 리스트로 묶기
-        grouped_df = df.groupby(pivot_col)["parsed_values"].sum().reset_index()
+        # 기존 인코딩 변수 제거 후 임베딩 변수 추가
+        freelancer_df = freelancer_df.drop(columns=freelancer_df.columns[3:])
+        freelancer_df = pd.concat([freelancer_df, freelancer_category_df, freelancer_skill_df], axis=1)
 
-        # MultiLabelBinarizer를 사용하여 멀티 핫 인코딩 수행
-        mlb = MultiLabelBinarizer()
-        multi_hot_encoded = mlb.fit_transform(grouped_df["parsed_values"])
+    project_df.to_csv(os.path.join(data_path, "project.csv"), index=False)
+    freelancer_df.to_csv(os.path.join(data_path, "freelancer.csv"), index=False)
 
-        # 결과를 데이터프레임으로 변환
-        multi_hot_df = pd.DataFrame(multi_hot_encoded, columns=mlb.classes_)
-        multi_hot_df.insert(0, pivot_col, grouped_df[pivot_col])
+    # 유사도 계산 (인코딩/임베딩 둘 다 사용 가능. 단, 자카드 유사도는 인코딩만 사용 가능)
+    match similarity:
+        case "cosine":
+            print(f"📍 calculating {similarity} similiarities ==============================")
+            category_similarity = Preprocessing.calculate_similarity_matrix(
+                project_category_df,
+                freelancer_category_df,
+                method="cosine"
+            )
+            skill_similarity = Preprocessing.calculate_similarity_matrix(
+                project_skill_df,
+                freelancer_skill_df,
+                method="cosine"
+            )
 
-        # 가중치 적용 (프리랜서 스킬 온도 적용)
-        if weight_col and "parsed_weights" in df:
-            weight_map = {
-                row[pivot_col]: row["parsed_weights"] for _, row in df.iterrows()
-            }
-            for skill in mlb.classes_:
-                if skill in multi_hot_df.columns:
-                    multi_hot_df[skill] = multi_hot_df[pivot_col].map(
-                        lambda x: weight_map.get(x, {}).get(skill, 1)
-                    ) * multi_hot_df[skill]
+            return category_similarity, skill_similarity
+        
+        case "dot_product":
+            print(f"📍 calculating {similarity} similiarities ==============================")
+            category_similarity = Preprocessing.calculate_similarity_matrix(
+                project_category_df,
+                freelancer_category_df,
+                method="dot_product"
+            )
+            skill_similarity = Preprocessing.calculate_similarity_matrix(
+                project_skill_df,
+                freelancer_skill_df,
+                method="dot_product"
+            )
 
-        return multi_hot_df
+            return category_similarity, skill_similarity
+        
+        case "elementwise_product":
+            print(f"📍 calculating {similarity} similiarities ==============================")
+            category_similarity = Preprocessing.calculate_similarity_matrix(
+                project_category_df,
+                freelancer_category_df,
+                method="elementwise_product"
+            )
+            skill_similarity = Preprocessing.calculate_similarity_matrix(
+                project_skill_df,
+                freelancer_skill_df,
+                method="elementwise_product"
+            )
+
+            return category_similarity, skill_similarity
+        
+        case "jaccard":
+            print(f"📍 calculating {similarity} similiarities ==============================")
+            category_similarity = Preprocessing.calculate_similarity_matrix(
+                project_category_df,
+                freelancer_category_df,
+                method="jaccard"
+            )
+            skill_similarity = Preprocessing.calculate_similarity_matrix(
+                project_skill_df,
+                freelancer_skill_df,
+                method="jaccard"
+            )
+
+            return category_similarity, skill_similarity
+        
+        case _: 
+            raise ValueError("Invalid input: Similarity should be 'cosine', 'dot_product', 'elementwise-product' and 'jaccard'.")
