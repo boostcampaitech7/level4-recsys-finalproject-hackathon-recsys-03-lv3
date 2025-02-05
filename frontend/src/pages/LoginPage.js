@@ -1,89 +1,88 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import logo from "../assets/logo_primary.png";
+import "../style/LoginPage.css"; // 스타일 적용
 
-const LoginPage = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [rememberMe, setRememberMe] = useState(false);
+const LoginPage = ({ setIsLoggedIn }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(
+    localStorage.getItem("rememberMe") === "true"
+  );
+  const navigate = useNavigate();
 
-    const handleLogin = (e) => {
-        e.preventDefault();
-        console.log("Login Attempt:", { email, password, rememberMe });
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (email === "test@example.com" && password === "password") {
+      setIsLoggedIn(true); // 로그인 상태 업데이트
 
-    };
+      // 로그인 유지 설정
+      if (rememberMe) {
+        localStorage.setItem("rememberMe", "true");
+      } else {
+        localStorage.removeItem("rememberMe");
+      }
 
-    return (
-        <div className="bg-gradient-primary" style={{ minHeight: "100vh" }}>
-            <div className="container">
-                {/* Outer Row */}
-                <div className="row justify-content-center">
-                    <div className="col-xl-10 col-lg-12 col-md-9">
-                        <div className="card o-hidden border-0 shadow-lg my-5">
-                            <div className="card-body p-0">
-                                {/* Nested Row within Card Body */}
-                                <div className="row">
-                                    <div className="col-lg-6 d-none d-lg-block bg-login-image"></div>
-                                    <div className="col-lg-6">
-                                        <div className="p-5">
-                                            <div className="text-center">
-                                                <h1 className="h4 text-gray-900 mb-4">Welcome Back!</h1>
-                                            </div>
-                                            <form className="user" onSubmit={handleLogin}>
-                                                <div className="form-group">
-                                                    <input 
-                                                        type="email" 
-                                                        className="form-control form-control-user" 
-                                                        id="exampleInputEmail" 
-                                                        aria-describedby="emailHelp" 
-                                                        placeholder="Enter Email Address..."
-                                                        value={email}
-                                                        onChange={(e) => setEmail(e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="form-group">
-                                                    <input 
-                                                        type="password" 
-                                                        className="form-control form-control-user" 
-                                                        id="exampleInputPassword" 
-                                                        placeholder="Password"
-                                                        value={password}
-                                                        onChange={(e) => setPassword(e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="form-group">
-                                                    <div className="custom-control custom-checkbox small">
-                                                        <input 
-                                                            type="checkbox" 
-                                                            className="custom-control-input" 
-                                                            id="customCheck"
-                                                            checked={rememberMe}
-                                                            onChange={() => setRememberMe(!rememberMe)}
-                                                        />
-                                                        <label className="custom-control-label" htmlFor="customCheck">
-                                                            Remember Me
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <button type="submit" className="btn btn-primary btn-user btn-block">
-                                                    Login
-                                                </button>
-                                            </form>
-                                            <hr />
-                                            <div className="text-center">
-                                                <a className="small" href="forgot-password.html">Forgot Password?</a>
-                                            </div>
-                                            <div className="text-center">
-                                                <a className="small" href="register.html">Create an Account!</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      navigate("/");
+    } else {
+      alert("잘못된 이메일 또는 비밀번호입니다.");
+    }
+  };
+
+  return (
+    <div className="login-container">
+      <div className="login-card">
+        {/* 로고 */}
+        <div className="login-logo">
+          <img src={logo} alt="Harmony Logo" />
         </div>
-    );
+
+        {/* 캐치프레이즈 */}
+        <p className="login-caption">HRmony</p>
+
+        {/* 로그인 폼 */}
+        <form onSubmit={handleLogin} className="login-form">
+          <input
+            type="email"
+            placeholder="이메일"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="비밀번호"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+
+          <div className="login-options">
+            <label className="remember-me">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={() => setRememberMe((prev) => !prev)}
+              />
+              로그인 상태 유지
+            </label>
+            <a href="/forgot-password" className="forgot-password">
+              비밀번호 찾기
+            </a>
+          </div>
+
+          <button type="submit" className="login-button">
+            로그인
+          </button>
+        </form>
+
+        {/* 회원가입 링크 */}
+        <p className="register-text">
+          아직 회원이 아니신가요? <a href="/register">회원가입</a>
+        </p>
+      </div>
+    </div>
+  );
 };
 
 export default LoginPage;
