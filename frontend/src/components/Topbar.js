@@ -5,7 +5,15 @@ import photo from "../assets/profile_example1.jpg";
 import ProfileIcon from "./ProfileIcon";
 import "../style/Topbar.css";
 
-const Topbar = ({ isLoggedIn, setIsLoggedIn, userType }) => {
+const Topbar = () => {
+  const token =
+    sessionStorage.getItem("token") || localStorage.getItem("token");
+  const userId =
+    sessionStorage.getItem("userId") || localStorage.getItem("userId");
+  const userName =
+    sessionStorage.getItem("userName") || localStorage.getItem("userName");
+  const userType =
+    sessionStorage.getItem("userType") || localStorage.getItem("userType");
   const navigate = useNavigate();
   const [dropdownState, setDropdownState] = useState({
     projectDropdownOpen: false,
@@ -13,11 +21,9 @@ const Topbar = ({ isLoggedIn, setIsLoggedIn, userType }) => {
   });
 
   const handleLogout = () => {
-    setIsLoggedIn(false); // 로그아웃 시 상태 변경
-    setDropdownState({
-      projectDropdownOpen: false,
-      freelancerDropdownOpen: false,
-    });
+    sessionStorage.removeItem("token");
+    localStorage.removeItem("token");
+    window.location.href = "/login"; // 로그인 페이지로 이동
   };
 
   const toggleDropdown = (dropdownName) => {
@@ -53,7 +59,7 @@ const Topbar = ({ isLoggedIn, setIsLoggedIn, userType }) => {
   return (
     <nav className="navbar">
       {/* 로고 영역 */}
-      <img src={logo} alt="Main Logo" onClick={() => navigate("/mainpage")} />
+      <img src={logo} alt="Main Logo" onClick={() => navigate("/main-page")} />
 
       {/* 메뉴 영역 */}
       <ul className="nav-menu">
@@ -74,7 +80,6 @@ const Topbar = ({ isLoggedIn, setIsLoggedIn, userType }) => {
             프로젝트 찾기
           </button>
         </li>
-
         {/* userType에 따라 프로젝트 관리 버튼 */}
         {userType === 1 ? (
           <li className="nav-item dropdown">
@@ -117,46 +122,44 @@ const Topbar = ({ isLoggedIn, setIsLoggedIn, userType }) => {
             </button>
           </li>
         )}
-
-        <li className="nav-item dropdown no-arrow">
-          <button
-            className="nav-link-btn dropdown-toggle"
-            id="freelancerDropdown"
-            onClick={() => toggleDropdown("freelancer")} // 클릭 시 토글
-          >
-            <ProfileIcon
-              profileImage={photo}
-              style={{ width: "35px", height: "35px", margin: "0" }}
-            />
-          </button>
-          {dropdownState.freelancerDropdownOpen && (
-            <div
-              className="custom-dropdown-menu"
-              aria-labelledby="userDropdown"
+        {token ? (
+          <li className="nav-item dropdown no-arrow">
+            <button
+              className="nav-link-btn dropdown-toggle"
+              id="freelancerDropdown"
+              onClick={() => toggleDropdown("freelancer")} // 클릭 시 토글
             >
-              <button
-                className="dropdown-item"
-                onClick={() => navigate("/mypage")}
+              <ProfileIcon
+                profileImage={photo}
+                style={{ width: "35px", height: "35px", margin: "0" }}
+              />
+            </button>
+            {dropdownState.freelancerDropdownOpen && (
+              <div
+                className="custom-dropdown-menu"
+                aria-labelledby="userDropdown"
               >
-                <i className="fas fa-user fa-sm fa-fw mr-3 text-gray-400"></i>
-                마이페이지
-              </button>
-              <button className="dropdown-item" onClick={handleLogout}>
-                <i className="fas fa-sign-out-alt fa-sm fa-fw mr-3 text-gray-400"></i>
-                로그아웃
-              </button>
-            </div>
-          )}
-        </li>
-        {/* 로그인 구현 완료 시 연결  
-        {isLoggedIn ? (
+                <button
+                  className="dropdown-item"
+                  onClick={() => navigate("/mypage")}
+                >
+                  <i className="fas fa-user fa-sm fa-fw mr-3 text-gray-400"></i>
+                  마이페이지
+                </button>
+                <button className="dropdown-item" onClick={handleLogout}>
+                  <i className="fas fa-sign-out-alt fa-sm fa-fw mr-3 text-gray-400"></i>
+                  로그아웃
+                </button>
+              </div>
+            )}
+          </li>
         ) : (
           <li>
             <a href="/login" className="login-btn">
               로그인
             </a>
           </li>
-        )} */}
+        )}
       </ul>
     </nav>
   );

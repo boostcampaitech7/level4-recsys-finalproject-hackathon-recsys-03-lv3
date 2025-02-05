@@ -10,6 +10,7 @@ import RecommendFreelancer from "./RecommendFreelancerPage";
 import RegisteredProjects from "./RegisteredProjectsPage";
 import FreelancerDetailPage from "./FreelancerDetailPage";
 import FreelancerSuggestPage from "./FreelancerSuggestPage";
+import MainPage from "./MainPage";
 
 const AppRouter = () => {
   return (
@@ -23,6 +24,7 @@ const AppRouter = () => {
           {/* Layout 내부의 하위 경로 */}
           {/* <Route index element={<Dashboard />} /> */}
           {/* 추가 경로 */}
+          <Route path="/main-page" element={<MainPage />} />
           <Route path="/search-project" element={<SearchProjectPage />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/search-freelancer" element={<SearchFreelancer />} />
