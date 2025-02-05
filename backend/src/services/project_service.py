@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
 from src.models import Project, Category, ProjectSkill, Skill, Company, Location, ProjectRanking, ProjectApplicants, Feedback, FreelancerSkill
-from src.schemas.project import ProjectRequest, FeedbackRequest, ProjectListResponse, ProjectDetailResponse, ProjectFeedbackResponse, CompanyResponse
+from src.schemas.project import ProjectRequest, FeedbackRequest, ProjectListResponse, ProjectDetailResponse, ProjectFeedbackResponse, CompanyResponse, ProjectProgressResponse
 from src.utils.error_messages import ERROR_MESSAGES
 
 MAX_CNT = 50
@@ -500,7 +500,7 @@ class ProjectService:
         error_message = ""
         # 프리랜서
         if search_type == 0:
-            query = query.filter(Project.freelancer_id == user_id, Project.status.in_(1, 2))
+            query = query.filter(Project.freelancer_id == user_id, Project.status.in_([1, 2]))
             error_message = f"프리랜서({user_id})의 프로젝트 리스트"
         # 기업
         elif search_type == 1:
@@ -546,9 +546,9 @@ class ProjectService:
             fc = feedback_dict.get(project_dict["projectId"])
             if fc is not None and hasattr(fc, "read"):
                 project_dict["feedbackContent"] = fc.read()
+                project_dict["feedbackContent"] = project_dict["feedbackContent"].replace("\\n", "\n")
             else:
                 project_dict["feedbackContent"] = fc
-            project_dict["feedbackContent"] = project_dict["feedbackContent"].replace("\\n", "\n")
             processed_projects.append(ProjectFeedbackResponse(**project_dict))
 
         return processed_projects
@@ -587,7 +587,9 @@ class ProjectService:
                         FreelancerSkill.freelancer_id == feedback_data.freelancerId,
                         FreelancerSkill.skill_id == skill_id
                     )
-                    .values(skill_score=(FreelancerSkill.skill_score * 0.8 + feedback_data.expertise * 0.2))
+                    .values(skill_score=func.least(
+                        func.greatest(FreelancerSkill.skill_score * 0.8 + feedback_data.expertise * 0.2, 0), 5)
+                    )
                 )
 
             db.commit()
@@ -639,3 +641,44 @@ class ProjectService:
             )
 
         return CompanyResponse(**dict(company._mapping))
+
+    def get_project_progress(
+        freelancer_id: int,
+        db: Session
+    ) -> ProjectProgressResponse:
+        """
+        프리랜서 상세 조회(프로젝트 진행상황)
+
+        Args:
+            freelancer_id (int): 프리랜서 ID
+            db (Session): SQLAlchemy 데이터베이스 세션
+
+        Returns:
+            ProjectProgressResponse: 조회된 프리랜서 진행상황 정보
+        """
+        progress = (
+            db.query(
+                func.count(Project.freelancer_id).label("projectCount"),
+                func.sum(
+                    case(
+                        (Project.status == 1, 1),
+                        else_=0
+                    )
+                ).label("ongoingCount"),
+                func.sum(
+                    case(
+                        (Project.status == 2, 1),
+                        else_=0
+                    )
+                ).label("completedCount")
+            ).filter(Project.freelancer_id == freelancer_id)
+            .first()
+        )
+
+        if not progress:
+            raise HTTPException(
+                status_code=ERROR_MESSAGES["NOT_FOUND"]["status"],
+                detail=ERROR_MESSAGES["NOT_FOUND"]["message"].format(f"프리랜서({freelancer_id})의 프로젝트 진행상황")
+            )
+
+        return ProjectProgressResponse(**progress._mapping)

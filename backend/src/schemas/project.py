@@ -104,3 +104,9 @@ class CompanyResponse(BaseModel):
     companyName: str
     companyContent: str
     locationName: str
+
+
+class ProjectProgressResponse(BaseModel):
+    projectCount: int
+    ongoingCount: int
+    completedCount: int

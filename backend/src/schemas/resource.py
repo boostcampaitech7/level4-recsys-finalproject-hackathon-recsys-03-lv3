@@ -12,10 +12,10 @@ class ResourceListResponse(BaseModel):
     workType: int
     role: str
     freelancerContent: str
+    locationName: str
     categoryList: List[str]
     skillList: List[str]
     skillScoreList: List[float]
-    locationName: str
     feedbackCount: Optional[int] = None
     feedbackScore: Optional[float] = None
     expertise: Optional[float] = None
@@ -29,9 +29,3 @@ class ResourceListResponse(BaseModel):
     @validator("categoryList", "skillList", "skillScoreList", pre=True)
     def parse_skill_list(cls, value: str) -> List[Union[int, float, str]]:
         return parse_json_to_list(value)
-
-
-class ResourceProgressResponse(BaseModel):
-    projectCount: int
-    ongoingCount: int
-    completedCount: int
