@@ -5,24 +5,58 @@ import photo from "../assets/profile_example1.jpg";
 import ProfileIcon from "./ProfileIcon";
 import "../style/Topbar.css";
 
-const Topbar = ({ isLoggedIn, setIsLoggedIn, userType }) => {
+const Topbar = () => {
+  const token =
+    sessionStorage.getItem("token") || localStorage.getItem("token");
+  const userId =
+    sessionStorage.getItem("userId") || localStorage.getItem("userId");
+  const userName =
+    sessionStorage.getItem("userName") || localStorage.getItem("userName");
+  const userType =
+    sessionStorage.getItem("userType") || localStorage.getItem("userType");
   const navigate = useNavigate();
   const [dropdownState, setDropdownState] = useState({
     projectDropdownOpen: false,
     freelancerDropdownOpen: false,
   });
 
-  const handleLogout = () => {
-    localStorage.removeItem("rememberMe"); // 로그인 유지 해제
-    setIsLoggedIn(false); // 로그아웃 시 상태 변경
-    setDropdownState({
-      projectDropdownOpen: false,
-      freelancerDropdownOpen: false,
-    });
-    navigate("/"); // 로그아웃 후 메인 페이지로 이동 (상태 변경 후 실행)
-    setTimeout(() => {
-      window.location.reload();
-    }, 100);
+  const handleLogout = async () => {
+    const token =
+      localStorage.getItem("token") || sessionStorage.getItem("token");
+
+    if (!token) {
+      console.warn("이미 로그아웃된 상태입니다.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/api/auth/logout`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`, // JWT 토큰 포함
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        console.log("✅ 서버 로그아웃 성공");
+      } else {
+        console.error("🚨 서버 로그아웃 실패");
+      }
+    } catch (error) {
+      console.error("🚨 로그아웃 요청 중 오류 발생:", error);
+    }
+
+    // 토큰 삭제 (클라이언트에서 세션 종료)
+    localStorage.removeItem("token");
+    localStorage.removeItem("expiresAt");
+    sessionStorage.removeItem("token");
+
+    // 메인 페이지로 이동
+    window.location.href = "/";
   };
 
   const toggleDropdown = (dropdownName) => {
@@ -58,7 +92,7 @@ const Topbar = ({ isLoggedIn, setIsLoggedIn, userType }) => {
   return (
     <nav className="navbar">
       {/* 로고 영역 */}
-      <img src={logo} alt="Main Logo" onClick={() => navigate("/")} />
+      <img src={logo} alt="Main Logo" onClick={() => navigate("/mainpage")} />
 
       {/* 메뉴 영역 */}
       <ul className="nav-menu">
@@ -79,7 +113,6 @@ const Topbar = ({ isLoggedIn, setIsLoggedIn, userType }) => {
             프로젝트 찾기
           </button>
         </li>
-
         {/* userType에 따라 프로젝트 관리 버튼 */}
         {userType === 1 ? (
           <li className="nav-item dropdown">
@@ -122,8 +155,7 @@ const Topbar = ({ isLoggedIn, setIsLoggedIn, userType }) => {
             </button>
           </li>
         )}
-
-        {isLoggedIn ? (
+        {token ? (
           <li className="nav-item dropdown no-arrow">
             <button
               className="nav-link-btn dropdown-toggle"

@@ -3,29 +3,56 @@ import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo_primary.png";
 import "../style/LoginPage.css";
 
-const LoginPage = ({ setIsLoggedIn }) => {
+const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(
-    localStorage.getItem("rememberMe") === "true"
-  );
-  const navigate = useNavigate();
+  const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (email === "test@example.com" && password === "1") {
-      setIsLoggedIn(true); // 로그인 상태 업데이트
+    setError(null); // 기존 에러 초기화
 
-      // 로그인 유지 설정
-      if (rememberMe) {
-        localStorage.setItem("rememberMe", "true");
-      } else {
-        localStorage.removeItem("rememberMe");
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Login failed");
       }
 
-      navigate("/");
-    } else {
-      alert("잘못된 이메일 또는 비밀번호입니다.");
+      // 토큰 저장 (Remember Me 체크 여부에 따라 저장 위치 변경)
+      if (rememberMe) {
+        localStorage.setItem("token", data.token);
+      } else {
+        sessionStorage.setItem("token", data.token);
+      }
+
+      const expiresAt = new Date().getTime() + 60 * 60 * 1000; // 1시간 후 (밀리초 단위)
+
+      sessionStorage.setItem("userId", data.userId);
+      sessionStorage.setItem("userName", data.userName);
+      sessionStorage.setItem("userType", data.userType);
+      sessionStorage.setItem("expiresAt", expiresAt); // 만료 시간 저장
+
+      console.log("Login Success:", data);
+
+      // 로그인 성공 후 페이지 이동 (예: 대시보드)
+      window.location.href = "/";
+    } catch (err) {
+      console.error("Login Error:", err.message);
+      setError(err.message);
     }
   };
 

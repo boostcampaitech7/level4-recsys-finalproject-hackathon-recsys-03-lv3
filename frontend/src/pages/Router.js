@@ -17,66 +17,77 @@ import FreelancerDetailPage from "./FreelancerDetailPage";
 import AppliedProjectPage from "./AppliedProjectPage";
 import FinishedProjectPage from "./FinishedProjectPage";
 import FreelancerSuggestPage from "./FreelancerSuggestPage";
+import CompanyMyPage from "./CompanyMyPage";
 
 const AppRouter = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return localStorage.getItem("rememberMe") === "true";
-  });
+  // 로그인 정보 상태(state) 저장
+  const [token, setToken] = useState(
+    sessionStorage.getItem("token") || localStorage.getItem("token")
+  );
+  const [userId, setUserId] = useState(
+    sessionStorage.getItem("userId") || localStorage.getItem("userId")
+  );
+  const [userName, setUserName] = useState(
+    sessionStorage.getItem("userName") || localStorage.getItem("userName")
+  );
+  const [userType, setUserType] = useState(
+    sessionStorage.getItem("userType") || localStorage.getItem("userType")
+  );
 
+  // sessionStorage 값 변경 감지
   useEffect(() => {
-    const savedLogin = localStorage.getItem("rememberMe") === "true";
-    setIsLoggedIn(savedLogin);
-  }, []);
+    const handleStorageChange = () => {
+      setToken(
+        sessionStorage.getItem("token") || localStorage.getItem("token")
+      );
+      setUserId(
+        sessionStorage.getItem("userId") || localStorage.getItem("userId")
+      );
+      setUserName(
+        sessionStorage.getItem("userName") || localStorage.getItem("userName")
+      );
+      setUserType(
+        sessionStorage.getItem("userType") || localStorage.getItem("userType")
+      );
+    };
 
-  // const handleLogout = () => {
-  //   localStorage.removeItem("rememberMe"); // 로그인 유지 해제
-  //   setIsLoggedIn(false); // 상태 변경
-  // };
+    // window 이벤트 리스너 추가 (로그인 후 변경 감지)
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
   return (
     <Router>
       <Routes>
         {/* 로그인 페이지 */}
-        <Route
-          path="/login"
-          element={<LoginPage setIsLoggedIn={setIsLoggedIn} />}
-        />
+        <Route path="/login" element={<LoginPage />} />
 
-        <Route
-          path="/"
-          element={
-            <Layout isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-          }
-        >
-          {/* 메인 페이지를 기본으로 설정 */}
+        {/* Layout 적용된 경로 */}
+        <Route path="/" element={<Layout />}>
+          {/* Layout 내부의 하위 경로 */}
           <Route index element={<MainPage />} />
-
-          <Route path="/search-freelancer" element={<SearchFreelancer />} />
           <Route path="/search-project" element={<SearchProjectPage />} />
-
-          {/* 추가 경로 */}
-          {isLoggedIn ? (
-            <>
-              <Route
-                path="/recommend-freelancer"
-                element={<RecommendFreelancer />}
-              />
-              <Route
-                path="/registered-projects"
-                element={<RegisteredProjects />}
-              />
-              <Route path="/chat" element={<Chat />} />
-              <Route
-                path="/freelancer-detail"
-                element={<FreelancerDetailPage />}
-              />
-              <Route path="/applied" element={<AppliedProjectPage />} />
-              <Route path="/finished" element={<FinishedProjectPage />} />
-              <Route path="/suggest" element={<FreelancerSuggestPage />} />
-            </>
-          ) : (
-            <Route path="*" element={<Navigate to="/" replace />} />
-          )}
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/search-freelancer" element={<SearchFreelancer />} />
+          <Route
+            path="/recommend-freelancer"
+            element={<RecommendFreelancer />}
+          />
+          <Route path="/freelancer-detail" element={<FreelancerDetailPage />} />
+          <Route path="/registered-projects" element={<RegisteredProjects />} />
+          <Route path="/suggest" element={<FreelancerSuggestPage />} />
+          <Route path="/finished" element={<FinishedProjectPage />} />
+          <Route path="/applied" element={<AppliedProjectPage />} />
+          <Route
+            path="/mypage"
+            element={
+              userType === "0" ? <FreelancerDetailPage /> : <CompanyMyPage />
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
     </Router>
