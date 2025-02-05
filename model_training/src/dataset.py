@@ -11,6 +11,9 @@ from sklearn.preprocessing import MultiLabelBinarizer
 from api.db import SessionLocal
 from src.utils import check_path
 
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
 
 def load_data(data_path: str):
     """
@@ -112,12 +115,13 @@ def load_data(data_path: str):
         db.close()
 
 
-def preprocess_data(data_path: str):
+def preprocess_data(data_path: str, n_components: int):
     """
     데이터 전처리 함수
 
     Args:
         data_path (str): 데이터 저장 경로
+        n_components (int): 주성분 개수
     """
     project_df = pd.read_csv(os.path.join(data_path, "project.csv"))
     freelancer_df = pd.read_csv(os.path.join(data_path, "freelancer.csv"))
@@ -125,7 +129,7 @@ def preprocess_data(data_path: str):
     freelancer_df = freelancer_df.head(5)
 
     print("📍 preprocessing project ==============================")
-    # project_df = Preprocessing.text_embedding(project_df, "project_content")
+    project_df = Preprocessing.text_embedding(project_df, "project_content", n_components)
 
     print("📍 preprocessing freelancer ===========================")
 
@@ -134,13 +138,14 @@ def preprocess_data(data_path: str):
 
 
 class Preprocessing:
-    def text_embedding(df: pd.DataFrame, col_name: str) -> pd.DataFrame:
+    def text_embedding(df: pd.DataFrame, col_name: str, n_components: int) -> pd.DataFrame:
         """
         텍스트 임베딩 함수 (Upstage Embeddings 사용)
 
         Args
             df (pd.DataFrame): 임베딩할 텍스트 컬럼이 있는 데이터프레임
             col_name (str): 임베딩할 텍스트 컬럼명
+            n_components (int): 주성분 개수
 
         Returns:
             pd.DataFrame: 임베딩된 텍스트 컬럼이 포함된 데이터프레임
@@ -155,6 +160,37 @@ class Preprocessing:
 
         emb_results = embeddings.embed_documents(df[col_name].tolist())
         df[col_name] = emb_results
+
+        # 특정 컬럼의 데이터를 numpy 배열로 변환하고, 각 배열을 reshape하여 1행 n열 형태로 변환
+        df_col_name = df[col_name].apply(lambda x: np.array(x).reshape(1,-1))
+
+        # 변환된 배열들을 하나의 numpy 배열로 합침 (axis=0을 기준으로 합침)
+        df_col_name = np.concatenate(df_col_name.values, axis=0)
+
+        # numpy 배열을 다시 pandas DataFrame으로 변환
+        df_col_name = pd.DataFrame(df_col_name)
+
+        # StandardScaler를 사용하여 데이터를 표준화 (평균 0, 표준편차 1로 조정)
+        scaler = StandardScaler()
+        X_scaled = scaler.fit_transform(df_col_name)
+
+        #  PCA 모델 생성 및 학습
+        np.random.seed(42)
+        pca = PCA(n_components=n_components, random_state=42)
+        X_pca = pca.fit_transform(X_scaled)
+
+        # PCA 결과를 pandas DataFrame으로 변환
+        x_pca_df = pd.DataFrame(X_pca)
+
+        # 새로운 컬럼 이름 생성 후 변경 (예: project_content_0, project_content_1, ...)
+        new_columns = [f"project_content_{i}" for i in range(len(x_pca_df.columns))]
+        x_pca_df.columns = new_columns
+
+        # 원본 DataFrame에 PCA 결과를 병합 (인덱스를 기준으로 병합)
+        df = pd.merge(df, x_pca_df, left_index=True, right_index=True)
+
+        # 원래의 "project_content" 컬럼을 삭제
+        df = df.drop("project_content", axis=1)
 
         return df
 

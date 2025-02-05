@@ -62,8 +62,8 @@ if __name__ == "__main__":
     set_seed(args.seed)
 
     if args.data:
-        load_data(data_path=args.data_path)
-        preprocess_data(data_path=args.data_path)
+        # load_data(data_path=args.data_path)
+        preprocess_data(data_path=args.data_path, n_components=args.n_components)
 
     # Recbole
     if args.type:
