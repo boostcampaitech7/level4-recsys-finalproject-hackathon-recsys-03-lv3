@@ -7,6 +7,7 @@ import RadarChart from "../components/RadarChart";
 import FreelancerSkillTag from "../components/FreelancerSkillTag";
 import DoughnutChart from "../components/DoughnutChart";
 import StaticStarRating from "../components/StaticStarRating";
+import ScoreDisplay from "../components/ScoreDisplay";
 
 const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/resource`;
 
@@ -161,9 +162,33 @@ const ProjectHistory = ({ history }) => {
           {history.map((project, index) => (
             <div key={index} className="card mb-3 d-flex">
               <div className="card-body">
-                <h5 className="card-title">{project.projectName}</h5>
-                <p className="card-text">금액: {project.budget}원</p>
-                <p className="card-text">기간: {project.duration}일</p>
+                <div className="row">
+                  <div className="col-md-8">
+                    <h5 className="card-title">{project.projectName}</h5>
+                    <p className="card-text">
+                      금액: {project.budget.toLocaleString()}원
+                    </p>
+                    <p className="card-text">기간: {project.duration}일</p>
+                  </div>
+                  <div className="col-md-4">
+                    <div className="rating">
+                      <div>
+                        <ScoreDisplay score={project.feedbackScore} />
+                      </div>
+                    </div>
+                    <div className="radar-chart">
+                      <RadarChart
+                        data={[
+                          project.expertise,
+                          project.proactiveness,
+                          project.punctuality,
+                          project.communication,
+                          project.maintainability,
+                        ]}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           ))}

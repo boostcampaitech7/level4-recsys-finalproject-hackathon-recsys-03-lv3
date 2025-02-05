@@ -55,8 +55,8 @@ const Topbar = () => {
     localStorage.removeItem("expiresAt");
     sessionStorage.removeItem("token");
 
-    // 로그인 페이지로 이동
-    window.location.href = "/login";
+    // 메인 페이지로 이동
+    window.location.href = "/";
   };
 
   const toggleDropdown = (dropdownName) => {
@@ -92,7 +92,7 @@ const Topbar = () => {
   return (
     <nav className="navbar">
       {/* 로고 영역 */}
-      <img src={logo} alt="Main Logo" onClick={() => navigate("/main-page")} />
+      <img src={logo} alt="Main Logo" onClick={() => navigate("/mainpage")} />
 
       {/* 메뉴 영역 */}
       <ul className="nav-menu">
@@ -114,7 +114,7 @@ const Topbar = () => {
           </button>
         </li>
         {/* userType에 따라 프로젝트 관리 버튼 */}
-        {userType === 1 ? (
+        {userType === "1" ? (
           <li className="nav-item dropdown">
             <button
               className="nav-link-btn dropdown-toggle"
@@ -188,9 +188,9 @@ const Topbar = () => {
           </li>
         ) : (
           <li>
-            <a href="/login" className="login-btn">
+            <button className="login-btn" onClick={() => navigate("/login")}>
               로그인
-            </a>
+            </button>
           </li>
         )}
       </ul>
