@@ -1,23 +1,28 @@
+import json
 from typing import List, Optional
 
 from fastapi import HTTPException
 from sqlalchemy import func, case, select, and_, update
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+from langchain.memory import ConversationBufferMemory
+from langchain.schema import SystemMessage, HumanMessage
 
+from api.upstage import chat_with_solar
 from src.models import Project, Category, ProjectSkill, Skill, Company, Location, ProjectRanking, ProjectApplicants, Feedback, FreelancerSkill
-from src.schemas.project import ProjectRequest, FeedbackRequest, ProjectListResponse, ProjectDetailResponse, ProjectFeedbackResponse, CompanyResponse, ProjectProgressResponse
+from src.schemas.project import ProjectRequest, FeedbackRequest, ProjectListResponse, ProjectDetailResponse, ProjectFeedbackResponse, SolarResponse, CompanyResponse, ProjectProgressResponse
+from src.services.filter_service import FilterService
 from src.utils.error_messages import ERROR_MESSAGES
 
 MAX_CNT = 50
+memory = ConversationBufferMemory(return_messages=True)
 
 
 class ProjectService:
     def get_projects(
         db: Session,
         user_id: Optional[int] = None,
-        status: Optional[List[int]] = None,
-        include_priority: Optional[bool] = None
+        status: Optional[List[int]] = None
     ) -> List[ProjectListResponse]:
         """
         프로젝트 리스트 조회 (기업)
@@ -26,7 +31,6 @@ class ProjectService:
             db (Session): SQLAlchemy 데이터베이스 세션
             user_id (Optional[int]): 기업 ID
             status (Optional[int]): 진행 상태
-            include_priority (Optional[bool]): 우선순위 포함 여부
 
         Returns:
             List[ProjectListResponse]: 조회된 프로젝트 리스트
@@ -46,17 +50,11 @@ class ProjectService:
                 func.json_arrayagg(Skill.name).label("skillNameList"),
                 Location.name.label("locationName")
             )
-        )
-
-        if include_priority:
-            query = query.add_columns(Project.priority.label("priority"))
-
-        query = (
-            query.join(Category, Project.category_id == Category.id)
-                 .join(ProjectSkill, Project.id == ProjectSkill.project_id)
-                 .join(Skill, ProjectSkill.skill_id == Skill.id)
-                 .join(Company, Project.company_id == Company.id)
-                 .join(Location, Company.location_id == Location.id)
+            .join(Category, Project.category_id == Category.id)
+            .join(ProjectSkill, Project.id == ProjectSkill.project_id)
+            .join(Skill, ProjectSkill.skill_id == Skill.id)
+            .join(Company, Project.company_id == Company.id)
+            .join(Location, Company.location_id == Location.id)
         )
 
         if user_id is not None:
@@ -65,26 +63,23 @@ class ProjectService:
         if status is not None:
             query = query.filter(Project.status.in_(status))
 
-        group_by_columns = [
-            Project.id,
-            Project.name,
-            Project.duration,
-            Project.budget,
-            Project.work_type,
-            Project.contract_type,
-            Project.status,
-            Project.register_date,
-            Category.name,
-            Location.name,
-        ]
-        if include_priority:
-            group_by_columns.append(Project.priority)
+        projects = (
+            query.group_by(
+                Project.id,
+                Project.name,
+                Project.duration,
+                Project.budget,
+                Project.work_type,
+                Project.contract_type,
+                Project.status,
+                Project.register_date,
+                Category.name,
+                Location.name
+            )
+            .order_by(Project.register_date.desc())
+            .limit(MAX_CNT).all()
+        )
 
-        query = query.group_by(*group_by_columns).order_by(Project.register_date.desc())
-        if not include_priority:
-            query = query.limit(MAX_CNT)
-
-        projects = query.all()
         if not projects:
             raise HTTPException(
                 status_code=ERROR_MESSAGES["NOT_FOUND"]["status"],
@@ -251,7 +246,8 @@ class ProjectService:
         project_id: int,
         category_id: int,
         budget: int,
-        db: Session
+        db: Session,
+        skill_list: Optional[List[int]] = None
     ) -> List[ProjectListResponse]:
         """
         유사한 프로젝트 리스트 조회
@@ -261,6 +257,7 @@ class ProjectService:
             category_id (int): 카테고리 ID
             budget (int): 금액
             db (Session): SQLAlchemy 데이터베이스 세션
+            skill_list(Optional[List[int]]): 스킬 ID 리스트
 
         Returns:
             List[ProjectListResponse]: 유사한 프로젝트 리스트
@@ -277,16 +274,19 @@ class ProjectService:
         ).cte("project_skills_agg_cte")
 
         # 각 프로젝트별로 현재 프로젝트의 스킬과 일치하는 스킬 수를 미리 집계하는 서브쿼리
+        if skill_list:
+            limit_cnt = 50
+            skill_filter = skill_list
+        else:
+            limit_cnt = 6
+            skill_filter = select(ProjectSkill.skill_id).where(ProjectSkill.project_id == project_id)
+
         matching_skill_count_cte = (
             db.query(
                 ProjectSkill.project_id.label("project_id"),
                 func.count().label("match_count")
             )
-            .filter(
-                ProjectSkill.skill_id.in_(
-                    select(ProjectSkill.skill_id).where(ProjectSkill.project_id == project_id)
-                )
-            )
+            .filter(ProjectSkill.skill_id.in_(skill_filter))
             .group_by(ProjectSkill.project_id)
         ).cte("matching_skill_count_cte")
 
@@ -324,10 +324,10 @@ class ProjectService:
             .outerjoin(matching_skill_count_cte, matching_skill_count_cte.c.project_id == Project.id)
             .filter(Project.id != project_id)  # 현재 프로젝트 제외
             .order_by(
-                similarity_expr.desc(),          # 유사도 점수 내림차순
-                Project.register_date.desc(),      # 등록일 내림차순
+                similarity_expr.desc(),  # 유사도 점수 내림차순
+                Project.register_date.desc(),  # 등록일 내림차순
             )
-            .limit(6)
+            .limit(limit_cnt)
             .all()
         )
 
@@ -379,6 +379,92 @@ class ProjectService:
                 status_code=ERROR_MESSAGES["UNPROCESSABLE_ENTITY"]["status"],
                 detail=ERROR_MESSAGES["UNPROCESSABLE_ENTITY"]["message"].format(str(e))
             )
+
+    def create_solar_response(
+        project_data: ProjectRequest,
+        db: Session
+    ) -> SolarResponse:
+        """
+        Solar와 대화해 프로젝트 정보를 자동 생성
+
+        Args:
+            project_data (ProjectRequest): 프로젝트 내용, 기간, 예산 등을 포함하는 등록하려는 프로젝트 정보
+            db (Session): SQLAlchemy 데이터베이스 세션
+
+        Returns:
+            dict: 변환된 프로젝트 데이터
+        """
+        try:
+            skill_list = FilterService.get_skills(db)
+            category_list = FilterService.get_categories(db)
+        except HTTPException as e:
+            raise e
+
+        if len(memory.chat_memory.messages) == 0:
+            system_message = "너의 이름은 HRmony야. 한글 데이터를 입력받고 한글로 답변해야 해. 기업이 프리랜서를 모집할 프로젝트 공고를 올릴 때 도움을 주는 AI야."
+            memory.chat_memory.add_message(SystemMessage(content=system_message))
+            memory.chat_memory.add_message(HumanMessage(content="다음은 프로젝트 등록을 위한 카테고리 및 스킬 정보야."))
+
+            # 카테고리 & 스킬 정보 저장
+            category_info = json.dumps(category_list, ensure_ascii=False)
+            skill_info = json.dumps(skill_list, ensure_ascii=False)
+            memory.chat_memory.add_message(HumanMessage(content="카테고리 정보: " + category_info))
+            memory.chat_memory.add_message(HumanMessage(content="스킬 정보: " + skill_info))
+
+        chat_history = [msg.content for msg in memory.chat_memory.messages]
+        project_info = json.dumps(project_data.dict(), ensure_ascii=False)
+        memory.chat_memory.add_message(HumanMessage(content="새로운 프로젝트 등록 요청: " + project_info))
+
+        new_project_instruction = """
+        다음은 프로젝트 등록 정보야.
+        이 정보들을 기반으로 projectName, categoryId, skillList, projectContent를 전달해줘.
+        1) projectName은 projectContent를 요약하는 내용으로 넣어줘.
+        2) categoryId는 프로젝트 내용을 보고 카테고리 목록 중 어떤 카테고리에 해당할 지 id값으로 넣어줘. id에 해당하는 categoryName도 넣어줘.
+        3) skillId는 projectContent를 보고 어떤 스킬이 필요할 지 스킬 목록에서 찾아서 id값으로 넣어줘 (skillIdList). (최대 6개) projectContent에서 개발 언어가 나오는 경우 스킬정보에서 찾아줘. 예를 들어, mysql이라면 skillId 121, skillName MySQL으로 해줘. 해당하는 skillName도 넣어줘 (skillNameList)
+        4) projectContent의 내용 형식은 <프로젝트 진행 방식>, <프로젝트의 현재 상황>, <상세한 업무 내용>, <참고 자료 / 유의 사항> 영역으로 나누어서 적어줘. 말투는 '~ 입니다.' 존댓말로 정리해줘. '개행기호'을 포함해서 적어줘.
+        * 제약 조건: 이 모든 데이터들은 json(Key-Value) 형식으로 전달해줘. Key는 proejctName, categoryId, categoryName, skillIdList, skillNameList, projectContent 로 해줘.
+        """
+        solar_payload = [
+            {"role": "system", "content": chat_history[0]},
+            {"role": "user", "content": "\n".join(chat_history[1:])},
+            {"role": "user", "content": new_project_instruction + project_info}
+        ]
+        response = chat_with_solar(solar_payload)
+        memory.chat_memory.add_message(HumanMessage(content="Solar 응답: " + json.dumps(response, ensure_ascii=False)))
+        project_data = {**project_data.dict(), **response}
+        memory.chat_memory.add_message(HumanMessage(content="새로운 프로젝트 정보: " + json.dumps(project_data, ensure_ascii=False)))
+
+        try:
+            project_list = ProjectService.get_project_similar(
+                project_id=100000,
+                category_id=project_data["categoryId"],
+                budget=project_data["budget"],
+                db=db,
+                skill_list=project_data["skillIdList"]
+            )
+        except HTTPException as e:
+            raise e
+
+        sim_project_instruction = """
+        등록하려는 프로젝트 정보와 유사한 프로젝트를 6개 찾아줘. 유사한 프로젝트의 기준은 projectContent가 유사하고 같은 스킬을 사용하는 게 우선이야.
+        1) 유사한 프로젝트들의 duration, budget을 바탕으로 너가 예상하는 새로운 프로젝트의 duration별 expectedBudget 하나만 골라줘 (int)
+        2) 유사한 프로젝트들의 minBudget (int)
+        3) 유사한 프로젝트들의 maxBudget (int)
+        4) 유사한 프로젝트들이 공통적으로 가지고 있는 skillName의 리스트인 simSkillNameList (최대 6개, List[str])
+        5) 유사한 프로젝트들의 정보를 projectId, projectName, duration, budget, workType, contractType, status, registerDate, skillIdList, skillNameList, priority, locationName, categoryName를 Key로 하는 json(Key-Value) list 형태로 similar_projects라는 키의 value로 줘.
+        * 제약 조건: 이 모든 데이터들은 json(Key-Value) 형식으로 전달해줘. Key는 similarProjects, expectedBudget, minBudget, maxBudget, simSkillNameList 로 해줘.
+        """
+        sim_project_data = json.dumps([project.__dict__ for project in project_list], ensure_ascii=False)
+        memory.chat_memory.add_message(HumanMessage(content="유사한 프로젝트 조회 요청: " + sim_project_data))
+        solar_payload = [
+            {"role": "system", "content": chat_history[0]},  # 첫 번째 시스템 메시지
+            {"role": "user", "content": "\n".join(chat_history[1:])},  # 이전 대화 내용 합치기
+            {"role": "user", "content": sim_project_instruction + sim_project_data}
+        ]
+        response = chat_with_solar(solar_payload)
+        memory.chat_memory.add_message(HumanMessage(content="Solar 응답(유사 프로젝트): " + json.dumps(response, ensure_ascii=False)))
+
+        return {**project_data, **response}
 
     def create_project(
         user_id: int,
@@ -659,18 +745,18 @@ class ProjectService:
         progress = (
             db.query(
                 func.count(Project.freelancer_id).label("projectCount"),
-                func.sum(
+                func.coalesce(func.sum(
                     case(
                         (Project.status == 1, 1),
                         else_=0
                     )
-                ).label("ongoingCount"),
-                func.sum(
+                ), 0).label("ongoingCount"),
+                func.coalesce(func.sum(
                     case(
                         (Project.status == 2, 1),
                         else_=0
                     )
-                ).label("completedCount")
+                ), 0).label("completedCount")
             ).filter(Project.freelancer_id == freelancer_id)
             .first()
         )
