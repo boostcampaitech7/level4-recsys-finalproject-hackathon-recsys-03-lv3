@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo_primary.png";
-import "../style/LoginPage.css"; // 스타일 적용
+import "../style/LoginPage.css";
 
 const LoginPage = ({ setIsLoggedIn }) => {
   const [email, setEmail] = useState("");
@@ -13,7 +13,7 @@ const LoginPage = ({ setIsLoggedIn }) => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (email === "test@example.com" && password === "password") {
+    if (email === "test@example.com" && password === "1") {
       setIsLoggedIn(true); // 로그인 상태 업데이트
 
       // 로그인 유지 설정

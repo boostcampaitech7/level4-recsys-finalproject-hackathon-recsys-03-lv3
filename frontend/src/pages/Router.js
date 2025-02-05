@@ -8,15 +8,15 @@ import {
 import Layout from "../components/Layout";
 import LoginPage from "./LoginPage";
 import MainPage from "./MainPage";
-import SearchProjectPage from "./SearchProjectPage";
-import Chat from "./ChatPage";
 import SearchFreelancer from "./SearchFreelancerPage";
 import RecommendFreelancer from "./RecommendFreelancerPage";
+import SearchProjectPage from "./SearchProjectPage";
 import RegisteredProjects from "./RegisteredProjectsPage";
+import Chat from "./ChatPage";
 import FreelancerDetailPage from "./FreelancerDetailPage";
-import FreelancerSuggestPage from "./FreelancerSuggestPage";
+import AppliedProjectPage from "./AppliedProjectPage";
 import FinishedProjectPage from "./FinishedProjectPage";
-import MainPage from "./MainPage";
+import FreelancerSuggestPage from "./FreelancerSuggestPage";
 
 const AppRouter = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -24,16 +24,14 @@ const AppRouter = () => {
   });
 
   useEffect(() => {
-    // 로그인 상태 유지 확인
-    if (localStorage.getItem("rememberMe") === "true") {
-      setIsLoggedIn(true);
-    }
+    const savedLogin = localStorage.getItem("rememberMe") === "true";
+    setIsLoggedIn(savedLogin);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("rememberMe"); // 로그인 유지 해제
-    setIsLoggedIn(false); // 상태 변경
-  };
+  // const handleLogout = () => {
+  //   localStorage.removeItem("rememberMe"); // 로그인 유지 해제
+  //   setIsLoggedIn(false); // 상태 변경
+  // };
 
   return (
     <Router>
@@ -44,40 +42,42 @@ const AppRouter = () => {
           element={<LoginPage setIsLoggedIn={setIsLoggedIn} />}
         />
 
-        {/* 로그인 안 한 경우에만 로그인 페이지로 이동 */}
         <Route
           path="/"
           element={
-            isLoggedIn ? (
-              <Layout isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-            ) : (
-              <Navigate to="/login" replace />
-            )
+            <Layout isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
           }
         >
           {/* 메인 페이지를 기본으로 설정 */}
           <Route index element={<MainPage />} />
 
-        {/* Layout 적용된 경로 */}
-        <Route path="/" element={<Layout />}>
-          {/* Layout 내부의 하위 경로 */}
-          <Route index element={<MainPage />} />
-          {/* 추가 경로 */}
-          <Route path="/search-project" element={<SearchProjectPage />} />
-          <Route path="/chat" element={<Chat />} />
           <Route path="/search-freelancer" element={<SearchFreelancer />} />
-          <Route
-            path="/recommend-freelancer"
-            element={<RecommendFreelancer />}
-          />
-          <Route path="finished" element={<FinishedProjectPage />} />
-          <Route path="/freelancer-detail" element={<FreelancerDetailPage />} />
-          <Route path="/registered-projects" element={<RegisteredProjects />} />
-          <Route path="/suggest" element={<FreelancerSuggestPage />} />
-        </Route>
+          <Route path="/search-project" element={<SearchProjectPage />} />
 
-        {/* 존재하지 않는 경로는 메인 페이지로 리디렉트 */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+          {/* 추가 경로 */}
+          {isLoggedIn ? (
+            <>
+              <Route
+                path="/recommend-freelancer"
+                element={<RecommendFreelancer />}
+              />
+              <Route
+                path="/registered-projects"
+                element={<RegisteredProjects />}
+              />
+              <Route path="/chat" element={<Chat />} />
+              <Route
+                path="/freelancer-detail"
+                element={<FreelancerDetailPage />}
+              />
+              <Route path="/applied" element={<AppliedProjectPage />} />
+              <Route path="/finished" element={<FinishedProjectPage />} />
+              <Route path="/suggest" element={<FreelancerSuggestPage />} />
+            </>
+          ) : (
+            <Route path="*" element={<Navigate to="/" replace />} />
+          )}
+        </Route>
       </Routes>
     </Router>
   );
