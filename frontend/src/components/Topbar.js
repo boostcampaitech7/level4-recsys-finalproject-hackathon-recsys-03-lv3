@@ -20,10 +20,40 @@ const Topbar = () => {
     freelancerDropdownOpen: false,
   });
 
-  const handleLogout = () => {
-    sessionStorage.removeItem("token");
+  const handleLogout = async () => {
+    const token =
+      localStorage.getItem("token") || sessionStorage.getItem("token");
+
+    if (!token) {
+      console.warn("이미 로그아웃된 상태입니다.");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8000/api/auth/logout", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`, // JWT 토큰 포함
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        console.log("✅ 서버 로그아웃 성공");
+      } else {
+        console.error("🚨 서버 로그아웃 실패");
+      }
+    } catch (error) {
+      console.error("🚨 로그아웃 요청 중 오류 발생:", error);
+    }
+
+    // 토큰 삭제 (클라이언트에서 세션 종료)
     localStorage.removeItem("token");
-    window.location.href = "/login"; // 로그인 페이지로 이동
+    localStorage.removeItem("expiresAt");
+    sessionStorage.removeItem("token");
+
+    // 로그인 페이지로 이동
+    window.location.href = "/login";
   };
 
   const toggleDropdown = (dropdownName) => {
