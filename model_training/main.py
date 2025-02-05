@@ -46,6 +46,27 @@ if __name__ == "__main__":
         type=str,
         help="추천 모델의 이름을 설정합니다. (참고: https://recbole.io/model_list.html)"
     )
+    arg(
+        "--n_components",
+        "-dn",
+        type=int,
+        help="텍스트 임베딩 벡터에 사용할 PCA 주성분 개수를 설정합니다."
+    )
+    arg(
+        "--embed",
+        "-de",
+        type=bool,
+        help="멀티-핫 인코딩된 범주형 데이터를 임베딩할 지 여부를 설정합니다.",
+        default=True
+    )
+    arg(
+        "--similarity",
+        "-ds",
+        type=str,
+        choices=["cosine", "dot_product", "elementwise_product", "jaccard"],
+        help="두 행렬 간 유사도를 계산하는 방식을 입력합니다.",
+        default="cosine"
+    )
 
     args = parser.parse_args()
 
@@ -62,8 +83,8 @@ if __name__ == "__main__":
     set_seed(args.seed)
 
     if args.data:
-        # load_data(data_path=args.data_path)
-        preprocess_data(data_path=args.data_path, n_components=args.n_components, embed=True, similarity="cosine")
+        load_data(data_path=args.data_path)
+        preprocess_data(data_path=args.data_path, n_components=args.n_components, embed=args.embed, similarity=args.similarity)
 
     # Recbole
     if args.type:
