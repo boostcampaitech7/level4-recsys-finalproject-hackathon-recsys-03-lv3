@@ -91,3 +91,18 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
     return pwd_context.verify(plain_password, hashed_password)
+
+
+def hash_password(password: str) -> str:
+    """
+    주어진 비밀번호를 bcrypt 알고리즘을 사용하여 해싱합니다.
+
+    Args:
+        password (str): 해싱할 비밀번호
+
+    Returns:
+        str: bcrypt 해싱된 비밀번호
+    """
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    
+    return pwd_context.hash(password)

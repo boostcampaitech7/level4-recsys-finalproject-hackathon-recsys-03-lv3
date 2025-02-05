@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../style/SwitchButton.css"; // CSS 파일 가져오기
 
-function SwitchButton({ text, onChange }) {
+function SwitchButton({ text, onChange, value }) {
   const [isActive, setIsActive] = useState(false);
 
   const handleToggle = () => {
@@ -11,6 +11,12 @@ function SwitchButton({ text, onChange }) {
       onChange(newState); // 상태 변경 시 부모에 알림
     }
   };
+
+  useEffect(() => {
+    if (value !== undefined) {
+      setIsActive(value);
+    }
+  }, [value]);
 
   return (
     <div className="switch-container">
