@@ -155,39 +155,37 @@ const Topbar = () => {
             </button>
           </li>
         )}
-
-        <li className="nav-item dropdown no-arrow">
-          <button
-            className="nav-link-btn dropdown-toggle"
-            id="freelancerDropdown"
-            onClick={() => toggleDropdown("freelancer")} // 클릭 시 토글
-          >
-            <ProfileIcon
-              profileImage={photo}
-              style={{ width: "35px", height: "35px", margin: "0" }}
-            />
-          </button>
-          {dropdownState.freelancerDropdownOpen && (
-            <div
-              className="custom-dropdown-menu"
-              aria-labelledby="userDropdown"
+        {token ? (
+          <li className="nav-item dropdown no-arrow">
+            <button
+              className="nav-link-btn dropdown-toggle"
+              id="freelancerDropdown"
+              onClick={() => toggleDropdown("freelancer")} // 클릭 시 토글
             >
-              <button
-                className="dropdown-item"
-                onClick={() => navigate("/mypage")}
+              <ProfileIcon
+                profileImage={photo}
+                style={{ width: "35px", height: "35px", margin: "0" }}
+              />
+            </button>
+            {dropdownState.freelancerDropdownOpen && (
+              <div
+                className="custom-dropdown-menu"
+                aria-labelledby="userDropdown"
               >
-                <i className="fas fa-user fa-sm fa-fw mr-3 text-gray-400"></i>
-                마이페이지
-              </button>
-              <button className="dropdown-item" onClick={handleLogout}>
-                <i className="fas fa-sign-out-alt fa-sm fa-fw mr-3 text-gray-400"></i>
-                로그아웃
-              </button>
-            </div>
-          )}
-        </li>
-        {/* 로그인 구현 완료 시 연결  
-        {isLoggedIn ? (
+                <button
+                  className="dropdown-item"
+                  onClick={() => navigate("/mypage")}
+                >
+                  <i className="fas fa-user fa-sm fa-fw mr-3 text-gray-400"></i>
+                  마이페이지
+                </button>
+                <button className="dropdown-item" onClick={handleLogout}>
+                  <i className="fas fa-sign-out-alt fa-sm fa-fw mr-3 text-gray-400"></i>
+                  로그아웃
+                </button>
+              </div>
+            )}
+          </li>
         ) : (
           <li>
             <button className="login-btn" onClick={() => navigate("/login")}>

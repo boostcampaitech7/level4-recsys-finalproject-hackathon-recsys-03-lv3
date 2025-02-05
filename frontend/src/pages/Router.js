@@ -17,7 +17,6 @@ import FreelancerDetailPage from "./FreelancerDetailPage";
 import AppliedProjectPage from "./AppliedProjectPage";
 import FinishedProjectPage from "./FinishedProjectPage";
 import FreelancerSuggestPage from "./FreelancerSuggestPage";
-import MainPage from "./MainPage";
 import CompanyMyPage from "./CompanyMyPage";
 
 const AppRouter = () => {
