@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "../style/ProjectRegisterPage.css";
 import botphoto from "../assets/chat_logo.png";
 import { useLocation } from "react-router-dom";
@@ -6,10 +7,59 @@ import ProfileIcon from "../components/ProfileIcon";
 import SimilarProject from "../components/SimilarProject";
 import ProjectSkillTag from "../components/ProjectSkillTag";
 
+const similarProjects = [
+  {
+    projectId: 101,
+    projectName: "Python 개발 프로젝트",
+    duration: 30,
+    budget: 5000000,
+    workType: 1,
+    contractType: 0,
+    status: 0,
+    registerDate: "20250125",
+    categoryName: "IT•정보통신업",
+    skillIdList: [1, 2, 3],
+    skillNameList: ["Python", "Django", "API"],
+    locationName: "서울특별시 강남구",
+    similarityScore: 15,
+  },
+  {
+    projectId: 102,
+    projectName: "Java 백엔드 개발",
+    duration: 60,
+    budget: 10000000,
+    workType: 0,
+    contractType: 1,
+    status: 0,
+    registerDate: "20250120",
+    categoryName: "IT•정보통신업",
+    skillIdList: [4, 5, 6],
+    skillNameList: ["Java", "Spring", "REST"],
+    locationName: "서울특별시 서초구",
+    similarityScore: 12,
+  },
+  {
+    projectId: 101,
+    projectName: "Python 개발 프로젝트",
+    duration: 30,
+    budget: 5000000,
+    workType: 1,
+    contractType: 0,
+    status: 0,
+    registerDate: "20250125",
+    categoryName: "IT•정보통신업",
+    skillIdList: [1, 2, 3],
+    skillNameList: ["Python", "Django", "API"],
+    locationName: "서울특별시 강남구",
+    similarityScore: 15,
+  },
+];
+
 const ProjectRegisterPage = () => {
   const location = useLocation();
   const { projectData } = location.state || {};
   const skillNameList = ["Java", "Spring", "REST"];
+  const navigate = useNavigate();
 
   if (!projectData) {
     return <div>프로젝트 데이터가 없습니다. 다시 시도해주세요.</div>;
@@ -80,6 +130,7 @@ const ProjectRegisterPage = () => {
                   <tr>
                     <td className="table-label">프로젝트 세부내용</td>
                   </tr>
+                  {/* Solar 결과 넣기 */}
                   <tr className="table-full-row">
                     <td colSpan="2" className="table-extra">
                       <span className="fw-bold">프로젝트 진행 상황:</span>
@@ -106,6 +157,7 @@ const ProjectRegisterPage = () => {
                 </tbody>
               </table>
               <div className="register-btn-container">
+                {/* 수정 필요 */}
                 <button
                   className="register-btn btn-edit"
                   type="button"
@@ -123,7 +175,7 @@ const ProjectRegisterPage = () => {
                   id="sendRequest"
                   onClick={() => {
                     alert("요청이 완료되었습니다.");
-                    window.location.reload(); //window.location.href = "https://example.com";
+                    navigate("/registered-projects");
                   }}
                 >
                   등록
@@ -134,7 +186,7 @@ const ProjectRegisterPage = () => {
         </div>
         <div className="predict-things">
           <div className="predict-left">
-            <SimilarProject />
+            <SimilarProject projects={similarProjects} />
           </div>
           <div className="predict-right">
             <div className="predict-top">
