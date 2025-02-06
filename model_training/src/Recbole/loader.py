@@ -47,6 +47,12 @@ def generate_data(data_path, config: Config):
     inter_df.rename(columns={"project_id": "user_id:token",
                              "freelancer_id": "item_id:token",
                              "matching_score": rating_name}, inplace=True)
+    
+    # 유사도 피처 사용시 (sim_feature 컬럼들을 float 타입으로 변환)
+    similarity_cols = [col for col in inter_df.columns if col.startswith("sim_feature_")]
+    feature_map = {col: f"{col}:float" for col in similarity_cols}
+    inter_df.rename(columns=feature_map, inplace=True)
+
     freelancer_df.rename(columns={"freelancer_id": "item_id:token",
                                   "work_exp": "work_exp:float",
                                   "price": "price:float",
