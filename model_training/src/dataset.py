@@ -144,11 +144,10 @@ def preprocess_data(
         project_df,
         categorical_cols=["category_id", "skill_id"]
     )
+    project_category_df = project_df.iloc[:, 6:16]
+    project_skill_df = project_df.iloc[:, 16:]
 
     if embed:
-        project_category_df = project_df.iloc[:, 6:16]
-        project_skill_df = project_df.iloc[:, 16:]
-
         # 범주형 변수 임베딩 (torch.nn.Embedding)
         project_category_df = Preprocessing.embed_categorical_features(
             project_category_df,
@@ -177,11 +176,10 @@ def preprocess_data(
         skill_col="skill_id",
         expertise_col="skill_temp"
     )
+    freelancer_category_df = freelancer_df.iloc[:, 3:13]
+    freelancer_skill_df = freelancer_df.iloc[:, 13:]
 
     if embed:
-        freelancer_category_df = freelancer_df.iloc[:, 3:13]
-        freelancer_skill_df = freelancer_df.iloc[:, 13:]
-
         # 범주형 변수 임베딩 (torch.nn.Embedding)
         freelancer_category_df = Preprocessing.embed_categorical_features(
             freelancer_category_df,
