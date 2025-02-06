@@ -26,7 +26,7 @@ def get_data(config: Config) -> Tuple[RecBoleDataset, RecBoleDataset, RecBoleDat
     return train_data, valid_data, test_data
 
 
-def generate_data(data_path, config: Config):
+def generate_data(data_path: str, config: Config):
     """
     data를 불러와 전처리한 후, Recbole의 .user, .item, .inter 데이터로 변환하는 함수
 
@@ -50,13 +50,15 @@ def generate_data(data_path, config: Config):
     freelancer_df.rename(columns={"freelancer_id": "item_id:token",
                                   "work_exp": "work_exp:float",
                                   "price": "price:float",
-                                  "category_id": "category:list"}, inplace=True)
+                                  "category_id": "category:list",
+                                  "skill_id": "skill:list"}, inplace=True)
     project_df.rename(columns={"project_id": "user_id:token",
                                "duration": "duration:float",
                                "budget": "budget:float",
                                "priority": "priority:token",
                                "company_id": "company_id:token",
-                               "category_id": "category:list"}, inplace=True)
+                               "category_id": "category:list",
+                               "skill_id": "skill:list"}, inplace=True)
 
     # RecBole용 `.inter`, `.user`, `.item` 저장
     recbole_data_path, recbole_data_name = config.data_path, config.dataset

@@ -68,9 +68,9 @@ if __name__ == "__main__":
         "--similarity",
         "-ds",
         type=str,
-        choices=["cosine", "dot_product", "elementwise_product", "jaccard"],
+        choices=["cosine", "dot_product", "jaccard"],
         help="두 행렬 간 유사도를 계산하는 방식을 입력합니다.",
-        default="cosine"
+        default=None
     )
     arg(
         "--optuna",
@@ -103,7 +103,7 @@ if __name__ == "__main__":
 
     set_seed(args.seed)
 
-    # Recbole 실행
+    # Recbole
     if args.type:
         if args.data:
             load_data(data_path=args.data_path)

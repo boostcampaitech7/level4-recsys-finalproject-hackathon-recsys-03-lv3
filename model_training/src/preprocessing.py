@@ -6,6 +6,7 @@ import pandas as pd
 import torch
 import torch.nn as nn
 
+from tqdm import tqdm
 from dotenv import load_dotenv
 from langchain_upstage import UpstageEmbeddings
 from sklearn.decomposition import PCA
@@ -166,44 +167,59 @@ class Preprocessing:
     def calculate_similarity_matrix(
         matrix_1: Union[pd.DataFrame, np.ndarray],
         matrix_2: Union[pd.DataFrame, np.ndarray],
-        method: Optional[str] = None
-    ) -> Union[np.ndarray, torch.Tensor]:
+        method: Optional[str] = None,
+        batch_size: int = 500
+    ) -> pd.DataFrame:
         """
-        두 행렬 간 유사도를 계산하는 함수.
+        두 행렬 간 유사도를 계산하는 함수. 메모리 최적화를 위해 배치 단위로 계산을 진행한다.
 
         Args:
             matrix_1 (Union[pd.DataFrame, np.ndarray]): 첫 번째 행렬
             matrix_2 (Union[pd.DataFrame, np.ndarray]): 두 번째 행렬
-            method (Optional[str]): 유사도 계산 방법 ("cosine", "dot_product", "elementwise_product", "jaccard"). 기본값은 None
-
+            method (Optional[str]): 유사도 계산 방법 ("cosine", "dot_product", "jaccard"). 기본값은 None
+            batch_size (int): 계산에 사용할 배치 크기. 기본값은 500
         Returns:
-            Union[np.ndarray, torch.Tensor]: 계산된 유사도 행렬 또는 텐서
+            pd.DataFrame: 계산된 유사도 데이터프레임
         """
         matrix_1 = np.array(matrix_1)
         matrix_2 = np.array(matrix_2)
+        similarity_matrix = np.zeros((matrix_1.shape[0], matrix_2.shape[0]))
+        
+        total_batches = (matrix_1.shape[0] // batch_size + 1) * (matrix_2.shape[0] // batch_size + 1)
+        progress_bar = tqdm(total=total_batches, desc=f"Calculating {method} similarity", unit="batch")
 
-        if method == "cosine":
-            return cosine_similarity(matrix_1, matrix_2)
+        for i in range(0, matrix_1.shape[0], batch_size):
+            end_i = min(i + batch_size, matrix_1.shape[0])
+            
+            for j in range(0, matrix_2.shape[0], batch_size):
+                end_j = min(j + batch_size, matrix_2.shape[0])
 
-        elif method == "dot_product":
-            return np.dot(matrix_1, matrix_2.T)
+                batch_1 = matrix_1[i:end_i]
+                batch_2 = matrix_2[j:end_j]
 
-        elif method == "elementwise_product":
-            matrix_1 = torch.tensor(matrix_1).unsqueeze(1)  # (matrix_1.shape[0], 1, embedding_dim)
-            matrix_2 = torch.tensor(matrix_2).unsqueeze(0)  # (1, matrix_2.shape[0], embedding_dim)
-            return matrix_1 * matrix_2  # (matrix_1.shape[0], matrix_2.shape[0], embedding_dim)
+                match method:
+                    case "cosine":
+                        similarity_matrix[i:end_i, j:end_j] = cosine_similarity(batch_1, batch_2)
 
-        # 단, 자카드 유사도는 임베딩 벡터가 아니라 인코딩 벡터일 때 이용해야 한다.
-        elif method == "jaccard":
-            # 두 행렬에서 0이 아닌 값을 모두 1로 변환
-            # 숙련도 값이 존재하는 경우, 스킬이 있다는 정보만 유지하여 1로 처리한다.
-            matrix_1 = (matrix_1 > 0).astype(int)
-            matrix_2 = (matrix_2 > 0).astype(int)
+                    case "dot_product":
+                        similarity_matrix[i:end_i, j:end_j] = np.dot(batch_1, batch_2.T)
 
-            intersection = np.bitwise_and(matrix_1[:, np.newaxis, :], matrix_2[np.newaxis, :, :]).sum(axis=2)
-            union = np.bitwise_or(matrix_1[:, np.newaxis, :], matrix_2[np.newaxis, :, :]).sum(axis=2)
+                    # 단, 자카드 유사도는 임베딩 벡터가 아니라 인코딩 벡터일 때 이용해야 한다.
+                    case "jaccard":
+                        # 두 행렬에서 0이 아닌 값을 모두 1로 변환
+                        # 숙련도 값이 존재하는 경우, 스킬이 있다는 정보만 유지하여 1로 처리한다.
+                        batch_1 = (batch_1 > 0).astype(int)
+                        batch_2 = (batch_2 > 0).astype(int)
 
-            return intersection / (union + 1e-8)
+                        intersection = np.bitwise_and(batch_1[:, np.newaxis, :], batch_2[np.newaxis, :, :]).sum(axis=2)
+                        union = np.bitwise_or(batch_1[:, np.newaxis, :], batch_2[np.newaxis, :, :]).sum(axis=2)
+                        similarity_matrix[i:end_i, j:end_j] = intersection / (union + 1e-8)
 
-        else:
-            raise ValueError(f"Unsupported method: {method}")
+                    case _:
+                        raise ValueError(f"Unsupported method: {method}")
+
+                progress_bar.update(1)
+
+        progress_bar.close()
+
+        return pd.DataFrame(similarity_matrix)
