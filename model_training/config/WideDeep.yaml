@@ -14,5 +14,5 @@ user_inter_num_interval: "[0,inf)"
 item_inter_num_interval: "[0,inf)"
 
 # Model settings
-model: FM
-dataset: FM
+model: WideDeep
+dataset: WideDeep
