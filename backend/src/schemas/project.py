@@ -5,15 +5,15 @@ from src.utils.utils import parse_json_to_list
 
 
 class ProjectRequest(BaseModel):
-    projectName: str
+    projectName: Optional[str] = None
     duration: int
     budget: int
     workType: int
     contractType: int
     priority: int
     projectContent: str
-    categoryId: int
-    skillList: List[int]
+    categoryId: Optional[int] = None
+    skillList: Optional[List[int]] = None
 
 
 class FeedbackRequest(BaseModel):
@@ -97,6 +97,40 @@ class ProjectFeedbackResponse(BaseModel):
     @validator("skillIdList", "skillNameList", pre=True)
     def parse_skill_list(cls, value: str) -> List[Union[int, float, str]]:
         return parse_json_to_list(value)
+
+
+class SimilarProjectList(BaseModel):
+    projectId: int
+    projectName: str
+    duration: int
+    budget: int
+    workType: int
+    contractType: int
+    status: int
+    registerDate: str
+    categoryName: str
+    skillIdList: List[int]
+    skillNameList: List[str]
+    locationName: str
+
+
+class SolarResponse(BaseModel):
+    projectName: str
+    duration: int
+    budget: int
+    workType: int
+    contractType: int
+    priority: int
+    categoryId: int
+    categoryName: str
+    skillIdList: List[int]
+    skillNameList: List[str]
+    projectContent: str
+    similarProjects: List[SimilarProjectList]
+    expectedBudget: int
+    minBudget: int
+    maxBudget: int
+    simSkillNameList: List[str]
 
 
 class CompanyResponse(BaseModel):

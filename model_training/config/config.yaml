@@ -1,4 +1,5 @@
 seed: 42
-data_path: "datasets/"
+data_path: "/data/ephemeral/home/develop/data/"
 output_path: "output/"
 repo_name: "TaroSin/HRmony"
+n_components: 3

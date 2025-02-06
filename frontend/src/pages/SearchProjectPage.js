@@ -344,6 +344,7 @@ const SearchProjectPage = () => {
           <SingleSelector
             options={["최신순", "금액 높은순"]}
             onChange={setSortOption}
+            value={sortOption}
           />
         </div>
       </div>

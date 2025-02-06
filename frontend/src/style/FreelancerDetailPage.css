@@ -56,9 +56,10 @@
   background-color: #f3fbfa;
 }
 
-.btn-suggest {
+.btn-suggest,
+.btn-register {
   background-color: var(--color-primary);
-  color: black;
+  color: var(--color-secondary);
   border: None;
   border-radius: 100px;
   width: 100px;
@@ -71,7 +72,8 @@
   border: None;
 }
 
-.btn-suggest:active {
+.btn-suggest:active,
+.btn-register:active {
   background-color: var(--color-primary); /* 클릭 시 배경 색상 변경 */
   transform: scale(0.98); /* 클릭 시 약간 작아지는 효과 */
   border: None;

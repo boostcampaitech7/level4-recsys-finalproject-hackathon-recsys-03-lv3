@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, Path, HTTPException, Request, Background
 from sqlalchemy.orm import Session
 
 from api.db import get_db
-from src.schemas.project import ProjectRequest, FeedbackRequest, ProjectListResponse, ProjectFeedbackResponse, CompanyResponse
+from src.schemas.project import ProjectRequest, FeedbackRequest, ProjectListResponse, ProjectFeedbackResponse, SolarResponse, CompanyResponse
 from src.schemas.resource import ResourceListResponse
 from src.services.project_service import ProjectService
 from src.services.resource_service import ResourceService
@@ -95,20 +95,23 @@ def get_prestart_project_detail(
         raise e
 
 
-@mymony.get("/project/init", response_model=List[ProjectListResponse])
-def get_init_projects(
+@mymony.post("/project/init", response_model=SolarResponse)
+def create_solar_response(
     request: Request,
+    project_data: ProjectRequest,
     db: Session = Depends(get_db)
-) -> List[ProjectListResponse]:
+) -> SolarResponse:
     """
-    Solar에 넘길 전체 프로젝트 목록 조회 API
+    프로젝트 등록 API
+    새로운 프로젝트에 대한 정보를 입력하고 Solar를 호출해 응답을 반환한다.
 
     Args:
         request (Request): FastAPI의 Request 객체
+        project_data (ProjectRequest): 프로젝트 내용, 기간, 예산 등을 포함하는 등록하려는 프로젝트 정보
         db (Session): SQLAlchemy 데이터베이스 세션
 
     Returns:
-        List[ProjectListResponse]: 조회된 프로젝트 리스트
+        SolarResponse: Solar 응답
     """
     token_info = request.state.token_info
     user_type: int = token_info.get("userType")
@@ -123,7 +126,7 @@ def get_init_projects(
                             detail=ERROR_MESSAGES["FORBIDDEN"]["message"])
 
     try:
-        return ProjectService.get_projects(db, include_priority=True)
+        return ProjectService.create_solar_response(project_data, db)
     except HTTPException as e:
         raise e
 
@@ -192,7 +195,7 @@ def get_project_feedbacks(
         )
 
     try:
-        return ProjectService.get_project_feedbacks(db, user_id, search_type=1)
+        return ProjectService.get_project_feedbacks(db, user_id)
     except HTTPException as e:
         raise e
 

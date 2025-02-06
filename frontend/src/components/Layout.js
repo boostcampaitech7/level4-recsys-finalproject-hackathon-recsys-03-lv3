@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import Topbar from "./Topbar";
 import Footer from "./Footer";
 import { Outlet } from "react-router-dom";
 
-const Layout = () => {
+const Layout = ({ isLoggedIn, setIsLoggedIn }) => {
   return (
     <div
       id="wrapper"
@@ -29,7 +29,11 @@ const Layout = () => {
             minHeight: "95vh",
           }}
         >
-          <Topbar />
+          <Topbar
+            userType={1}
+            isLoggedIn={isLoggedIn}
+            setIsLoggedIn={setIsLoggedIn}
+          />
           <div className="container-fluid">
             <Outlet />
           </div>
