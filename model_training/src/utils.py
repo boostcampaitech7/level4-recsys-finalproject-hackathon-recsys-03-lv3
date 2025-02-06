@@ -57,7 +57,7 @@ def recall_at_k(y_true: dict[float, list[int]], y_pred: dict[float, list[int]], 
 
         recall = len(true_freelancers & predicted_freelancers) / len(true_freelancers)
         recalls.append(recall)
-    return np.mean(recalls) if recalls else 0.0 
+    return np.mean(recalls) if recalls else 0.0
 
 
 def dcg_at_k(y_true: dict[float, list[int]], y_pred: dict[float, list[int]], k=5):
@@ -67,6 +67,7 @@ def dcg_at_k(y_true: dict[float, list[int]], y_pred: dict[float, list[int]], k=5
         y_true (dict): 실제 매칭된 프리랜서 목록 (key=project_id, value=list(freelancer_ids))
         y_pred (dict): 모델이 예측한 프리랜서 목록 (key=project_id, value=list(freelancer_ids))
         k (int): DCG@K의 K 값 (기본값 5)
+
     Returns:
         float: DCG@K 값
     """
@@ -84,6 +85,7 @@ def ndcg_at_k(y_true: dict[float, list[int]], y_pred: dict[float, list[int]], k=
         y_true (dict): 실제 매칭된 프리랜서 목록 (key=project_id, value=list(freelancer_ids))
         y_pred (dict): 모델이 예측한 프리랜서 목록 (key=project_id, value=list(freelancer_ids))
         k (int): NDCG@K의 K 값 (기본 5)
+
     Returns:
         float: NDCG@K 평균 값
     """

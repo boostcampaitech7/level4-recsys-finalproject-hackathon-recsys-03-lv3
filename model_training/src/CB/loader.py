@@ -2,17 +2,18 @@ import os
 from ast import literal_eval
 
 import pandas as pd
+from omegaconf.dictconfig import DictConfig
 
 from src.utils import check_path
 
 
-def prepare_data(data_path: str, config):
+def prepare_data(data_path: str, config: DictConfig):
     """
     CatBoost용 데이터셋 생성 (프로젝트와 프리랜서 데이터를 결합).
-    
+
     Args:
         data_path (str): 데이터 저장 경로
-        config: config.yaml 설정값
+        config (DictConfig): config.yaml 설정값
     """
     project_path = os.path.join(data_path, "project.csv")
     freelancer_path = os.path.join(data_path, "freelancer.csv")

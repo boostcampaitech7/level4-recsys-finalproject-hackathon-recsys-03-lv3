@@ -129,6 +129,7 @@ if __name__ == "__main__":
     # 직접 구현한 모델
     else:
         config = OmegaConf.load("config/config.yaml")
+        print(type(config))
 
         if args.data:
             print("======== 데이터 로드 시작 ========")
