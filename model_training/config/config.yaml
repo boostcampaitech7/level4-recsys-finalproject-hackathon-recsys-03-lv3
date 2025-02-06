@@ -1,5 +1,45 @@
 seed: 42
+cb_data_path: "./datasets/"
 data_path: "/data/ephemeral/home/develop/data/"
-output_path: "output/"
-repo_name: "TaroSin/HRmony"
+output_path: output/
+repo_name: TaroSin/HRmony
+config_path: config/
 n_components: 3
+catboost_params:
+  iterations: 874
+  depth: 4
+  learning_rate: 0.03189367860145962
+  loss_function: RMSE
+  l2_leaf_reg: 0.45452375412903995
+  eval_metric: RMSE
+  task_type: GPU
+xgboost_params:
+  n_estimators: 942
+  max_depth: 8
+  learning_rate: 0.012784992144220556
+  eval_metric: rmse
+  device: cuda
+  tree_method: hist
+  subsample: 0.841112648392071
+  colsample_bytree: 0.5578740901015404
+  reg_lambda: 0.5607474414911422
+lr_params:
+  penalty: l2
+  C: 1.0
+  solver: lbfgs
+  max_iter: 1000
+data_params:
+  train_ratio: 0.8
+  target_column: matching_score
+  numerical_features:
+    - project_budget
+    - freelancer_experience
+    - freelancer_price
+  categorical_features:
+    - project_skills
+    - project_category
+    - freelancer_skills
+    - freelancer_category
+cb_prepare_data:
+  n_components: 3
+  similarity: dot_product

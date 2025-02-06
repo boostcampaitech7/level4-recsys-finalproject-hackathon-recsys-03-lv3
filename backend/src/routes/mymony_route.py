@@ -195,7 +195,7 @@ def get_project_feedbacks(
         )
 
     try:
-        return ProjectService.get_project_feedbacks(db, user_id)
+        return ProjectService.get_project_feedbacks(db, user_id, search_type=1)
     except HTTPException as e:
         raise e
 
