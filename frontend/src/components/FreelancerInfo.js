@@ -16,6 +16,7 @@ Chart.register(ArcElement, Tooltip, Legend);
 const FreelancerInfo = ({ freelancerInfo, pageType }) => {
   const {
     photo,
+    applied,
     freelancerName,
     workExp,
     workType,
@@ -23,6 +24,7 @@ const FreelancerInfo = ({ freelancerInfo, pageType }) => {
     freelancerContent,
     locationName,
     skillList,
+    skillScoreList,
     feedbackCount,
     feedbackScore,
     expertise,
@@ -31,7 +33,6 @@ const FreelancerInfo = ({ freelancerInfo, pageType }) => {
     communication,
     maintainability,
     matchingScore,
-    applied,
   } = freelancerInfo;
 
   const chartRef = useRef(null); // 차트를 그릴 캔버스 참조
@@ -119,15 +120,16 @@ const FreelancerInfo = ({ freelancerInfo, pageType }) => {
             </div>
           </div>
           <div className="field mb-2">
-            {role} | {workExp} | {workType} | {locationName}
+            {role} | {workExp}년 | {workType === 0 ? "대면" : "원격"} |{" "}
+            {locationName}
           </div>
           <div className="intro">{freelancerContent}</div>
           <div className="skillList d-flex flex-wrap mt-3">
-            {skillList.map(({ skillName, skillScore }, index) => (
+            {skillList.map((skillName, index) => (
               <FreelancerSkillTag
                 key={index}
                 text={skillName}
-                score={skillScore}
+                score={skillScoreList[index]}
               />
             ))}
           </div>
