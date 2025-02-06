@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import ProfileIcon from "../components/ProfileIcon";
 import profileExample from "../assets/profile_example5.jpg";
 import "../style/FreelancerDetailPage.css";
@@ -6,6 +7,76 @@ import RadarChart from "../components/RadarChart";
 import FreelancerSkillTag from "../components/FreelancerSkillTag";
 import DoughnutChart from "../components/DoughnutChart";
 import StaticStarRating from "../components/StaticStarRating";
+import ScoreDisplay from "../components/ScoreDisplay";
+
+const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/resource`;
+
+const ProfilePage = () => {
+  const [freelancerInfo, setFreelancerInfo] = useState(null);
+  const [progress, setProgress] = useState(null);
+  const [history, setHistory] = useState([]);
+  const freelancerId = parseInt(sessionStorage.getItem("userId"), 10); // 실제 사용 시 동적으로 설정 필요
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("인증 토큰이 없습니다.");
+      return;
+    }
+
+    const headers = {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    const fetchFreelancerData = async () => {
+      try {
+        const [profileRes, progressRes, historyRes] = await Promise.all([
+          axios.get(`${API_BASE_URL}/${freelancerId}/profile`, { headers }),
+          axios.get(`${API_BASE_URL}/${freelancerId}/progress`, { headers }),
+          axios
+            .get(`${API_BASE_URL}/${freelancerId}/feedback`, { headers })
+            .catch((err) => {
+              if (err.response && err.response.status === 404) {
+                return { data: [] }; // 404 발생 시 빈 배열 반환
+              }
+              throw err;
+            }),
+        ]);
+
+        setFreelancerInfo(profileRes.data);
+        setProgress(progressRes.data);
+        setHistory(historyRes.data);
+      } catch (error) {
+        console.error("데이터 불러오기 실패: ", error);
+      }
+    };
+
+    fetchFreelancerData();
+  }, [freelancerId]);
+
+  if (!freelancerInfo || !progress) {
+    return <div>로딩 중...</div>;
+  }
+
+  return (
+    <div className="profile-page container-fluid">
+      <ProfileHeader freelancerInfo={freelancerInfo} />
+      <div className="container-fluid detail-card bg-light mt-4">
+        <div className="row">
+          <h3>프로젝트 히스토리</h3>
+          <div className="col-md-6 d-flex">
+            <ProjectRates freelancerInfo={freelancerInfo} progress={progress} />
+          </div>
+          <div className="col-md-6 d-flex">
+            <ProjectStatus progress={progress} />
+          </div>
+          <ProjectHistory history={history} />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const ProfileHeader = ({ freelancerInfo }) => {
   return (
@@ -22,38 +93,22 @@ const ProfileHeader = ({ freelancerInfo }) => {
               {freelancerInfo.locationName}
             </p>
             <div>
-              {freelancerInfo.skillList.map((skill) => (
+              {freelancerInfo.skillList.map((skill, index) => (
                 <FreelancerSkillTag
+                  key={index}
                   text={skill.skillName}
                   score={skill.skillScore}
                 />
               ))}
-              {/* 더 많은 스킬 배지 추가 가능 */}
             </div>
           </div>
         </div>
-        <div
-          className="d-flex align-items-center mx-5"
-          style={{ marginTop: "20px" }}
-        >
-          <div className="row">
-            <h4>소개</h4>
-            <h6>{freelancerInfo.freelancerContent}</h6>
-          </div>
-        </div>
-      </div>
-      <div className="button-right align-items-center">
-        <a href="/suggest">
-          <button type="button" className="btn-suggest">
-            제안하기
-          </button>
-        </a>
       </div>
     </div>
   );
 };
 
-const ProjectRates = ({ freelancerInfo, prograss }) => {
+const ProjectRates = ({ freelancerInfo, progress }) => {
   return (
     <div className="profile-stats container-fluid detail-card">
       <div className="row">
@@ -67,7 +122,7 @@ const ProjectRates = ({ freelancerInfo, prograss }) => {
               freelancerInfo.maintainability) /
             5
           }
-          numRates={prograss.projectCount}
+          numRates={progress.projectCount}
         />
         <RadarChart
           data={[
@@ -83,16 +138,16 @@ const ProjectRates = ({ freelancerInfo, prograss }) => {
   );
 };
 
-const ProjectStatus = ({ prograss }) => {
+const ProjectStatus = ({ progress }) => {
   return (
     <div className="project-status container-fluid detail-card">
       <div className="row">
         <div>
           <h4>프로젝트 진행 상황</h4>
-          {prograss.projectCount}건
+          {progress.projectCount}건
         </div>
         <DoughnutChart
-          data={[prograss.completedCount, prograss.ongoingCount]}
+          data={[progress.completedCount, progress.ongoingCount]}
         />
       </div>
     </div>
@@ -101,142 +156,42 @@ const ProjectStatus = ({ prograss }) => {
 
 const ProjectHistory = ({ history }) => {
   return (
-    <div
-      className="project-history container-fluid detail-card mt-4"
-      //   style={{ height: "300px", overflow: "hidden" }}
-    >
+    <div className="project-history container-fluid detail-card mt-4">
       <div className="history-list">
         <div className="row">
-          {history.map((project) => (
-            <div className="card mb-3 d-flex">
+          {history.map((project, index) => (
+            <div key={index} className="card mb-3 d-flex">
               <div className="card-body">
                 <div className="row">
-                  <div className="col-md-9">
+                  <div className="col-md-8">
                     <h5 className="card-title">{project.projectName}</h5>
-                    <p className="card-text">금액: {project.budget}원</p>
+                    <p className="card-text">
+                      금액: {project.budget.toLocaleString()}원
+                    </p>
                     <p className="card-text">기간: {project.duration}일</p>
                   </div>
-                  <div className="col-md-3">
-                    평가{" "}
-                    <StaticStarRating
-                      rating={
-                        (project.expertise +
-                          project.proactiveness +
-                          project.punctuality +
-                          project.communication +
-                          project.maintainability) /
-                        5
-                      }
-                    />
-                    <br />
-                    <div className="row">
-                      <div className="col-md-6">전문성</div>
-                      <div className="col-md-6">{project.expertise}</div>
-                      <div className="col-md-6">적극성</div>
-                      <div className="col-md-6">{project.proactiveness}</div>
-                      <div className="col-md-6">일정 준수</div>
-                      <div className="col-md-6">{project.punctuality}</div>
-                      <div className="col-md-6">의사소통</div>
-                      <div className="col-md-6">{project.communication}</div>
-                      <div className="col-md-6">유지보수</div>
-                      <div className="col-md-6">{project.maintainability}</div>
+                  <div className="col-md-4">
+                    <div className="rating">
+                      <div>
+                        <ScoreDisplay score={project.feedbackScore} />
+                      </div>
+                    </div>
+                    <div className="radar-chart">
+                      <RadarChart
+                        data={[
+                          project.expertise,
+                          project.proactiveness,
+                          project.punctuality,
+                          project.communication,
+                          project.maintainability,
+                        ]}
+                      />
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const ProfilePage = () => {
-  const freelancerInfo = {
-    freelancerId: 123,
-    freelancerName: "박왕균이",
-    workExp: 5,
-    price: 100000000,
-    workType: 1,
-    role: "백엔드 개발자",
-    freelancerContent: "안녕하세요! 저 잘합니다.",
-    locationName: "서울특별시 강남구",
-    categoryList: ["IT•정보통신업", "건설업"],
-    skillList: [
-      { skillName: "Python", skillScore: 4.5 },
-      { skillName: "Django", skillScore: 4.0 },
-    ],
-    reviewCount: 3,
-    expertise: 4.2,
-    proactiveness: 4.3,
-    punctuality: 4.1,
-    communication: 4.4,
-    maintainability: 4.0,
-  };
-
-  const prograss = {
-    projectCount: 20,
-    ongoingCount: 5,
-    completedCount: 10,
-  };
-
-  const history = [
-    {
-      projectId: 101,
-      projectName: "AI Chatbot Development",
-      duration: 6,
-      budget: 5000000,
-      workType: 1,
-      contractType: 0,
-      status: 1,
-      registerDate: "20250125",
-      companyName: "TechCorp",
-      skillIdList: [1, 2, 3],
-      skillNameList: ["Python", "Machine Learning", "Deep Learning"],
-      feedbackScore: 4.2,
-      expertise: 4.5,
-      proactiveness: 4.0,
-      punctuality: 4.2,
-      communication: 4.3,
-      maintainability: 4.0,
-      feedbackContent: "Great performance and timely delivery.",
-    },
-    {
-      projectId: 102,
-      projectName: "E-commerce Website",
-      duration: 3,
-      budget: 2000000,
-      workType: 0,
-      contractType: 1,
-      status: 2,
-      registerDate: "20250110",
-      companyName: "ShopEase",
-      skillIdList: [1, 2, 3],
-      skillNameList: ["Python", "Machine Learning", "Deep Learning"],
-      feedbackScore: null,
-      expertise: 4,
-      proactiveness: 5,
-      punctuality: 3,
-      communication: 2,
-      maintainability: 4,
-      feedbackContent: null,
-    },
-  ];
-
-  return (
-    <div className="profile-page container-fluid">
-      <ProfileHeader freelancerInfo={freelancerInfo} />
-      <div className="container-fluid detail-card scrollable bg-light mt-4">
-        <div className="row">
-          <h3>프로젝트 히스토리</h3>
-          <div className="col-md-6 d-flex">
-            <ProjectRates freelancerInfo={freelancerInfo} prograss={prograss} />
-          </div>
-          <div className="col-md-6 d-flex">
-            <ProjectStatus prograss={prograss} />
-          </div>
-          <ProjectHistory history={history} />
         </div>
       </div>
     </div>

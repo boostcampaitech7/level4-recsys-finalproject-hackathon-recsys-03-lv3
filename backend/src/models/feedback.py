@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Float, String, ForeignKey
+from sqlalchemy import Column, Integer, Float, Text, ForeignKey
 from sqlalchemy.orm import relationship
 from api.db import Base
 
@@ -12,7 +12,7 @@ class Feedback(Base):
     punctuality = Column("PUNCTUALITY", Float, nullable=False)
     communication = Column("COMMUNICATION", Float, nullable=False)
     maintainability = Column("MAINTAINABILITY", Float, nullable=False)
-    content = Column("FEEDBACK_CONTENT", String(4000), nullable=False)
+    content = Column("FEEDBACK_CONTENT", Text, nullable=False)
 
     # 외래 키
     project_id = Column("PROJECT_ID", Integer, ForeignKey("PROJECT.PROJECT_ID"), nullable=False)

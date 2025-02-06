@@ -4,9 +4,9 @@
 .info-card {
   position: relative;
   height: auto;
-  min-height: 200px;
+  min-height: 320px;
   overflow-x: auto;
-  max-width: 1200px;
+  max-width: 1000px;
   white-space: nowrap;
 }
 
@@ -15,7 +15,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  min-height: 200px;
+  min-height: 250px;
   padding: 10px; /* 여백 추가 */
   box-sizing: border-box;
 }
@@ -41,7 +41,7 @@
   grid-template-columns: 0.25fr 1fr;
   gap: 20px;
   align-items: start;
-  min-width: 1200px;
+  width: 100%;
 }
 
 /* 좌측 및 우측 정보 영역 */
@@ -56,4 +56,28 @@
   margin: 5px 0;
   font-size: 18px;
   color: black;
+}
+
+.project-location {
+  display: flex;
+  align-items: center; /* 세로 정렬 */
+  gap: 5px; /* 아이콘과 텍스트 간격 조절 */
+  font-size: 16px;
+  color: #555;
+}
+
+.project-location i {
+  font-size: 18px; /* 아이콘 크기 조절 */
+  color: darkgrey; /* 아이콘 색상 */
+  margin-left: 3px;
+}
+
+.skills {
+  margin-top: 4px;
+}
+
+.project-link,
+.project-link:hover {
+  color: black;
+  text-decoration: none;
 }

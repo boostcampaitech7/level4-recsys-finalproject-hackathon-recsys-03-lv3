@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, ForeignKey
 from sqlalchemy.orm import relationship
 from api.db import Base
 
@@ -14,7 +14,7 @@ class Freelancer(Base):
     price = Column("PRICE", Integer, nullable=False)
     work_type = Column("WORK_TYPE", Integer, nullable=False)
     role = Column("ROLE", String(100), nullable=False)
-    content = Column("FREELANCER_CONTENT", String(4000))
+    content = Column("FREELANCER_CONTENT", Text)
 
     # 외래 키
     location_id = Column("LOCATION_ID", Integer, ForeignKey("LOCATION.LOCATION_ID"), nullable=False)
@@ -44,6 +44,11 @@ class Freelancer(Base):
         "ProjectRanking",
         back_populates="freelancer",
         foreign_keys="ProjectRanking.freelancer_id"
+    )
+    applicants = relationship(
+        "ProjectApplicants",
+        back_populates="freelancer",
+        foreign_keys="ProjectApplicants.freelancer_id"
     )
     feedbacks = relationship(
         "Feedback",

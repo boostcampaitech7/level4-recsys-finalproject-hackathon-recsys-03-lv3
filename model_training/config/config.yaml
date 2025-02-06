@@ -1,8 +1,9 @@
 seed: 42
-data_path: datasets/
+data_path: "/data/ephemeral/home/develop/data/"
 output_path: output/
 repo_name: TaroSin/HRmony
 config_path: config/
+n_components: 3
 catboost_params:
   iterations: 874
   depth: 4
@@ -30,11 +31,11 @@ data_params:
   train_ratio: 0.8
   target_column: matching_score
   numerical_features:
-  - project_budget
-  - freelancer_experience
-  - freelancer_price
+    - project_budget
+    - freelancer_experience
+    - freelancer_price
   categorical_features:
-  - project_skills
-  - project_category
-  - freelancer_skills
-  - freelancer_category
+    - project_skills
+    - project_category
+    - freelancer_skills
+    - freelancer_category

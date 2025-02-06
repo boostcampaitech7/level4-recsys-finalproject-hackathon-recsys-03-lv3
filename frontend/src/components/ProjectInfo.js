@@ -5,7 +5,15 @@ import ProjectSkillTag from "./ProjectSkillTag";
 import "../style/ProjectInfo.css";
 import "../style/colors.css";
 
-const ProjectInfo = ({ content }) => {
+const ProjectInfo = ({ content, className = "" }) => {
+  const formatDateUsingMath = (dateNumber) => {
+    let year = Math.floor(dateNumber / 10000); // 2025
+    let month = Math.floor((dateNumber % 10000) / 100); // 2
+    let day = dateNumber % 100; // 12
+
+    return `${year}년 ${month}월 ${day}일`;
+  };
+
   const {
     projectId, // 프로젝트 ID
     projectName, // 프로젝트 이름
@@ -24,8 +32,8 @@ const ProjectInfo = ({ content }) => {
   } = content;
 
   return (
-    <InfoCard>
-      <div className={"project-container"}>
+    <InfoCard className={className}>
+      <div className="project-container">
         <div className="status">
           {status === 0 ? (
             <ProjectKeywordIcon color="var(--color-secondary)" text="모집 중" />
@@ -40,7 +48,11 @@ const ProjectInfo = ({ content }) => {
           <ProjectKeywordIcon color="var(--color-primary)" text="NEW" />
         </div>
 
-        <h3 className="project-title">{projectName}</h3>
+        <h3 className="project-title">
+          <a className="project-link" href="#">
+            {projectName}
+          </a>
+        </h3>
         <div className="project-info-grid">
           <div className="project-info-left">
             <p>
@@ -50,7 +62,7 @@ const ProjectInfo = ({ content }) => {
               <strong>예상 기간:</strong> {duration}일
             </p>
             <p>
-              <strong>근무 시작일:</strong> {registerDate}
+              <strong>근무 시작일:</strong> {formatDateUsingMath(registerDate)}
             </p>
             <div className="project-location">
               <i className="fas fa-map-marker-alt"></i>

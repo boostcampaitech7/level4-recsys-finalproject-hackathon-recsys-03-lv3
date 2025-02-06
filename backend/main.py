@@ -11,7 +11,7 @@ from src.routes.resource_route import resource as resource_router
 # FastAPI 앱 초기화
 app = FastAPI(
     title="HRmony",
-    description="AI 기반 추천 시스템을 활용해 팀 협업과 프로젝트 매칭을 지원하는 HR 플랫폼",
+    description="AI 기반 추천 시스템을 활용해 프리랜서와 프로젝트의 매칭을 지원하는 플랫폼",
     version="1.0.0"
 )
 
@@ -30,10 +30,10 @@ async def root():
 
 # 라우터 등록
 app.include_router(auth_router, prefix="/api/auth", tags=["Auth"])
-app.include_router(filter_router, prefix="/api/filter", tags=["Filter"])
-app.include_router(mymony_router, prefix="/api/mymony", tags=["Mymony"])
-app.include_router(project_router, prefix="/api/project", tags=["Project"])
 app.include_router(resource_router, prefix="/api/resource", tags=["Resource"])
+app.include_router(project_router, prefix="/api/project", tags=["Project"])
+app.include_router(mymony_router, prefix="/api/mymony", tags=["Mymony"])
+app.include_router(filter_router, prefix="/api/filter", tags=["Filter"])
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

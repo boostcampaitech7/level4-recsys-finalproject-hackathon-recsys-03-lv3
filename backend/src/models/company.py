@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, ForeignKey
 from sqlalchemy.orm import relationship
 from api.db import Base
 
@@ -8,6 +8,7 @@ class Company(Base):
 
     id = Column("COMPANY_ID", Integer, primary_key=True, index=True)
     name = Column("COMPANY_NAME", String(100), nullable=False)
+    content = Column("COMPANY_CONTENT", Text)
     email = Column("EMAIL", String(100), nullable=False, unique=True)
     password = Column("PASSWORD", String(100), nullable=False)
 

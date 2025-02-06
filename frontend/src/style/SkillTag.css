@@ -1,11 +1,11 @@
 .skill-badge {
   width: fit-content;
   height: fit-content;
-  padding: 9px 20px;
-  font-size: 15px;
+  margin: 5px 0;
+  padding: 7px 15px;
+  font-size: 13px;
   font-weight: 400;
   color: rgb(0, 0, 0);
   border-radius: 10px;
-  margin-right: 10px;
   border-color: black;
 }

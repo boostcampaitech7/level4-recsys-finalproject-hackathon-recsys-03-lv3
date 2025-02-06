@@ -6,3 +6,5 @@ sqlalchemy==2.0.37            # ORM
 huggingface_hub==0.27.1       # HuggingFace 라이브러리
 passlib==1.7.4
 PyJWT==2.10.1
+openai==1.61.0                # Upstage API 라이브러리
+langchain==0.3.17   

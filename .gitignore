@@ -171,3 +171,4 @@ backend/model/
 model_training/output/
 model_training/datasets/
 model_training/log_tensorboard/
+model_training/catboost_info

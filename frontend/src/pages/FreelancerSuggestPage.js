@@ -58,7 +58,7 @@ const FreelancerSuggest = () => {
 
   return (
     <div className="suggest-page container-fluid">
-      <div className="container-fluid detail-card scrollable">
+      <div className="container-fluid detail-card">
         <h3>제안할 프로젝트 선택</h3>
         {projectList.map((project) => (
           <div
