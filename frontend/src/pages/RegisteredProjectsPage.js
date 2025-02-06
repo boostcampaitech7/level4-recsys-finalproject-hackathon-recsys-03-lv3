@@ -79,38 +79,34 @@ const RegisteredProjects = () => {
   };
 
   return (
-    <div className="search-project-container">
+    <div className="registered-project-container">
       <div className="header-container">
-        <div className="register-header">
-          <div className="register-left">
-            <div>
-              <h3 className="header">내가 등록한 프로젝트</h3>
-              <p>총 {projects.length}개의 등록한 프로젝트가 있습니다.</p>
-            </div>
-          </div>
-          <div className="register-right">
-            <button className="btn-register" onClick={handleRegisterClick}>
-              등록하기
-            </button>
-          </div>
+        <div className="header-left">
+          <h3 className="header">내가 등록한 프로젝트</h3>
+          <p>총 {projects.length}개의 등록한 프로젝트가 있습니다.</p>
         </div>
-        {projects.map((project) => (
-          <ProjectInfo
-            key={project.projectId}
-            content={{
-              projectName: project.projectName,
-              skillNameList: project.skillNameList,
-              locationName: project.locationName,
-              registerDate: project.registerDate,
-              duration: project.duration,
-              budget: project.budget,
-              categoryRole: "개발",
-              categoryName: project.categoryName,
-              status: project.status,
-            }}
-          />
-        ))}
+        <div className="header-right">
+          <button className="btn-register" onClick={handleRegisterClick}>
+            등록하기
+          </button>
+        </div>
       </div>
+      {projects.map((project) => (
+        <ProjectInfo
+          key={project.projectId}
+          content={{
+            projectName: project.projectName,
+            skillNameList: project.skillNameList,
+            locationName: project.locationName,
+            registerDate: project.registerDate,
+            duration: project.duration,
+            budget: project.budget,
+            categoryRole: "개발",
+            categoryName: project.categoryName,
+            status: project.status,
+          }}
+        />
+      ))}
     </div>
   );
 };

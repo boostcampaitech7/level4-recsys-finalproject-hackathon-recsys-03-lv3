@@ -410,15 +410,13 @@ const SearchFreelancer = () => {
           />
         </div>
       </div>
-      <div className="freelancers">
-        {filteredFreelancers.map((freelancer) => (
-          <FreelancerInfo
-            key={freelancer.freelancerId}
-            freelancerInfo={freelancer}
-            pageType="search"
-          />
-        ))}
-      </div>
+      {filteredFreelancers.map((freelancer) => (
+        <FreelancerInfo
+          key={freelancer.freelancerId}
+          freelancerInfo={freelancer}
+          pageType="search"
+        />
+      ))}
     </div>
   );
 };
