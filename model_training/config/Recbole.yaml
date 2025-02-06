@@ -1,34 +1,40 @@
 # Environment Settings
 device: cuda
-seed: 42
-state: 'INFO'
-encoding: 'utf-8'
-reproducibility: True
-data_path: "datasets/"
-checkpoint_dir: "output/"
+seed: 42                                # (int) Random seed.
+state: 'INFO'                           # (str) Logging level.
+show_progress: True                     # (bool) Whether or not to show the progress bar of every epoch.
+encoding: 'utf-8'                       
+reproducibility: True                   # (bool) Whether or not to make results reproducible.
+data_path: "datasets/"                  # (str) The path of input dataset.
+checkpoint_dir: "output/"               # (str) The path to save checkpoint file.
 
 # Training Settings_basic
 verbose: 1
-epochs: 50
-train_batch_size: 2048
-eval_batch_size: 2048
-learner: 'adam'
-learning_rate: 0.0001
-train_neg_sample_args: ~  # neg_sampling: {'uniform': 1}
-eval_step: 1
-stopping_step: 10         # early stopping threshold
-# loss_decimal_place: 4
+epochs: 50                              # (int) The number of training epochs.
+learner: 'adam'                         # (str) The name of used optimizer.
+learning_rate: 0.0001                   # (float) Learning rate.
+train_batch_size: 2048                  # (int) The training batch size.
+eval_batch_size: 2048                   # (int) The evaluation batch size.
+train_neg_sample_args:                  # (dict) Arguments for negative sampling during training.
+ distribution: "uniform"                # (str) Sampling distribution: 'uniform' or 'popularity'
+ sample_num: 1                          # (int) Number of negative samples per positive sample.
+valid_neg_sample_args:                  # (dict) Arguments for negative sampling during validation.
+ distribution: "uniform"                # (str) Sampling distribution: 'uniform' or 'popularity'
+ sample_num: 1                          # (int) Number of negative samples per positive sample.
+eval_step: 1                            # (int) The number of training epochs before an evaluation on the valid dataset.
+stopping_step: 10                       # (int) The threshold for validation-based early stopping.
+loss_decimal_place: 4                   # (int) The decimal place of training loss.
 # weight_decay: 0.000
 
 # Evaluation Settings
-eval_args:
-    group_by: user
-    order: RO
-    split: {"LS": 'valid_and_test'}
-    mode: full
-repeatable: False
-metrics: ['Recall', 'MRR', 'NDCG', 'Hit', 'Precision']
-topk: 10
-valid_metric: Recall@10
-# eval_batch_size: 4096
-metric_decimal_place: 4
+eval_args:                              # (dict) 4 keys: group_by, order, split, and mode
+    group_by: user                      # (str) The grouping strategy ranging in ['user', 'none'].
+    order: RO                           # (str) The ordering strategy ranging in ['RO', 'TO'].
+    split: {"LS": 'valid_and_test'}     # (dict) The splitting strategy ranging in ['RS','LS'].
+    mode: full                          # (str) The evaluation mode ranging in ['full','unixxx','popxxx','labeled'].
+repeatable: False                       # (bool) Whether to evaluate results with a repeatable recommendation scene. 
+metrics: ['Recall', 'NDCG']
+topk: [5, 10]                           # (list or int or None) The value of k for topk evaluation metrics.
+valid_metric: Recall@10                 # (str) The evaluation metric for early stopping. 
+valid_metric_bigger: True               # (bool) Whether to take a bigger valid metric value as a better result.
+metric_decimal_place: 4                 # (int) The decimal place of metric scores.
