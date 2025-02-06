@@ -32,7 +32,7 @@ const DropdownSelector = ({
 
   return (
     <div className="content-box">
-      <p className="label">{label}</p>
+      <p className="chat-label">{label}</p>
       <div className="dropdown-container">
         <select
           className="custom-select"
@@ -182,7 +182,7 @@ const ProjectInputPage = () => {
               {chat.text === questions[1] ? (
                 // Duration
                 <div className="content-box">
-                  <p className="label">{chat.text}</p>
+                  <p className="chat-label">{chat.text}</p>
                   <div className="custom-input-container">
                     <input
                       className="custom-input"
@@ -257,7 +257,7 @@ const ProjectInputPage = () => {
               ) : chat.text === questions[5] ? (
                 // Budget
                 <div className="content-box">
-                  <p className="label">{chat.text}</p>
+                  <p className="chat-label">{chat.text}</p>
                   <div className="budget-container">
                     <button
                       className="custom-btn btn-outline"

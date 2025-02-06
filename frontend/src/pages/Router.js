@@ -14,7 +14,6 @@ import RecommendFreelancerPage from "./RecommendFreelancerPage";
 import ProjectInputPage from "./ProjectInputPage";
 import ProjectRegisterPage from "./ProjectRegisterPage";
 import RegisteredProjectsPage from "./RegisteredProjectsPage";
-import ChatPage from "./ChatPage";
 import FreelancerDetailPage from "./FreelancerDetailPage";
 import AppliedProjectPage from "./AppliedProjectPage";
 import FinishedProjectPage from "./FinishedProjectPage";
@@ -72,7 +71,6 @@ const AppRouter = () => {
           {/* Layout 내부의 하위 경로 */}
           <Route index element={<MainPage />} />
           <Route path="/search-project" element={<SearchProjectPage />} />
-          <Route path="/chat" element={<ChatPage />} />
           <Route path="/search-freelancer" element={<SearchFreelancerPage />} />
           <Route
             path="/recommend-freelancer"

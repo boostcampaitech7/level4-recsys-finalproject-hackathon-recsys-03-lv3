@@ -102,18 +102,20 @@ const AppliedProjectPage = () => {
               setFilterOption(mapping[value]);
             }}
           />
+        </div>
+
+        <div className="filter-group-right">
+          {/* SwitchButton을 클릭하면 setShowOnlyUnreviewed 값 변경 */}
+          <SwitchButton
+            text="매칭 전 프로젝트만 표시"
+            onChange={setShowOnlyUnreviewed}
+          />
 
           {/* 정렬용 SingleSelector */}
           <SingleSelector
             title="정렬"
             options={["최신순", "매칭 점수 높은순", "금액 높은순"]}
             onChange={setSortOption}
-          />
-
-          {/* SwitchButton을 클릭하면 setShowOnlyUnreviewed 값 변경 */}
-          <SwitchButton
-            text="매칭 전 프로젝트만 표시"
-            onChange={setShowOnlyUnreviewed}
           />
         </div>
       </div>
