@@ -533,7 +533,8 @@ class ProjectService:
 
     def get_project_feedbacks(
         db: Session,
-        user_id: int
+        user_id: int,
+        search_type: int
     ) -> List[ProjectFeedbackResponse]:
         """
         등록한 프로젝트(완료) 리스트 조회
@@ -541,11 +542,12 @@ class ProjectService:
         Args:
             db (Session): SQLAlchemy 데이터베이스 세션
             user_id (int): 기업 ID
+            search_type (int): 조회 조건 (0: 프리랜서, 1: 기업)
 
         Returns:
             List[ProjectFeedbackResponse]: 조회된 프로젝트-피드백 리스트
         """
-        projects = (
+        query = (
             db.query(
                 Project.id.label("projectId"),
                 Project.name.label("projectName"),
@@ -579,8 +581,21 @@ class ProjectService:
             .join(ProjectSkill, Project.id == ProjectSkill.project_id)
             .join(Skill, ProjectSkill.skill_id == Skill.id)
             .outerjoin(Feedback, Project.id == Feedback.project_id)
-            .filter(Project.company_id == user_id, Project.status == 2)
-            .group_by(
+            .filter(Project.status == 2)
+        )
+
+        error_message = ""
+        # 프리랜서
+        if search_type == 0:
+            query = query.filter(Project.freelancer_id == user_id)
+            error_message = f"프리랜서({user_id})의 프로젝트 리스트"
+        # 기업
+        elif search_type == 1:
+            query = query.filter(Project.company_id == user_id)
+            error_message = "완료한 프로젝트 리스트"
+
+        projects = (
+            query.group_by(
                 Project.id,
                 Project.name,
                 Project.duration,
@@ -600,7 +615,7 @@ class ProjectService:
         if not projects:
             raise HTTPException(
                 status_code=ERROR_MESSAGES["NOT_FOUND"]["status"],
-                detail=ERROR_MESSAGES["NOT_FOUND"]["message"].format("프로젝트 리스트")
+                detail=ERROR_MESSAGES["NOT_FOUND"]["message"].format(error_message)
             )
 
         project_ids = [project._mapping["projectId"] for project in projects]
