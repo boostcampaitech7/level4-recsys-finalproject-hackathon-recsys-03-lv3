@@ -11,6 +11,10 @@ import MainPage from "./MainPage";
 import SearchFreelancer from "./SearchFreelancerPage";
 import RecommendFreelancer from "./RecommendFreelancerPage";
 import SearchProjectPage from "./SearchProjectPage";
+import SearchFreelancer from "./SearchFreelancer";
+import RecommendFreelancerPage from "./RecommendFreelancerPage";
+import ProjectInputPage from "./ProjectInputPage";
+import ProjectRegisterPage from "./ProjectRegisterPage";
 import RegisteredProjects from "./RegisteredProjectsPage";
 import Chat from "./ChatPage";
 import FreelancerDetailPage from "./FreelancerDetailPage";
@@ -76,6 +80,8 @@ const AppRouter = () => {
             path="/recommend-freelancer"
             element={<RecommendFreelancer />}
           />
+          <Route path="register-input" element={<ProjectInputPage />} />
+          <Route path="register-result" element={<ProjectRegisterPage />} />
           <Route path="/freelancer-detail" element={<FreelancerDetailPage />} />
           <Route path="/registered-projects" element={<RegisteredProjects />} />
           <Route path="/suggest" element={<FreelancerSuggestPage />} />
