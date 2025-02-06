@@ -91,7 +91,7 @@ def get_resource_feedbacks(
         List[ProjectFeedbackResponse]: 조회된 프로젝트-피드백 리스트
     """
     try:
-        return ProjectService.get_project_feedbacks(db, user_id=freelancer_id)
+        return ProjectService.get_project_feedbacks(db, user_id=freelancer_id, search_type=0)
     except HTTPException as e:
         raise e
 
