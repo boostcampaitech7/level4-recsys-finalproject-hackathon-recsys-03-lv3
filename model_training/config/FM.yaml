@@ -5,7 +5,7 @@ RATING_FIELD: ~
 LABEL_FIELD: label
 
 local_col: # 모델이 실제로 학습할 때 사용하는 특정 컬럼
-    inter: [user_id, item_id, label, similarity]
+    inter: [user_id, item_id, label]
     user: [user_id, duration, budget, priority, company_id, category_id, skill_id]
     item: [item_id, work_exp, price, category_id, skill_id]
     shared_fields: [category_id, skill_id]

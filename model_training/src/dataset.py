@@ -259,5 +259,7 @@ def preprocess_data(
                         chunk.to_csv(f, mode="a", index=True, header=False)
 
                     pbar.update(1)
+                
+                pbar.close()
 
         print(f"inter.csv saved successfully with {similarity} similarity! ==========")

@@ -70,7 +70,7 @@ if __name__ == "__main__":
         type=str,
         choices=["cosine", "dot_product", "jaccard"],
         help="두 행렬 간 유사도를 계산하는 방식을 입력합니다.",
-        default="cosine"
+        default=None
     )
     arg(
         "--optuna",
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     # Recbole
     if args.type:
         if args.data:
-            # load_data(data_path=args.data_path)
+            load_data(data_path=args.data_path)
             preprocess_data(data_path=args.data_path, n_components=args.n_components, embed=args.embed, similarity=args.similarity)
 
         model_type = {"g": "general_recommender", "s": "sequential_recommender", "c": "context_aware_recommender"}

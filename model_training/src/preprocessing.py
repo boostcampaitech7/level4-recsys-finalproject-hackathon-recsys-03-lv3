@@ -185,7 +185,6 @@ class Preprocessing:
         matrix_2 = np.array(matrix_2)
         similarity_matrix = np.zeros((matrix_1.shape[0], matrix_2.shape[0]))
         
-        # tqdm 적용 (프로그레스 바)
         total_batches = (matrix_1.shape[0] // batch_size + 1) * (matrix_2.shape[0] // batch_size + 1)
         progress_bar = tqdm(total=total_batches, desc=f"Calculating {method} similarity", unit="batch")
 
@@ -222,4 +221,5 @@ class Preprocessing:
                 progress_bar.update(1)
 
         progress_bar.close()
+
         return pd.DataFrame(similarity_matrix)
