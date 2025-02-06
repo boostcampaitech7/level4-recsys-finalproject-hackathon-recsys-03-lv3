@@ -42,12 +42,16 @@
   color: black;
   font-weight: 500;
   margin-left: 50px;
+  max-width: 100% auto;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 .button-container {
   display: flex; /* Flexbox 사용 */
   justify-content: flex-end; /* 오른쪽 정렬 */
-  width: 1400px;
+  width: 1000px;
   margin: 20px auto;
 }
 

@@ -14,7 +14,7 @@
 
 .container-fluid.detail-card {
   width: 100%;
-  max-width: 900px;
+  max-width: 1000px;
   margin-bottom: 20px;
   overflow: hidden; /* 부모 너비를 넘어서지 않도록 설정 */
 }

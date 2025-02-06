@@ -89,6 +89,7 @@ class ResourceService:
             .join(category_sub, category_sub.c.freelancer_id == Freelancer.id)
             .join(skill_sub, skill_sub.c.freelancer_id == Freelancer.id)
             .outerjoin(feedback_sub, feedback_sub.c.freelancer_id == Freelancer.id)
+            .filter(feedback_sub.c.feedbackScore.isnot(None))
             .order_by(Freelancer.id.desc())
             .limit(MAX_CNT)
             .all()

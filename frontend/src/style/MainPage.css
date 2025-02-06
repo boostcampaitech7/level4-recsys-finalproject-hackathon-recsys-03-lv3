@@ -18,6 +18,7 @@
   width: 90%;
   max-width: none;
   margin: 0 auto; /* 중앙 정렬 */
+  margin-right: 0;
 }
 
 .magnet-image-container {
@@ -33,10 +34,9 @@
   height: auto; /* 비율 유지 */
 }
 
-.content {
+.text-container {
   flex: 1; /* 남은 공간을 균등하게 차지 */
   padding-left: 5%; /* 상대적 간격 (화면 크기에 따라 유동적) */
-  transform: translateX(-10%);
 }
 
 .title {
@@ -50,14 +50,14 @@
   font-weight: 500;
   color: #333333;
   white-space: nowrap; /* 줄바꿈 방지 */
-  transform: translateX(-11%);
+  transform: translateX(-21%);
 }
 
 .line2 {
   display: flex;
   align-items: baseline; /* 로고와 텍스트 수직 정렬 */
   gap: 1vw; /* 로고와 텍스트 사이 간격 */
-  transform: translateY(-92%);
+  transform: translateX(-10%) translateY(-92%);
 }
 
 .hrmony-logo {
@@ -65,6 +65,6 @@
   vertical-align: bottom;
   transform: translateY(38%) scale(0.45) translateX(-66%);
 }
-.child {
+.highlight {
   color: var(--color-primary) !important;
 }
