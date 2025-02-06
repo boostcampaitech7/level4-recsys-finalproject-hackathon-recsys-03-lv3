@@ -78,6 +78,12 @@ if __name__ == "__main__":
         help="트리 모델 사용 시, optuna를 이용하여 최적화를 먼저 수행할지 결정합니다. False 선택 시 저장된 하이퍼파라미터로 모델을 학습합니다.",
         default=False
     )
+    arg(
+        "--cb_data",
+        "-cd",
+        help="트리 모델 사용 시 데이터가 업데이트된 경우 True로 설정해 새로 train/test 데이터를 생성합니다. (default: False)",
+        default=False
+    )
 
     args = parser.parse_args()
 
@@ -97,12 +103,12 @@ if __name__ == "__main__":
 
     set_seed(args.seed)
 
-    if args.data:
-        load_data(data_path=args.data_path)
-        preprocess_data(data_path=args.data_path, n_components=args.n_components, embed=args.embed, similarity=args.similarity)
-
     # Recbole 실행
     if args.type:
+        if args.data:
+            load_data(data_path=args.data_path)
+            preprocess_data(data_path=args.data_path, n_components=args.n_components, embed=args.embed, similarity=args.similarity)
+
         model_type = {"g": "general_recommender", "s": "sequential_recommender", "c": "context_aware_recommender"}
         recbole_model = importlib.import_module("recbole.model." + model_type.get(args.type))
         model_class = getattr(recbole_model, args.model)
@@ -124,10 +130,21 @@ if __name__ == "__main__":
     else:
         config = OmegaConf.load("config/config.yaml")
 
-        # 데이터 생성
-        print("======== 데이터 생성 시작 ========")
-        prepare_data("datasets/", config)
-        print("======== 데이터 생성 완료 ========")
+        if args.data:
+            print("======== 데이터 로드 시작 ========")
+            load_data(data_path=args.cb_data_path)
+            preprocess_data(
+                data_path=args.cb_data_path,
+                n_components=args.cb_prepare_data.n_components,
+                similarity=args.cb_prepare_data.similarity
+            )
+            print("======== 데이터 로드 완료 ========")
+
+        # train/test 데이터 생성
+        if args.cb_data:
+            print("======== 데이터 생성 시작 ========")
+            prepare_data("datasets/", config)
+            print("======== 데이터 생성 완료 ========")
 
         # Optuna
         if args.optuna:

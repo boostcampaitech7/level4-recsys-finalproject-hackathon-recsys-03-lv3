@@ -1,4 +1,5 @@
 seed: 42
+cb_data_path: "./datasets/"
 data_path: "/data/ephemeral/home/develop/data/"
 output_path: output/
 repo_name: TaroSin/HRmony
@@ -39,3 +40,6 @@ data_params:
     - project_category
     - freelancer_skills
     - freelancer_category
+cb_prepare_data:
+  n_components: 3
+  similarity: dot_product

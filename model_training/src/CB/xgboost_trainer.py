@@ -18,8 +18,8 @@ class XGBoostTrainer:
 
     def load_data(self):
         """저장된 Train/Test 데이터를 로드"""
-        train_path = os.path.join(self.config.data_path, "train.csv")
-        test_path = os.path.join(self.config.data_path, "test.csv")
+        train_path = os.path.join(self.config.cb_data_path, "train.csv")
+        test_path = os.path.join(self.config.cb_data_path, "test.csv")
 
         train_data = pd.read_csv(train_path)
         test_data = pd.read_csv(test_path)
