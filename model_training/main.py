@@ -124,7 +124,7 @@ if __name__ == "__main__":
         tr_data, val_data, te_data = get_data(config)
 
         # 4. Train
-        train(config=config, model_class=model_class, data_list=[tr_data, val_data, te_data])
+        train(args=args, config=config, model_class=model_class, data_list=[tr_data, val_data, te_data])
 
     # 직접 구현한 모델
     else:
