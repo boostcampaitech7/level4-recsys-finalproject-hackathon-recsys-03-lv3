@@ -18,15 +18,15 @@ const CompanyMyPage = () => {
     <>
       <div className="page-container">
         <InfoCard>
-          <div className="profile-photo p-3 me-5">
+          <div className="profile-photo p-3">
             <ProfileIcon profileImage={photo} />
             <div className="company-info">
               <h2 className="company-name">{company.companyName}</h2>
               <p className="company-address">{company.locationName}</p>
             </div>
           </div>
-          <div>
-            <h3 className="company-introduction">소개</h3>
+          <div className="intro-section">
+            <p className="company-introduction">기업 소개</p>
             <p className="company-content">{company.companyContent}</p>
           </div>
         </InfoCard>

@@ -51,9 +51,12 @@ const Topbar = () => {
     }
 
     // 토큰 삭제 (클라이언트에서 세션 종료)
-    localStorage.removeItem("token");
-    localStorage.removeItem("expiresAt");
     sessionStorage.removeItem("token");
+    sessionStorage.removeItem("expiresAt");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("userId");
+    sessionStorage.removeItem("userName");
+    sessionStorage.removeItem("userType");
 
     // 메인 페이지로 이동
     window.location.href = "/";

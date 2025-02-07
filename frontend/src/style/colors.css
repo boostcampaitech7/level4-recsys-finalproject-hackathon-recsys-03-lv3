@@ -1,10 +1,11 @@
 :root {
   --color-bg: #f0f1f4; /* background-color */
-  --color-bg-green: rgba(24, 188, 156, 5);
+  --color-bg-green: #f3fbfa;
   --color-primary: #18bc9c; /* Main */
   --color-secondary: #e6e6e6; /* Tags */
   --color-warning: #f27233; /* Chart */
   --color-point: #466cd9; /* Switch Toggle */
   --color-chat: #2e3e60;
+  --color-box: #56627e;
   --color-star: #ffcd29;
 }

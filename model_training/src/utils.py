@@ -1,7 +1,8 @@
 import os
+
 import random
-import numpy as np
 import torch
+import numpy as np
 
 
 def set_seed(seed):
@@ -31,3 +32,75 @@ def check_path(path: str) -> None:
     if not os.path.exists(path):
         os.makedirs(path)
         print(f"{path} created")
+
+
+def recall_at_k(y_true: dict[float, list[int]], y_pred: dict[float, list[int]], k=10) -> float:
+    """
+    Recall@K 계산 함수
+
+    Args:
+        y_true (dict): 실제 매칭된 프리랜서 목록 (key=project_id, value=list(freelancer_ids))
+        y_pred (dict): 모델이 예측한 프리랜서 목록 (key=project_id, value=list(freelancer_ids))
+        k (int): Recall@K의 K 값 (기본 10)
+
+    Returns:
+        float: Recall@K
+    """
+    recalls = []
+
+    for project_id in y_true.keys():
+        true_freelancers = set(y_true[project_id])  # 실제 매칭된 프리랜서
+        predicted_freelancers = set(y_pred.get(project_id, [])[:k])  # 모델이 추천한 상위 K명
+
+        if len(true_freelancers) == 0:
+            continue  # 매칭이 없는 프로젝트는 제외
+
+        recall = len(true_freelancers & predicted_freelancers) / len(true_freelancers)
+        recalls.append(recall)
+    return np.mean(recalls) if recalls else 0.0
+
+
+def dcg_at_k(y_true: dict[float, list[int]], y_pred: dict[float, list[int]], k=5):
+    """
+    DCG@K 계산 함수
+    Args:
+        y_true (dict): 실제 매칭된 프리랜서 목록 (key=project_id, value=list(freelancer_ids))
+        y_pred (dict): 모델이 예측한 프리랜서 목록 (key=project_id, value=list(freelancer_ids))
+        k (int): DCG@K의 K 값 (기본값 5)
+
+    Returns:
+        float: DCG@K 값
+    """
+    dcg = 0.0
+    for i, pred in enumerate(y_pred[:k]):
+        if pred in y_true:
+            dcg += 1 / np.log2(i + 2)  # log2(i+2) -> 인덱스 0부터 시작하므로 i+2
+    return dcg
+
+
+def ndcg_at_k(y_true: dict[float, list[int]], y_pred: dict[float, list[int]], k=5):
+    """
+    NDCG@K 계산 함수
+    Args:
+        y_true (dict): 실제 매칭된 프리랜서 목록 (key=project_id, value=list(freelancer_ids))
+        y_pred (dict): 모델이 예측한 프리랜서 목록 (key=project_id, value=list(freelancer_ids))
+        k (int): NDCG@K의 K 값 (기본 5)
+
+    Returns:
+        float: NDCG@K 평균 값
+    """
+    ndcg_scores = []
+    for project_id in y_true.keys():
+        true_freelancers = set(y_true[project_id])
+        predicted_freelancers = y_pred.get(project_id, [])[:k]
+
+        if not true_freelancers:
+            continue  # 실제 매칭이 없는 경우 제외
+
+        dcg = dcg_at_k(true_freelancers, predicted_freelancers, k)
+        idcg = dcg_at_k(true_freelancers, list(true_freelancers)[:k], k)  # IDCG 계산
+
+        ndcg = dcg / idcg if idcg > 0 else 0.0
+        ndcg_scores.append(ndcg)
+
+    return np.mean(ndcg_scores) if ndcg_scores else 0.0

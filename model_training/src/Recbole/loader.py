@@ -26,7 +26,7 @@ def get_data(config: Config) -> Tuple[RecBoleDataset, RecBoleDataset, RecBoleDat
     return train_data, valid_data, test_data
 
 
-def generate_data(data_path, config: Config):
+def generate_data(data_path: str, config: Config):
     """
     data를 불러와 전처리한 후, Recbole의 .user, .item, .inter 데이터로 변환하는 함수
 
@@ -39,12 +39,26 @@ def generate_data(data_path, config: Config):
     freelancer_df = pd.read_csv(os.path.join(data_path, "freelancer.csv"))
     inter_df = pd.read_csv(os.path.join(data_path, "inter.csv"))
 
+    rating_name = "rating:float"
+    if config.model in ("FM", "FFM", "DeepFM"):
+        rating_name = "label:float"
+
     # 컬럼명을 RecBole 표준 포맷으로 변경
     inter_df.rename(columns={"project_id": "user_id:token",
                              "freelancer_id": "item_id:token",
-                             "matching_score": "rating:float"}, inplace=True)
-    freelancer_df.rename(columns={"freelancer_id": "item_id:token"}, inplace=True)
-    project_df.rename(columns={"project_id": "user_id:token"}, inplace=True)
+                             "matching_score": rating_name}, inplace=True)
+    freelancer_df.rename(columns={"freelancer_id": "item_id:token",
+                                  "work_exp": "work_exp:float",
+                                  "price": "price:float",
+                                  "category_id": "category:list",
+                                  "skill_id": "skill:list"}, inplace=True)
+    project_df.rename(columns={"project_id": "user_id:token",
+                               "duration": "duration:float",
+                               "budget": "budget:float",
+                               "priority": "priority:token",
+                               "company_id": "company_id:token",
+                               "category_id": "category:list",
+                               "skill_id": "skill:list"}, inplace=True)
 
     # RecBole용 `.inter`, `.user`, `.item` 저장
     recbole_data_path, recbole_data_name = config.data_path, config.dataset
