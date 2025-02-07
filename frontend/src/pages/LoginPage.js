@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo_primary.png";
 import "../style/LoginPage.css";
 
@@ -32,12 +31,8 @@ const LoginPage = () => {
         throw new Error(data.message || "Login failed");
       }
 
-      // 토큰 저장 (Remember Me 체크 여부에 따라 저장 위치 변경)
-      if (rememberMe) {
-        localStorage.setItem("token", data.token);
-      } else {
-        sessionStorage.setItem("token", data.token);
-      }
+      // 토큰 저장
+      sessionStorage.setItem("token", data.token);
 
       const expiresAt = new Date().getTime() + 60 * 60 * 1000; // 1시간 후 (밀리초 단위)
 
@@ -48,7 +43,7 @@ const LoginPage = () => {
 
       console.log("Login Success:", data);
 
-      // 로그인 성공 후 페이지 이동 (예: 대시보드)
+      // 로그인 성공 후 메인 페이지 이동
       window.location.href = "/";
     } catch (err) {
       console.error("Login Error:", err.message);
@@ -105,7 +100,7 @@ const LoginPage = () => {
 
         {/* 회원가입 링크 */}
         <p className="register-text">
-          아직 회원이 아니신가요? <a href="/register">회원가입</a>
+          아직 회원이 아니신가요? <a href="/signup">회원가입</a>
         </p>
       </div>
     </div>
