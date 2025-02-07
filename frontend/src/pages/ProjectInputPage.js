@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
 import "../style/ProjectInputPage.css";
 import ProfileIcon from "../components/ProfileIcon";
 import botphoto from "../assets/chat_logo.png";
 
-const WorkMode = ["대면", "원격"];
+const workType = ["대면", "원격"];
 const ProjectType = ["외주", "기간제"];
 const Priority = ["스킬", "금액", "상관없음"];
 
@@ -65,16 +66,21 @@ const DropdownSelector = ({
   );
 };
 
+const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/mymony/project/init`;
+
 const ProjectInputPage = () => {
   const navigate = useNavigate();
 
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [projectSummary, setProjectSummary] = useState(null);
   const [chatHistory, setChatHistory] = useState([]);
   const [step, setStep] = useState(0);
   const [userInput, setUserInput] = useState("");
   const [selectedDuration, setSelectedDuration] = useState("");
   const [isDayButtonClicked, setDayIsButtonClicked] = useState(false);
-  const [selectedWorkMode, setSelectedWorkMode] = useState("");
-  const [isWorkModeButtonClicked, setIsWorkModeButtonClicked] = useState(false);
+  const [selectedWorkType, setSelectedWorkType] = useState("");
+  const [isworkTypeButtonClicked, setIsworkTypeButtonClicked] = useState(false);
   const [selectedProjectType, setSelectedProjectType] = useState("");
   const [isProjectTypeButtonClicked, setIsProjectTypeButtonClicked] =
     useState(false);
@@ -85,13 +91,19 @@ const ProjectInputPage = () => {
   const [isBudgetButtonClicked, setIsBudgetButtonClicked] = useState(false);
   const [projectData, setProjectData] = useState({
     projectContent: "",
-    duration: "",
-    workMode: "",
-    projectType: "",
-    priority: "",
-    contrastType: "",
-    budget: "",
+    duration: null,
+    workType: null,
+    // projectType: "",
+    priority: null,
+    contractType: null,
+    budget: null,
   });
+
+  useEffect(() => {
+    if (!isLoading && isSuccess) {
+      navigate("/register-result", { state: { projectSummary } });
+    }
+  }, [isLoading]);
 
   // 첫 번째 질문 표시
   useEffect(() => {
@@ -110,38 +122,41 @@ const ProjectInputPage = () => {
     } else if (step === 1) {
       setProjectData((prev) => ({
         ...prev,
-        duration: selectedDuration,
+        duration: parseInt(selectedDuration, 10),
       }));
     } else if (step === 2) {
       setProjectData((prev) => ({
         ...prev,
-        workMode: selectedWorkMode,
+        workType: selectedWorkType === "대면" ? 0 : 1,
       }));
     } else if (step === 3) {
       setProjectData((prev) => ({
         ...prev,
-        projectType: selectedProjectType,
+        // projectType: selectedProjectType,
       }));
     } else if (step === 4) {
       setProjectData((prev) => ({
         ...prev,
-        priority: selectedPriority,
+        priority:
+          selectedPriority === "스킬" ? 0 : selectedPriority === "금액" ? 1 : 2,
       }));
     } else if (step === 5) {
-      setProjectData((prev) => ({
-        ...prev,
-        contrastType: selectedContractType,
-        budget: selectedBudget,
-      }));
+      const updatedData = {
+        contractType: selectedContractType === "월" ? 0 : 1,
+        budget: parseInt(selectedBudget, 10),
+      };
+      console.log("업데이트될 데이터:", updatedData); // 디버깅 로그 추가
+      setProjectData((prev) => {
+        const newData = { ...prev, ...updatedData };
+        console.log("최종 업데이트된 projectData:", newData); // 상태 변경 후 확인
+        postProjectData(newData); // 변경된 값으로 API 요청 실행
+        return newData;
+      });
     }
 
     if (step === questions.length - 1) {
       updatedChat.push({ sender: "bot", text: "요약 중..." });
       setChatHistory(updatedChat);
-
-      setTimeout(() => {
-        navigate("/register-result", { state: { projectData } });
-      }, 2000);
     } else {
       updatedChat.push({ sender: "bot", text: questions[step + 1] });
     }
@@ -149,6 +164,36 @@ const ProjectInputPage = () => {
     setChatHistory(updatedChat);
     setStep((prev) => prev + 1);
     setUserInput(""); // 입력 초기화
+  };
+
+  const [error, setError] = useState(null);
+
+  const token = sessionStorage.getItem("token");
+  if (!token) {
+    console.error("인증 토큰이 없습니다.");
+    return;
+  }
+
+  const postProjectData = async (data) => {
+    try {
+      setIsLoading(true); // POST 요청 시작 시 로딩 상태 활성화
+      console.log("전송할 데이터:", data);
+
+      const response = await axios.post(API_BASE_URL, data, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log("데이터 전송 성공:", JSON.stringify(response.data));
+      setProjectSummary(response.data);
+      setIsSuccess(true);
+    } catch (error) {
+      console.error("데이터 불러오기 실패: ", error);
+    } finally {
+      setIsLoading(false); // 요청이 끝나면 로딩 상태 비활성화
+    }
   };
 
   return (
@@ -213,20 +258,20 @@ const ProjectInputPage = () => {
                   </div>
                 </div>
               ) : chat.text === questions[2] ? (
-                // WorkMode
+                // workType
                 <DropdownSelector
                   label={chat.text}
-                  options={WorkMode}
-                  selectedValue={selectedWorkMode}
+                  options={workType}
+                  selectedValue={selectedWorkType}
                   setSelectedValue={(value) => {
-                    setSelectedWorkMode(value);
+                    setSelectedWorkType(value);
                     setProjectData((prev) => ({
                       ...prev,
-                      workMode: value,
+                      workType: value,
                     }));
                   }}
-                  isButtonClicked={isWorkModeButtonClicked}
-                  setIsButtonClicked={setIsWorkModeButtonClicked}
+                  isButtonClicked={isworkTypeButtonClicked}
+                  setIsButtonClicked={setIsworkTypeButtonClicked}
                   handleNextStep={handleUserInput}
                   dropdownIdx={0}
                 />

@@ -43,3 +43,4 @@ data_params:
 cb_prepare_data:
   n_components: 3
   similarity: dot_product
+csv: True

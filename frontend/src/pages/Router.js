@@ -18,6 +18,7 @@ import FreelancerDetailPage from "./FreelancerDetailPage";
 import AppliedProjectPage from "./AppliedProjectPage";
 import FinishedProjectPage from "./FinishedProjectPage";
 import CompanyMyPage from "./CompanyMyPage";
+import ProjectDetail from "./ProjectDetail";
 
 const AppRouter = () => {
   // 로그인 정보 상태(state) 저장
@@ -75,8 +76,8 @@ const AppRouter = () => {
             path="/recommend-freelancer"
             element={<RecommendFreelancerPage />}
           />
-          <Route path="register-input" element={<ProjectInputPage />} />
-          <Route path="register-result" element={<ProjectRegisterPage />} />
+          <Route path="/register-input" element={<ProjectInputPage />} />
+          <Route path="/register-result" element={<ProjectRegisterPage />} />
           <Route path="/freelancer-detail" element={<FreelancerDetailPage />} />
           <Route
             path="/registered-projects"
@@ -91,6 +92,7 @@ const AppRouter = () => {
             }
           />
           <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/project-detail" element={<ProjectDetail />} />
         </Route>
       </Routes>
     </Router>

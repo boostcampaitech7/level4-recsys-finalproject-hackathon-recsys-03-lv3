@@ -422,8 +422,9 @@ class ProjectService:
         1) projectName은 projectContent를 요약하는 내용으로 넣어줘.
         2) categoryId는 프로젝트 내용을 보고 카테고리 목록 중 어떤 카테고리에 해당할 지 id값으로 넣어줘. id에 해당하는 categoryName도 넣어줘.
         3) skillId는 projectContent를 보고 어떤 스킬이 필요할 지 스킬 목록에서 찾아서 id값으로 넣어줘 (skillIdList). (최대 6개) projectContent에서 개발 언어가 나오는 경우 스킬정보에서 찾아줘. 예를 들어, mysql이라면 skillId 121, skillName MySQL으로 해줘. 해당하는 skillName도 넣어줘 (skillNameList)
-        4) projectContent의 내용 형식은 <프로젝트 진행 방식>, <프로젝트의 현재 상황>, <상세한 업무 내용>, <참고 자료 / 유의 사항> 영역으로 나누어서 적어줘. 말투는 '~ 입니다.' 존댓말로 정리해줘. '개행기호'을 포함해서 적어줘.
-        * 제약 조건: 이 모든 데이터들은 json(Key-Value) 형식으로 전달해줘. Key는 proejctName, categoryId, categoryName, skillIdList, skillNameList, projectContent 로 해줘.
+        4) projectContent의 내용은 입력 받은 projectContent를 5)와 같이 형식에 맞추어서 요약해서 적어줘.
+        5) projectContent의 내용 형식은 <프로젝트 진행 방식>, <프로젝트의 현재 상황>, <상세한 업무 내용>, <참고 자료 / 유의 사항> 영역으로 나누어서 적어줘. 말투는 '~ 입니다.' 존댓말로 정리해줘. '개행기호'을 포함해서 적어줘. (projectContent 예시: <프로젝트 진행 방식>\n내용1\n내용2\n<프로젝트의 현재 상황>\n내용1\n내용2\n<상세한 업무 내용>\n내용1\n내용2\n<참고자료 / 유의사항>\n내용1\n내용2
+        * 제약 조건: 이 모든 데이터들은 json(Key-Value) 형식으로 전달해줘. Key는 proejctName, categoryId, categoryName, skillIdList, skillNameList, projectContent 로 해줘. 각각의 value 형식은 str, int, str, List[int], List[str], str 이야.
         """
 
         solar_payload = [

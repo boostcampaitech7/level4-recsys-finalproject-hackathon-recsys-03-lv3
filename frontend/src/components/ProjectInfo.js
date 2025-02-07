@@ -29,7 +29,7 @@ const ProjectInfo = ({ content, className = "" }) => {
     skillNameList, // 스킬 이름 리스트
     locationName, // 지역명
     isReviewed, // 평가 여부
-  } = content;
+  } = content || {};
 
   return (
     <InfoCard className={className}>
@@ -75,7 +75,7 @@ const ProjectInfo = ({ content, className = "" }) => {
             </p>
             <p>{categoryName}</p>
             <div className="skills">
-              {skillNameList.length > 0 ? (
+              {skillNameList && skillNameList.length > 0 ? (
                 skillNameList.map((skill, index) => (
                   // 각 스킬 태그 출력
                   <ProjectSkillTag key={index} text={skill} />
