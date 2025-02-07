@@ -75,8 +75,8 @@ const AppRouter = () => {
             path="/recommend-freelancer"
             element={<RecommendFreelancerPage />}
           />
-          <Route path="register-input" element={<ProjectInputPage />} />
-          <Route path="register-result" element={<ProjectRegisterPage />} />
+          <Route path="/register-input" element={<ProjectInputPage />} />
+          <Route path="/register-result" element={<ProjectRegisterPage />} />
           <Route path="/freelancer-detail" element={<FreelancerDetailPage />} />
           <Route
             path="/registered-projects"
