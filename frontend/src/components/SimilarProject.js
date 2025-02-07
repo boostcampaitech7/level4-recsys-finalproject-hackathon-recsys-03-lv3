@@ -1,8 +1,11 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "../style/SimilarProject.css";
 import ProjectSkillTag from "./ProjectSkillTag";
 
 const SimilarProject = ({ projects }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="similar-project-container">
       {/* 제목 */}
@@ -27,7 +30,14 @@ const SimilarProject = ({ projects }) => {
                     {/* 첫 번째 카드 */}
                     <div className="col-md-12">
                       <div className="cus-card1 p-3">
-                        <a href="#">
+                        <a
+                          className="pointer"
+                          onClick={() =>
+                            navigate("/project-detail", {
+                              state: { projectId: project.projectId },
+                            })
+                          }
+                        >
                           <h5 className="projects-title">
                             {projects[index].projectName}
                           </h5>
@@ -70,7 +80,14 @@ const SimilarProject = ({ projects }) => {
                     {projects[index + 1] && (
                       <div className="col-md-12">
                         <div className="cus-card p-3">
-                          <a href="#">
+                          <a
+                            className="pointer"
+                            onClick={() =>
+                              navigate("/project-detail", {
+                                state: { projectId: project.projectId },
+                              })
+                            }
+                          >
                             <h5 className="projects-title">
                               {projects[index + 1].projectName}
                             </h5>
