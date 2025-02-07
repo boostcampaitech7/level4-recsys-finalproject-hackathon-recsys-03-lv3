@@ -10,8 +10,7 @@ const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/project`;
 
 const ProjectDetailPage = () => {
   const location = useLocation();
-  // const { projectId } = location.state || null;
-  const projectId = 0;
+  const projectId = parseInt(location.state.projectId, 10) || null;
 
   // 로그인 정보 상태(state) 저장
   const [token, setToken] = useState(

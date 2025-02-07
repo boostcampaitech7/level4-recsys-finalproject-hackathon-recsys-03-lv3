@@ -5,7 +5,7 @@ import ProjectSkillTag from "./ProjectSkillTag";
 import "../style/ProjectInfo.css";
 import "../style/colors.css";
 
-const ProjectInfo = ({ content, className = "" }) => {
+const ProjectInfo = ({ content, className = "", onClick = null }) => {
   const formatDateUsingMath = (dateNumber) => {
     let year = Math.floor(dateNumber / 10000); // 2025
     let month = Math.floor((dateNumber % 10000) / 100); // 2
@@ -49,7 +49,7 @@ const ProjectInfo = ({ content, className = "" }) => {
         </div>
 
         <h3 className="project-title">
-          <a className="project-link" href="#">
+          <a className="project-link" onClick={onClick}>
             {projectName}
           </a>
         </h3>

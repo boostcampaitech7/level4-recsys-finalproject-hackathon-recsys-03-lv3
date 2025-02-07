@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ProjectInfo from "../components/ProjectInfo";
 import SingleSelector from "../components/SingleSelector";
@@ -9,6 +10,7 @@ import "../style/SearchPages.css";
 const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/project`;
 
 const SearchProjectPage = () => {
+  const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -89,6 +91,10 @@ const SearchProjectPage = () => {
     setShowOnlyRecruiting(true);
   };
 
+  const handleProjectCard = (project) => {
+    navigate("/project-detail", { state: project.projectId });
+  };
+
   return (
     <div className="search-project-container">
       <div className="header-container">
@@ -149,6 +155,11 @@ const SearchProjectPage = () => {
       {/* 필터링된 프로젝트 리스트 */}
       {filteredProjects.map((project) => (
         <ProjectInfo
+          onClick={() =>
+            navigate("/project-detail", {
+              state: { projectId: project.projectId },
+            })
+          }
           key={project.projectId}
           content={{
             projectName: project.projectName,
