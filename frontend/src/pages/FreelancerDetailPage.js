@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ProfileIcon from "../components/ProfileIcon";
 import profileExample from "../assets/profile_example5.jpg";
@@ -11,15 +12,24 @@ import StaticStarRating from "../components/StaticStarRating";
 import ScoreDisplay from "../components/ScoreDisplay";
 
 const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/resource`;
-const userType = sessionStorage.getItem("userType");
+const userType = parseInt(sessionStorage.getItem("userType"), 10);
 
 const ProfilePage = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const freelancerId = location.state?.freelancerId;
+
   const [freelancerInfo, setFreelancerInfo] = useState(null);
   const [progress, setProgress] = useState(null);
   const [history, setHistory] = useState([]);
-  const freelancerId = parseInt(sessionStorage.getItem("userId"), 10); // 실제 사용 시 동적으로 설정 필요
+  //const freelancerId = parseInt(sessionStorage.getItem("userId"), 10); // 실제 사용 시 동적으로 설정 필요
 
   useEffect(() => {
+    if (!freelancerId) {
+      navigate("/search-freelancer"); // 🔹 freelancerId가 없으면 목록 페이지로 이동
+      return;
+    }
+
     const token = sessionStorage.getItem("token");
     if (!token) {
       console.error("인증 토큰이 없습니다.");
