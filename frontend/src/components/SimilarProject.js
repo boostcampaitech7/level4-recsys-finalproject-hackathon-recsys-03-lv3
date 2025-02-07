@@ -34,7 +34,7 @@ const SimilarProject = ({ projects }) => {
                           className="pointer"
                           onClick={() =>
                             navigate("/project-detail", {
-                              state: { projectId: project.projectId },
+                              state: { projectId: projects[index].projectId },
                             })
                           }
                         >
@@ -84,7 +84,9 @@ const SimilarProject = ({ projects }) => {
                             className="pointer"
                             onClick={() =>
                               navigate("/project-detail", {
-                                state: { projectId: project.projectId },
+                                state: {
+                                  projectId: projects[index + 1].projectId,
+                                },
                               })
                             }
                           >
