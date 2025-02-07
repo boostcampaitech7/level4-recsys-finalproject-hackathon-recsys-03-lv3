@@ -22,7 +22,7 @@ class FreelancerRegisterRequest(BaseModel):
     price: int
     workType: int
     role: str
-    freelancerContent: Optional[str]
+    freelancerContent: Optional[str] = None
     locationId: int
     categoryList: List[int]
     skillList: List[int]
@@ -31,6 +31,6 @@ class FreelancerRegisterRequest(BaseModel):
 class CompanyRegisterRequest(BaseModel):
     companyName: str
     email: str
-    projectContent: Optional[str]
+    companyContent: Optional[str] = None
     password: str
     locationId: int
