@@ -1,82 +1,58 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import ProjectInfo from "../components/ProjectInfo";
 import { useNavigate } from "react-router-dom";
 
-const RegisteredProjects = () => {
-  const projects = [
-    {
-      projectId: 1,
-      projectName: "Javascript / jQuery기반 공공기관 홈페이지 프론트엔드 개발",
-      duration: 30,
-      budget: 4000000,
-      workType: 1,
-      contractType: 0,
-      status: 0,
-      registerDate: "20250123",
-      categoryName: "소프트웨어/IT",
-      skillIdList: [98, 215, 141, 119, 99],
-      skillNameList: [
-        "Java",
-        "jQuery",
-        "Oracle",
-        "Microsoft SQL Server",
-        "JavaScript",
-      ],
-      locationName: "대전광역시",
-      matchingScore: null,
-      applied: null,
-      similarityScore: null,
-      priority: null,
-    },
-    {
-      projectId: 9,
-      projectName: "SpringBoot기반 공공기관 웹 구축",
-      duration: 35,
-      budget: 6416666,
-      workType: 1,
-      contractType: 0,
-      status: 0,
-      registerDate: "20250114",
-      categoryName: "소프트웨어/IT",
-      skillIdList: [11, 143, 112, 98, 41],
-      skillNameList: ["Ansible", "PHP", "Make", "Java", "Couch DB"],
-      locationName: "대전광역시",
-      matchingScore: null,
-      applied: null,
-      similarityScore: null,
-      priority: null,
-    },
-    {
-      projectId: 21,
-      projectName: "Flutter/Java 기반 공공기관 사이트 통합 및 고도화 개발",
-      duration: 60,
-      budget: 12000000,
-      workType: 1,
-      contractType: 0,
-      status: 1,
-      registerDate: "20250106",
-      categoryName: "소프트웨어/IT",
-      skillIdList: [98, 186, 183, 132, 99],
-      skillNameList: [
-        "Java",
-        "Supabase",
-        "Spring Boot",
-        "Nuxt.js",
-        "JavaScript",
-      ],
-      locationName: "대전광역시",
-      matchingScore: null,
-      applied: null,
-      similarityScore: null,
-      priority: null,
-    },
-  ];
+const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/mymony/prestart-project`;
 
+const RegisteredProjects = () => {
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const userId = sessionStorage.getItem("userId");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+
+    if (!token) {
+      setError("인증 토큰이 없습니다. 로그인 후 이용해주세요.");
+      setLoading(false);
+      return;
+    }
+
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get(API_BASE_URL, {
+          params: { userId },
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setProjects(response.data);
+      } catch (error) {
+        console.error("프로젝트 데이터를 불러오는 데 실패했습니다:", error);
+        setError("프로젝트 데이터를 불러오는 데 실패했습니다.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   const handleRegisterClick = () => {
     navigate("/register-input");
   };
+
+  const handleProjectClick = (projectId, projectName) => {
+    navigate(`/recommend-freelancer/${projectId}`, { state: { projectName } });
+  };
+
+  if (loading) return <div>로딩 중...</div>;
+  if (error) return <div className="error-message">{error}</div>;
 
   return (
     <div className="registered-project-container">
@@ -92,20 +68,28 @@ const RegisteredProjects = () => {
         </div>
       </div>
       {projects.map((project) => (
-        <ProjectInfo
+        <div
           key={project.projectId}
-          content={{
-            projectName: project.projectName,
-            skillNameList: project.skillNameList,
-            locationName: project.locationName,
-            registerDate: project.registerDate,
-            duration: project.duration,
-            budget: project.budget,
-            categoryRole: "개발",
-            categoryName: project.categoryName,
-            status: project.status,
-          }}
-        />
+          onClick={() =>
+            handleProjectClick(project.projectId, project.projectName)
+          }
+          style={{ cursor: "pointer" }}
+        >
+          <ProjectInfo
+            key={project.projectId}
+            content={{
+              projectName: project.projectName,
+              skillNameList: project.skillNameList,
+              locationName: project.locationName,
+              registerDate: project.registerDate,
+              duration: project.duration,
+              budget: project.budget,
+              categoryRole: "개발",
+              categoryName: project.categoryName,
+              status: project.status,
+            }}
+          />
+        </div>
       ))}
     </div>
   );

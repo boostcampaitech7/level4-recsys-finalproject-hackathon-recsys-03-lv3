@@ -93,3 +93,7 @@
 .filters > * {
   flex-shrink: 0; /* 자식 요소가 줄어들지 않도록 설정 */
 }
+
+.freelancers .info-card {
+  justify-content: center;
+}
