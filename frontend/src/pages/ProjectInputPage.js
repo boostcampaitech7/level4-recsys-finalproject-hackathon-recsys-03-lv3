@@ -72,6 +72,8 @@ const ProjectInputPage = () => {
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [projectSummary, setProjectSummary] = useState(null);
   const [chatHistory, setChatHistory] = useState([]);
   const [step, setStep] = useState(0);
   const [userInput, setUserInput] = useState("");
@@ -98,8 +100,8 @@ const ProjectInputPage = () => {
   });
 
   useEffect(() => {
-    if (!isLoading) {
-      navigate("/register-result", { state: { projectData } });
+    if (!isLoading && isSuccess) {
+      navigate("/register-result", { state: { projectSummary } });
     }
   }, [isLoading]);
 
@@ -185,7 +187,8 @@ const ProjectInputPage = () => {
       });
 
       console.log("데이터 전송 성공:", JSON.stringify(response.data));
-      sessionStorage.setItem("projectSummary", JSON.stringify(response.data));
+      setProjectSummary(response.data);
+      setIsSuccess(true);
     } catch (error) {
       console.error("데이터 불러오기 실패: ", error);
     } finally {

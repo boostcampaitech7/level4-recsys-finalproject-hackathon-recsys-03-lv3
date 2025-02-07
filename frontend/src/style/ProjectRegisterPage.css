@@ -79,12 +79,12 @@
 }
 
 .btn-confirm {
-  background: #007bff;
+  background: var(--color-primary);
   color: #fff;
 }
 
 .btn-confirm:hover {
-  background: #0056b3;
+  background: var(--color-primary);
 }
 
 .predict-things {
