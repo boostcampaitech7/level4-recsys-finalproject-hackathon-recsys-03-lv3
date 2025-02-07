@@ -16,12 +16,15 @@ function convertToJSX(text) {
   for (let i = 0; i < sections.length; i++) {
     const content = sections[i].trim();
 
-    if (i % 2 === 0) {
+    if (i % 2 === 1) {
       // 짝수 인덱스 -> 제목 (꺽쇠 안의 내용)
-      jsxElements.push(<p key={i}>{content}</p>);
+      jsxElements.push(<h5 key={i}>{content}</h5>);
     } else {
       // 홀수 인덱스 -> 본문 (꺽쇠 괄호 밖의 내용)
-      jsxElements.push(<h5 key={i}>{content}</h5>);
+      const paragraphs = content.split(/\n+/).filter(Boolean); // 개행 문자 기준으로 나누고 빈 문자열 제거
+      paragraphs.forEach((para, index) => {
+        jsxElements.push(<p key={`${i}-${index}`}>{para.trim()}</p>);
+      });
     }
   }
 
@@ -194,17 +197,17 @@ const ProjectRegisterPage = () => {
               </div>
               <div className="slider-container">
                 <span className="min-value">
-                  최저 {projectSummary.minBudget}
+                  최저 {projectSummary.minBudget.toLocaleString()}원
                 </span>
                 <input
                   type="range"
-                  min="1000000"
-                  max="4000000"
-                  value="3000000"
+                  min={projectSummary.minBudget}
+                  max={projectSummary.maxBudget}
+                  value={projectSummary.expectedBudget}
                   readOnly
                 />
                 <span className="max-value">
-                  최고 {projectSummary.maxBudget}
+                  최고 {projectSummary.maxBudget.toLocaleString()}원
                 </span>
               </div>
             </div>
