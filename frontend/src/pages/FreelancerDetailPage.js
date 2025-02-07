@@ -11,6 +11,7 @@ import StaticStarRating from "../components/StaticStarRating";
 import ScoreDisplay from "../components/ScoreDisplay";
 
 const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/resource`;
+const userType = sessionStorage.getItem("userType");
 
 const ProfilePage = () => {
   const [freelancerInfo, setFreelancerInfo] = useState(null);
@@ -106,17 +107,22 @@ const ProfileHeader = ({ freelancerInfo }) => {
         </div>
       </div>
       <div className="for-suggest">
-        {/* {userType === 1 ? (
-        <button className="btn-suggest" onClick={() => setIsPopupOpen(true)}>
-          제안하기
-        </button>
-        <FreelancerSuggest
-          isOpen={isPopupOpen}
-          onClose={() => setIsPopupOpen(false)}
-        />
+        {userType === 1 ? (
+          <>
+            <button
+              className="btn-suggest"
+              onClick={() => setIsPopupOpen(true)}
+            >
+              제안하기
+            </button>
+            <FreelancerSuggest
+              isOpen={isPopupOpen}
+              onClose={() => setIsPopupOpen(false)}
+            />
+          </>
         ) : (
-        <button className="btn-suggest">정보 수정</button>
-          )} */}
+          <button className="btn-suggest">정보 수정</button>
+        )}
       </div>
     </div>
   );
