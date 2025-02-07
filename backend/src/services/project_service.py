@@ -1,20 +1,27 @@
 import json
+import pickle
+import logging
+import pandas as pd
 from typing import List, Optional
 
 from fastapi import HTTPException
 from sqlalchemy import func, case, select, and_, update
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+
 from langchain.memory import ConversationBufferMemory
 from langchain.schema import SystemMessage, HumanMessage
 
 from api.upstage import chat_with_solar
-from src.models import Project, Category, ProjectSkill, Skill, Company, Location, ProjectRanking, ProjectApplicants, Feedback, FreelancerSkill
+from src.models import Project, Category, ProjectSkill, Skill, Company, Location, ProjectRanking, ProjectApplicants, Feedback, FreelancerSkill, Freelancer
 from src.schemas.project import ProjectRequest, FeedbackRequest, ProjectListResponse, ProjectDetailResponse, ProjectFeedbackResponse, SolarResponse, CompanyResponse, ProjectProgressResponse
 from src.services.filter_service import FilterService
+from src.routes.websocket_route import notify_client
 from src.utils.error_messages import ERROR_MESSAGES
+from src.utils.utils import download_model_file
 
 MAX_CNT = 50
+logger = logging.getLogger(__name__)
 
 
 class ProjectService:
@@ -399,43 +406,48 @@ class ProjectService:
         except HTTPException as e:
             raise e
 
-        # 1. 대화 memory 생성
-        memory = ConversationBufferMemory(return_messages=True)
+        try:
+            # 1. 대화 memory 생성
+            memory = ConversationBufferMemory(return_messages=True)
 
-        # 2. 설정 정보 생성
-        system_message = "너의 이름은 HRmony야. 한글 데이터를 입력받고 한글로 답변해야 해. 기업이 프리랜서를 모집할 프로젝트 공고를 올릴 때 도움을 주는 AI야."
-        memory.chat_memory.add_message(SystemMessage(content=system_message))
+            # 2. 설정 정보 생성
+            system_message = "너의 이름은 HRmony야. 한글 데이터를 입력받고 한글로 답변해야 해. 기업이 프리랜서를 모집할 프로젝트 공고를 올릴 때 도움을 주는 AI야."
+            memory.chat_memory.add_message(SystemMessage(content=system_message))
 
-        # 3. 첫번째 대화: 프로젝트 정보 생성
-        memory.chat_memory.add_message(HumanMessage(content="다음은 프로젝트 등록을 위한 카테고리 및 스킬 정보야."))
-        category_info = json.dumps([category.__dict__ for category in category_list], ensure_ascii=False)
-        skill_info = json.dumps([skill.__dict__ for skill in skill_list], ensure_ascii=False)
-        memory.chat_memory.add_message(HumanMessage(content="카테고리 정보: " + category_info))
-        memory.chat_memory.add_message(HumanMessage(content="스킬 정보: " + skill_info))
+            # 3. 첫번째 대화: 프로젝트 정보 생성
+            memory.chat_memory.add_message(HumanMessage(content="다음은 프로젝트 등록을 위한 카테고리 및 스킬 정보야."))
+            category_info = json.dumps([category.__dict__ for category in category_list], ensure_ascii=False)
+            skill_info = json.dumps([skill.__dict__ for skill in skill_list], ensure_ascii=False)
+            memory.chat_memory.add_message(HumanMessage(content="카테고리 정보: " + category_info))
+            memory.chat_memory.add_message(HumanMessage(content="스킬 정보: " + skill_info))
 
-        chat_history = [msg.content for msg in memory.chat_memory.messages]
-        project_info = json.dumps(project_data.dict(), ensure_ascii=False)
-        memory.chat_memory.add_message(HumanMessage(content="새로운 프로젝트 등록 요청: " + project_info))
-        new_project_instruction = """
-        다음은 프로젝트 등록 정보야.
-        이 정보들을 기반으로 projectName, categoryId, skillList, projectContent를 전달해줘.
-        1) projectName은 projectContent를 요약하는 내용으로 넣어줘.
-        2) categoryId는 프로젝트 내용을 보고 카테고리 목록 중 어떤 카테고리에 해당할 지 id값으로 넣어줘. id에 해당하는 categoryName도 넣어줘.
-        3) skillId는 projectContent를 보고 어떤 스킬이 필요할 지 스킬 목록에서 찾아서 id값으로 넣어줘 (skillIdList). (최대 6개) projectContent에서 개발 언어가 나오는 경우 스킬정보에서 찾아줘. 예를 들어, mysql이라면 skillId 121, skillName MySQL으로 해줘. 해당하는 skillName도 넣어줘 (skillNameList)
-        4) projectContent의 내용은 입력 받은 projectContent를 5)와 같이 형식에 맞추어서 요약해서 적어줘.
-        5) projectContent의 내용 형식은 <프로젝트 진행 방식>, <프로젝트의 현재 상황>, <상세한 업무 내용>, <참고 자료 / 유의 사항> 영역으로 나누어서 적어줘. 말투는 '~ 입니다.' 존댓말로 정리해줘. '개행기호'을 포함해서 적어줘. (projectContent 예시: <프로젝트 진행 방식>\n내용1\n내용2\n<프로젝트의 현재 상황>\n내용1\n내용2\n<상세한 업무 내용>\n내용1\n내용2\n<참고자료 / 유의사항>\n내용1\n내용2
-        * 제약 조건: 이 모든 데이터들은 json(Key-Value) 형식으로 전달해줘. Key는 proejctName, categoryId, categoryName, skillIdList, skillNameList, projectContent 로 해줘. 각각의 value 형식은 str, int, str, List[int], List[str], str 이야.
-        """
+            chat_history = [msg.content for msg in memory.chat_memory.messages]
+            project_info = json.dumps(project_data.dict(), ensure_ascii=False)
+            memory.chat_memory.add_message(HumanMessage(content="새로운 프로젝트 등록 요청: " + project_info))
+            new_project_instruction = """
+            다음은 프로젝트 등록 정보야.
+            이 정보들을 기반으로 projectName, categoryId, skillList, projectContent를 전달해줘.
+            1) projectName은 projectContent를 요약하는 내용으로 넣어줘.
+            2) categoryId는 프로젝트 내용을 보고 카테고리 목록 중 어떤 카테고리에 해당할 지 id값으로 넣어줘. id에 해당하는 categoryName도 넣어줘.
+            3) skillId는 projectContent를 보고 어떤 스킬이 필요할 지 스킬 목록에서 찾아서 id값으로 넣어줘 (skillIdList). (최대 6개) projectContent에서 개발 언어가 나오는 경우 스킬정보에서 찾아줘. 예를 들어, mysql이라면 skillId 121, skillName MySQL으로 해줘. 해당하는 skillName도 넣어줘 (skillNameList)
+            4) projectContent의 내용은 입력 받은 projectContent를 5)와 같이 형식에 맞추어서 요약해서 적어줘.
+            5) projectContent의 내용 형식은 <프로젝트 진행 방식>, <프로젝트의 현재 상황>, <상세한 업무 내용>, <참고 자료 / 유의 사항> 영역으로 나누어서 적어줘. 말투는 '~ 입니다.' 존댓말로 정리해줘. '개행기호'을 포함해서 적어줘. (projectContent 예시: <프로젝트 진행 방식>\n내용1\n내용2\n<프로젝트의 현재 상황>\n내용1\n내용2\n<상세한 업무 내용>\n내용1\n내용2\n<참고자료 / 유의사항>\n내용1\n내용2
+            * 제약 조건: 이 모든 데이터들은 json(Key-Value) 형식으로 전달해줘. Key는 proejctName, categoryId, categoryName, skillIdList, skillNameList, projectContent 로 해줘. 각각의 value 형식은 str, int, str, List[int], List[str], str 이야.
+            """
 
-        solar_payload = [
-            {"role": "system", "content": chat_history[0]},
-            {"role": "user", "content": "\n".join(chat_history[1:])},
-            {"role": "user", "content": new_project_instruction + project_info}
-        ]
-        response = chat_with_solar(solar_payload)
-        memory.chat_memory.add_message(HumanMessage(content="Solar 응답: " + json.dumps(response, ensure_ascii=False)))
-        project_data = {**project_data.dict(), **response}
-        memory.chat_memory.add_message(HumanMessage(content="새로운 프로젝트 정보: " + json.dumps(project_data, ensure_ascii=False)))
+            solar_payload = [
+                {"role": "system", "content": chat_history[0]},
+                {"role": "user", "content": "\n".join(chat_history[1:])},
+                {"role": "user", "content": new_project_instruction + project_info}
+            ]
+            response = chat_with_solar(solar_payload)
+            memory.chat_memory.add_message(HumanMessage(content="Solar 응답: " + json.dumps(response, ensure_ascii=False)))
+            project_data = {**project_data.dict(), **response}
+            memory.chat_memory.add_message(HumanMessage(content="새로운 프로젝트 정보: " + json.dumps(project_data, ensure_ascii=False)))
+
+        except Exception as e:
+            logging.error(f"Unexpected Error with Solar (Project Info Creation) | Error: {str(e)}")
+            raise e
 
         # 4. 두번째 대화: 유사한 프로젝트 정보 생성
         try:
@@ -449,24 +461,28 @@ class ProjectService:
         except HTTPException as e:
             raise e
 
-        sim_project_instruction = """
-        등록하려는 프로젝트 정보와 유사한 프로젝트를 6개 찾아줘. 유사한 프로젝트의 기준은 projectContent가 유사하고 같은 스킬을 사용하는 게 우선이야.
-        1) 유사한 프로젝트들의 duration, budget을 바탕으로 너가 예상하는 새로운 프로젝트의 duration별 expectedBudget 하나만 골라줘 (int)
-        2) 유사한 프로젝트들의 minBudget (int)
-        3) 유사한 프로젝트들의 maxBudget (int)
-        4) 유사한 프로젝트들이 공통적으로 가지고 있는 skillName의 리스트인 simSkillNameList (최대 6개, List[str])
-        5) 유사한 프로젝트들의 정보를 projectId, projectName, duration, budget, workType, contractType, status, registerDate, skillIdList, skillNameList, priority, locationName, categoryName를 Key로 하는 json(Key-Value) list 형태로 similar_projects라는 키의 value로 줘.
-        * 제약 조건: 이 모든 데이터들은 json(Key-Value) 형식으로 전달해줘. Key는 similarProjects, expectedBudget, minBudget, maxBudget, simSkillNameList 로 해줘.
-        """
-        sim_project_data = json.dumps([project.__dict__ for project in project_list], ensure_ascii=False)
-        memory.chat_memory.add_message(HumanMessage(content="유사한 프로젝트 조회 요청: " + sim_project_data))
-        solar_payload = [
-            {"role": "system", "content": chat_history[0]},  # 첫 번째 시스템 메시지
-            {"role": "user", "content": "\n".join(chat_history[1:])},  # 이전 대화 내용 합치기
-            {"role": "user", "content": sim_project_instruction + sim_project_data}
-        ]
-        response = chat_with_solar(solar_payload)
-        memory.chat_memory.add_message(HumanMessage(content="Solar 응답(유사 프로젝트): " + json.dumps(response, ensure_ascii=False)))
+        try:
+            sim_project_instruction = """
+            등록하려는 프로젝트 정보와 유사한 프로젝트를 6개 찾아줘. 유사한 프로젝트의 기준은 projectContent가 유사하고 같은 스킬을 사용하는 게 우선이야.
+            1) 유사한 프로젝트들의 duration, budget을 바탕으로 너가 예상하는 새로운 프로젝트의 duration별 expectedBudget 하나만 골라줘 (int)
+            2) 유사한 프로젝트들의 minBudget (int)
+            3) 유사한 프로젝트들의 maxBudget (int)
+            4) 유사한 프로젝트들이 공통적으로 가지고 있는 skillName의 리스트인 simSkillNameList (최대 6개, List[str])
+            5) 유사한 프로젝트들의 정보를 projectId, projectName, duration, budget, workType, contractType, status, registerDate, skillIdList, skillNameList, priority, locationName, categoryName를 Key로 하는 json(Key-Value) list 형태로 similar_projects라는 키의 value로 줘.
+            * 제약 조건: 이 모든 데이터들은 json(Key-Value) 형식으로 전달해줘. Key는 similarProjects, expectedBudget, minBudget, maxBudget, simSkillNameList 로 해줘.
+            """
+            sim_project_data = json.dumps([project.__dict__ for project in project_list], ensure_ascii=False)
+            memory.chat_memory.add_message(HumanMessage(content="유사한 프로젝트 조회 요청: " + sim_project_data))
+            solar_payload = [
+                {"role": "system", "content": chat_history[0]},  # 첫 번째 시스템 메시지
+                {"role": "user", "content": "\n".join(chat_history[1:])},  # 이전 대화 내용 합치기
+                {"role": "user", "content": sim_project_instruction + sim_project_data}
+            ]
+            response = chat_with_solar(solar_payload)
+            memory.chat_memory.add_message(HumanMessage(content="Solar 응답(유사 프로젝트): " + json.dumps(response, ensure_ascii=False)))
+        except Exception as e:
+            logging.error(f"Unexpected Error with Solar (Similar Projects) | Error: {str(e)}")
+            raise e
 
         return {**project_data, **response}
 
@@ -530,10 +546,81 @@ class ProjectService:
             )
 
     def create_project_matching(
-        project_id: int,
+        project_data: ProjectRequest,
+        user_id: int,
         db: Session
     ):
-        pass
+        """
+        프로젝트 매칭정보 저장 및 WebSocket 알림 전송
+
+        Args:
+            project_data (ProjectRequest): 프로젝트 기간, 내용 등을 포함한 요청 데이터
+            user_id (int): 기업 ID
+            db (Session): SQLAlchemy 데이터베이스 세션
+        """
+        # X 만들기
+        query = db.query(
+            Freelancer.id.label("freelancerId"),
+            Freelancer.work_exp.label("freelancerExperience"),
+            Freelancer.price.label("freelancerPrice"),
+            func.LISTAGG(FreelancerSkill.skill_id, ",").within_group(FreelancerSkill.skill_id).label("freelancerSkills")
+            .join(FreelancerSkill, Freelancer.freelancer_id == FreelancerSkill.freelancer_id)
+            .group_by(Freelancer.freelancer_id, Freelancer.work_exp, Freelancer.price)
+        ).all()
+
+        df = pd.DataFrame(query, columns=["freelancer_id",
+                                          "freelancer_experience",
+                                          "freelancer_price",
+                                          "freelancer_skills"])
+
+        project_skills = ",".join(map(str, project_data.skillList))
+        df = df.assign(
+            project_id=project_data.projectId,
+            project_budget=project_data.budget,
+            project_skills=project_skills,
+            project_category=project_data.categoryId
+        )
+        numerical_features = ["project_budget", "freelancer_experience", "freelancer_price"]
+        categorical_features = ["project_skills", "project_category", "freelancer_skills"]
+        features = numerical_features + categorical_features
+        X = df[features]
+
+        # 모델 로드
+        file_path = download_model_file(
+            repo_name="TaroSin/HRmony",
+            file_name="model.pkl"
+        )
+
+        with open(file_path, "rb") as f:
+            model = pickle.load(f)
+
+        # 모델 예측
+        predictions = model.predict(X)
+        result_df = df[["project_id", "freelancer_id"]].copy()
+        result_df["matching_score"] = predictions
+
+        # 결과 저장
+        try:
+            for _, row in result_df.iterrows():
+                new_entry = ProjectRanking(
+                    project_id=row["project_id"],
+                    freelancer_id=row["freelancer_id"],
+                    matching_score=row["matching_score"]
+                )
+                db.add(new_entry)
+
+            db.commit()
+
+        except IntegrityError as e:
+            db.rollback()
+            logging.error(f"IntegrityError while creating ProjectMatching for project_id={row['project_id']} | Error: {str(e)}")
+
+        except Exception as e:
+            db.rollback()
+            logging.error(f"Unexpected Error while creating ProjectMatching for project_id={row['project_id']} | Error: {str(e)}")
+
+        # WebSocket으로 알림 전송
+        notify_client(user_id, f"✅ 프로젝트 {project_data.projectId} 매칭이 완료되었습니다!")
 
     def get_project_feedbacks(
         db: Session,
