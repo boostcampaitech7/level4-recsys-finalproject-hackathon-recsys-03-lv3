@@ -38,14 +38,12 @@ const ProjectDetailPage = () => {
   useEffect(() => {
     const fetchProjectData = async () => {
       try {
-        const [projectRes, similarProjectsRes] = await Promise.all([
-          axios.get(`${API_BASE_URL}/${projectId}`, { headers }),
-          axios.get(`${API_BASE_URL}/${projectId}/similar`, { headers }),
-        ]);
+        const projectRes = await axios.get(`${API_BASE_URL}/${projectId}`, {
+          headers,
+        });
 
+        console.log("projectRes: ", projectRes);
         setProject(projectRes.data);
-        console.log(project);
-        setSimilarProjects(similarProjectsRes.data);
       } catch (error) {
         console.error("프로젝트 데이터를 불러오는 데 실패했습니다:", error);
       }
@@ -54,18 +52,41 @@ const ProjectDetailPage = () => {
     fetchProjectData();
   }, [projectId]);
 
+  useEffect(() => {
+    const fetchSimilarProjects = async () => {
+      try {
+        const similarRes = await axios.get(
+          `${API_BASE_URL}/${projectId}/similar`,
+          {
+            params: { budget: project.budget, categoryId: project.categoryId },
+            headers: headers,
+          }
+        );
+
+        setSimilarProjects(similarRes.data);
+      } catch (error) {
+        console.error("프로젝트 데이터를 불러오는 데 실패했습니다:", error);
+      }
+    };
+    fetchSimilarProjects();
+  }, [project]);
+
   if (!project || !similarProjects) {
     return <div>로딩 중...</div>;
   }
 
-  const handleApply = () => {
+  const handleApply = async () => {
     try {
-      axios.post(`${API_BASE_URL}/${projectId}/apply`, {}, { headers });
+      const applyRes = await axios.post(
+        `${API_BASE_URL}/${projectId}/apply`,
+        {},
+        { headers }
+      );
     } catch (err) {
-      if (err.response && err.response.status === 409) {
-        return { data: [] };
+      if (err.response.status === 409) {
+        alert(err.response.data.detail);
+        return;
       }
-      throw err;
     }
   };
 
@@ -118,7 +139,7 @@ const ProjectDetailPage = () => {
               </span>
             </div>
             <div>
-              {project.skillNameList.map((skill, i) => (
+              {project.skillList.map((skill) => (
                 <ProjectSkillTag text={skill} />
               ))}
             </div>
