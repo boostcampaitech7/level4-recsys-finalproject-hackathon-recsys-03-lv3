@@ -1,10 +1,14 @@
 import os
+
 import numpy as np
 import pandas as pd
 import torch
+
+from tqdm import tqdm
 from typing import Optional, Tuple, Union
 
 from sqlalchemy import text
+
 from api.db import SessionLocal
 from src.utils import check_path
 from src.preprocessing import Preprocessing
@@ -122,29 +126,28 @@ def preprocess_data(
         data_path (str): 데이터 저장 경로
         n_components (int): 텍스트 임베딩 벡터에 사용할 PCA 주성분 개수
         embed (bool): 전처리 방식. 임베딩을 사용할 경우 True. 기본값은 False (인코딩)
-        similarity (Optional[str]): 유사도를 추가 피처로 사용할 경우 종류 선택. 기본값은 None
-                                    ("cosine", "dot_product", "elementwise_product", "jaccard")
+        similarity (Optional[str]): 유사도를 추가 피처로 사용할 경우 종류 선택. 기본값은 None ("cosine", "dot_product", "jaccard")
 
     Returns:
         Optional[Tuple[Union[np.ndarray, torch.Tensor], Union[np.ndarray, torch.Tensor]]]: similarity를 선택하면 유사도 출력. 기본값은 None
     """
-    project_df = pd.read_csv(os.path.join(data_path, "project.csv"))
-    freelancer_df = pd.read_csv(os.path.join(data_path, "freelancer.csv"))
+    project_df = pd.read_csv(os.path.join(data_path, "project_original.csv"))
+    freelancer_df = pd.read_csv(os.path.join(data_path, "freelancer_original.csv"))
+    inter_df = pd.read_csv(os.path.join(data_path, "inter_original.csv"))
 
     print("📍 preprocessing project data ==============================")
     # 텍스트 임베딩 (Upstage Embeddings -> PCA)
-    project_df = Preprocessing.text_embedding(project_df, "project_content", n_components)
+    # project_df = Preprocessing.text_embedding(project_df, "project_content", n_components)
 
     # 범주형 변수 인코딩 (멀티-핫)
     project_df = Preprocessing.encode_categorical_features(
         project_df,
         categorical_cols=["category_id", "skill_id"]
     )
+    project_category_df = project_df.iloc[:, 6:16]
+    project_skill_df = project_df.iloc[:, 16:]
 
     if embed:
-        project_category_df = project_df.iloc[:, 6:16]
-        project_skill_df = project_df.iloc[:, 16:]
-
         # 범주형 변수 임베딩 (torch.nn.Embedding)
         project_category_df = Preprocessing.embed_categorical_features(
             project_category_df,
@@ -173,11 +176,10 @@ def preprocess_data(
         skill_col="skill_id",
         expertise_col="skill_temp"
     )
+    freelancer_category_df = freelancer_df.iloc[:, 3:13]
+    freelancer_skill_df = freelancer_df.iloc[:, 13:]
 
     if embed:
-        freelancer_category_df = freelancer_df.iloc[:, 3:13]
-        freelancer_skill_df = freelancer_df.iloc[:, 13:]
-
         # 범주형 변수 임베딩 (torch.nn.Embedding)
         freelancer_category_df = Preprocessing.embed_categorical_features(
             freelancer_category_df,
@@ -204,17 +206,60 @@ def preprocess_data(
 
     # 유사도 계산 (인코딩/임베딩 둘 다 사용 가능. 단, 자카드 유사도는 인코딩만 사용 가능)
     if similarity:
-        print(f"📍 calculating {similarity} similiarities ==============================")
+        print(f"📍 calculating {similarity} similiarities =======================")
 
-        category_similarity = Preprocessing.calculate_similarity_matrix(
+        category_similarity_df = Preprocessing.calculate_similarity_matrix(
             project_category_df,
             freelancer_category_df,
-            method=similarity
+            method=similarity,
+            batch_size=500
         )
-        skill_similarity = Preprocessing.calculate_similarity_matrix(
+        skill_similarity_df = Preprocessing.calculate_similarity_matrix(
             project_skill_df,
             freelancer_skill_df,
-            method=similarity
+            method=similarity,
+            batch_size=500
         )
 
-        return category_similarity, skill_similarity
+        print(f"📍 Merge inter.csv and {similarity} similarity dataframes =======================")
+        # inter_df와 유사도 데이터에 merge_index 추가
+        inter_df["merge_index"] = inter_df["project_id"].astype(str) + "_" + inter_df["freelancer_id"].astype(str)
+
+        category_similarity_df["merge_index"] = project_df["project_id"].astype(str) + "_" + freelancer_df["freelancer_id"].astype(str)
+        skill_similarity_df["merge_index"] = project_df["project_id"].astype(str) + "_" + freelancer_df["freelancer_id"].astype(str)
+
+        # inter_df 기준으로 유사도 데이터 필터링
+        category_similarity_df = category_similarity_df[category_similarity_df["merge_index"].isin(inter_df["merge_index"])]
+        skill_similarity_df = skill_similarity_df[skill_similarity_df["merge_index"].isin(inter_df["merge_index"])]
+
+        inter_df = inter_df.set_index("merge_index")
+        category_similarity_df = category_similarity_df.set_index("merge_index")
+        skill_similarity_df = skill_similarity_df.set_index("merge_index")
+
+        # 청크 단위로 inter.csv에 유사도 병합 (메모리 최적화 문제)
+        output_path = os.path.join(data_path, "inter.csv")
+
+        chunk_size = 15000  # 한 번에 처리할 행 개수
+        total_chunks = len(inter_df) // chunk_size + (1 if len(inter_df) % chunk_size > 0 else 0)  # 전체 청크 개수 계산
+        
+        with open(output_path, "w") as f:
+            with tqdm(total=total_chunks, desc="🔄 Merging similarity data", unit="chunk") as pbar:
+                for chunk_start in range(0, len(inter_df), chunk_size):
+                    chunk_end = min(chunk_start + chunk_size, len(inter_df))
+                    chunk = inter_df.iloc[chunk_start:chunk_end]
+
+                    # 배치 단위로 유사도 병합
+                    chunk = chunk.merge(category_similarity_df, on="merge_index", how="left", suffixes=("", "_category"), sort=False).fillna(0.0)
+                    chunk = chunk.merge(skill_similarity_df, on="merge_index", how="left", suffixes=("", "skill"), sort=False).fillna(0.0)
+
+                    # 첫 번째 청크는 헤더 포함, 이후에는 헤더 없이 저장
+                    if chunk_start == 0:
+                        chunk.to_csv(f, mode="w", index=True)
+                    else:
+                        chunk.to_csv(f, mode="a", index=True, header=False)
+
+                    pbar.update(1)
+                
+                pbar.close()
+
+        print(f"inter.csv saved successfully with {similarity} similarity! ==========")

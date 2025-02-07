@@ -1,42 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import ProjectInfo from "../components/ProjectInfo";
 import SingleSelector from "../components/SingleSelector";
 import MultiSelector from "../components/MultiSelector";
 import SwitchButton from "../components/SwitchButton";
 import "../style/SearchPages.css";
 
+const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/project`;
+
 const SearchProjectPage = () => {
-  // 프로젝트 데이터
-  const [projects, setProjects] = useState([
-    {
-      projectId: 101,
-      projectName: "AI 기반 추천 시스템 개발",
-      duration: 6,
-      budget: 5000000,
-      workType: 1,
-      contractType: 0,
-      status: 0,
-      registerDate: "20250127",
-      categoryName: "소프트웨어/IT",
-      skillIdList: [1, 2, 3],
-      skillNameList: ["Python", "Machine Learning", "Deep Learning"],
-      locationName: "서울시 강남구",
-    },
-    {
-      projectId: 102,
-      projectName: "프리랜서 여행 플랫폼 프론트엔드 개발",
-      duration: 30,
-      budget: 3000000,
-      workType: 1,
-      contractType: 0,
-      status: 1,
-      registerDate: "20250212",
-      categoryName: "소매/소비자",
-      skillIdList: [4, 5],
-      skillNameList: ["React", "TypeScript"],
-      locationName: "서울시 종로구",
-    },
-  ]);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const userType = sessionStorage.getItem("userType");
 
   const skillList = [
     "Bash/Shell (all shells)",
@@ -261,11 +238,43 @@ const SearchProjectPage = () => {
   ];
 
   // 필터 상태
-  const [showOnlyRecruiting, setShowOnlyRecruiting] = useState(false);
+  const [showOnlyRecruiting, setShowOnlyRecruiting] = useState(true);
   const [sortOption, setSortOption] = useState("최신순");
   const [categoryFilterOption, setCategoryFilterOption] = useState("직군");
   const [workTypeFilterOption, setWorkTypeFilterOption] = useState("근무 형태");
   const [skillFilterOption, setSkillFilterOption] = useState(skillList);
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+
+    if (!token) {
+      setError("인증 토큰이 없습니다. 로그인 후 이용해주세요.");
+      setLoading(false);
+      return;
+    }
+
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get(API_BASE_URL, {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setProjects(response.data);
+      } catch (error) {
+        console.error("프로젝트 데이터를 불러오는 데 실패했습니다:", error);
+        setError("프로젝트 데이터를 불러오는 데 실패했습니다.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  if (loading) return <div>로딩 중...</div>;
+  if (error) return <div className="error-message">{error}</div>;
 
   const workTypeMapping = { 0: "상주", 1: "원격" };
 
@@ -283,6 +292,8 @@ const SearchProjectPage = () => {
     })
     .sort((a, b) => {
       // 정렬 로직
+      if (sortOption === "매칭 점수 높은순")
+        return b.matchingScore - a.matchingScore;
       if (sortOption === "최신순") return b.projectId - a.projectId;
       if (sortOption === "금액 높은순") return b.budget - a.budget;
       return 0;
@@ -293,7 +304,7 @@ const SearchProjectPage = () => {
     setWorkTypeFilterOption("근무 형태");
     setSkillFilterOption(skillList);
     setSortOption("최신순");
-    setShowOnlyRecruiting(false);
+    setShowOnlyRecruiting(true);
   };
 
   return (
@@ -342,7 +353,11 @@ const SearchProjectPage = () => {
           />
 
           <SingleSelector
-            options={["최신순", "금액 높은순"]}
+            options={
+              userType === "1"
+                ? ["최신순", "금액 높은순"]
+                : ["최신순", "매칭 점수 높은순", "금액 높은순"]
+            }
             onChange={setSortOption}
             value={sortOption}
           />

@@ -1,3 +1,5 @@
+.freelancer-list-container,
+.registered-project-container,
 .search-freelancer-container,
 .search-project-container {
   display: flex;
@@ -25,11 +27,27 @@
   color: black;
 }
 
+.registered-project-container .header-container {
+  display: flex; /* 플렉스 컨테이너로 설정 */
+  justify-content: space-between; /* 양쪽 끝으로 정렬 */
+  align-items: center; /* 세로 가운데 정렬 */
+}
+
+.header-right {
+  display: flex;
+  justify-content: flex-end; /* 버튼을 오른쪽 끝에 배치 */
+  align-items: center;
+}
+
 .header {
   text-align: left;
   font-weight: 600;
   margin-top: 20px;
   margin-bottom: 10px;
+}
+
+.header-right {
+  flex: 1;
 }
 
 .filters,
@@ -74,10 +92,4 @@
 
 .filters > * {
   flex-shrink: 0; /* 자식 요소가 줄어들지 않도록 설정 */
-}
-
-.freelancers {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
 }

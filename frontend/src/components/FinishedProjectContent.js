@@ -32,17 +32,17 @@ const FinishedProjectContent = ({ content, onReview }) => {
       >
         {/* 왼쪽: 프로젝트 정보 */}
         <div className="left-section">
-          <h3 className="finished-project-title">{projectName}</h3>
+          <div className="title-section">
+            <h3 className="project-title">{projectName}</h3>
+            {isReviewed && (
+              <div className="rating">
+                <ScoreDisplay score={content.feedbackScore} />
+              </div>
+            )}
+          </div>
 
-          {/* 금액 표시 (평가 후에만 보이도록) */}
-          <p
-            className={`finished-project-price ${isReviewed ? "visible" : ""}`}
-          >
-            <strong>금액:</strong> {budget.toLocaleString()}원
-          </p>
-
-          <div className="finished-project-info-grid">
-            <div className="finished-project-info-left">
+          <div className="project-info-grid">
+            <div className="project-info-left">
               <p>
                 <strong>기간:</strong> {duration}일
               </p>
@@ -53,21 +53,27 @@ const FinishedProjectContent = ({ content, onReview }) => {
                 <strong>작업 종료일:</strong> {endDate}
               </p>
             </div>
-            <div className="finished-project-info-right">
+            <div className="project-info-right">
+              {/* 금액 표시 (평가 후에만 보이도록) */}
+              <p
+                className={`finished-project-price ${isReviewed ? "visible" : ""}`}
+              >
+                {budget.toLocaleString()}원
+              </p>
               <p>
                 <strong>{categoryRole}</strong>
               </p>
               <p>{categoryName}</p>
-              <div className="finished-skills">
-                {skillNameList.length > 0 ? (
-                  skillNameList.map((skill, index) => (
-                    <ProjectSkillTag key={index} text={skill} />
-                  ))
-                ) : (
-                  <span>스킬 정보 없음</span>
-                )}
-              </div>
             </div>
+          </div>
+          <div className="finished-skills">
+            {skillNameList.length > 0 ? (
+              skillNameList.map((skill, index) => (
+                <ProjectSkillTag key={index} text={skill} />
+              ))
+            ) : (
+              <span>스킬 정보 없음</span>
+            )}
           </div>
         </div>
 
@@ -87,11 +93,6 @@ const FinishedProjectContent = ({ content, onReview }) => {
             </div>
           ) : (
             <>
-              <div className="rating">
-                <div>
-                  <ScoreDisplay score={content.feedbackScore} />
-                </div>
-              </div>
               <div className="radar-chart">
                 <RadarChart data={radarData ?? [0, 0, 0, 0, 0]} />
               </div>

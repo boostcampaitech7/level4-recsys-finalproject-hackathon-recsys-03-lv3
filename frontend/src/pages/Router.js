@@ -8,19 +8,15 @@ import {
 import Layout from "../components/Layout";
 import LoginPage from "./LoginPage";
 import MainPage from "./MainPage";
-import SearchFreelancer from "./SearchFreelancerPage";
-import RecommendFreelancer from "./RecommendFreelancerPage";
 import SearchProjectPage from "./SearchProjectPage";
-import SearchFreelancer from "./SearchFreelancer";
+import SearchFreelancerPage from "./SearchFreelancerPage";
 import RecommendFreelancerPage from "./RecommendFreelancerPage";
 import ProjectInputPage from "./ProjectInputPage";
 import ProjectRegisterPage from "./ProjectRegisterPage";
-import RegisteredProjects from "./RegisteredProjectsPage";
-import Chat from "./ChatPage";
+import RegisteredProjectsPage from "./RegisteredProjectsPage";
 import FreelancerDetailPage from "./FreelancerDetailPage";
 import AppliedProjectPage from "./AppliedProjectPage";
 import FinishedProjectPage from "./FinishedProjectPage";
-import FreelancerSuggestPage from "./FreelancerSuggestPage";
 import CompanyMyPage from "./CompanyMyPage";
 
 const AppRouter = () => {
@@ -74,17 +70,18 @@ const AppRouter = () => {
           {/* Layout 내부의 하위 경로 */}
           <Route index element={<MainPage />} />
           <Route path="/search-project" element={<SearchProjectPage />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/search-freelancer" element={<SearchFreelancer />} />
+          <Route path="/search-freelancer" element={<SearchFreelancerPage />} />
           <Route
             path="/recommend-freelancer"
-            element={<RecommendFreelancer />}
+            element={<RecommendFreelancerPage />}
           />
           <Route path="register-input" element={<ProjectInputPage />} />
           <Route path="register-result" element={<ProjectRegisterPage />} />
           <Route path="/freelancer-detail" element={<FreelancerDetailPage />} />
-          <Route path="/registered-projects" element={<RegisteredProjects />} />
-          <Route path="/suggest" element={<FreelancerSuggestPage />} />
+          <Route
+            path="/registered-projects"
+            element={<RegisteredProjectsPage />}
+          />
           <Route path="/finished" element={<FinishedProjectPage />} />
           <Route path="/applied" element={<AppliedProjectPage />} />
           <Route

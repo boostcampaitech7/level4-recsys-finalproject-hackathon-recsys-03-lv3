@@ -182,19 +182,16 @@ const FinishedProjectPage = () => {
             onChange={setSortOption}
           />
         </div>
-        {/* <div className="filter-group-right"> </div> */}
       </div>
 
       {/* 필터링 + 정렬된 프로젝트 리스트 */}
-      <div className="project-list-container">
-        {displayedProjects.map((project) => (
-          <FinishedProjectContent
-            key={project.projectID}
-            content={project}
-            onReview={() => handleReview(project)}
-          /> // 평가 버튼 클릭 시 호출
-        ))}
-      </div>
+      {displayedProjects.map((project) => (
+        <FinishedProjectContent
+          key={project.projectID}
+          content={project}
+          onReview={() => handleReview(project)}
+        /> // 평가 버튼 클릭 시 호출
+      ))}
 
       {/* 평가 모달 (기존 페이지 위에 오버레이) */}
       <Modal open={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)}>

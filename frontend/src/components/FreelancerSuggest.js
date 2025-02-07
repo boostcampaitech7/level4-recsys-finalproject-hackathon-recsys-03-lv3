@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ProjectSkillTag from "../components/ProjectSkillTag";
+import ProjectSkillTag from "./ProjectSkillTag";
 import "../style/InfoCard.css";
 import "../style/FreelancerDetailPage.css";
 
-const FreelancerSuggest = () => {
+const FreelancerSuggest = ({ isOpen, onClose }) => {
   const [selectedProject, setSelectedProject] = useState(null); // 선택된 프로젝트 ID 저장
   const navigate = useNavigate();
 
@@ -46,7 +46,10 @@ const FreelancerSuggest = () => {
   const handleSuggestClick = () => {
     if (selectedProject) {
       alert("제안이 완료되었습니다.");
-      navigate("/myproject");
+      onClose(); // 팝업 닫기
+      setTimeout(() => {
+        navigate("/myproject");
+      }, 10);
     }
   };
 
@@ -56,10 +59,12 @@ const FreelancerSuggest = () => {
       .replace(/\b0(\d)/g, "$1");
   };
 
+  if (!isOpen) return null;
+
   return (
-    <div className="suggest-page container-fluid">
-      <div className="container-fluid detail-card">
-        <h3>제안할 프로젝트 선택</h3>
+    <div className="popup-overlay">
+      <div className="popup-content">
+        <h3 className="history-header mb-3">제안할 프로젝트 선택</h3>
         {projectList.map((project) => (
           <div
             key={project.projectId}
@@ -70,35 +75,36 @@ const FreelancerSuggest = () => {
             style={{ width: "inherit" }}
           >
             <div className="card-content">
-              <h5>{project.projectName}</h5>
-              <p>
-                <strong>예상 금액</strong> {project.budget.toLocaleString()}원
-                <span className="ml-3">
-                  <strong>예상 기간</strong> {project.duration}일
+              <h5 className="sm-header mb-3">{project.projectName}</h5>
+              <div className="history-info">
+                <span className="info-label">예상 금액</span>
+                <span className="budget">
+                  {" "}
+                  {project.budget.toLocaleString()}원{" "}
                 </span>
-              </p>
-              <p>
-                <strong>근무 시작일</strong> {formatDate(project.registerDate)}
-              </p>
-              <p>
-                <span className="location">
-                  <i class="bi bi-geo-alt"></i> {project.locationName}
-                </span>
-              </p>
-              <div className="skill-list">
-                {project.skillNameList.map((skill, index) => (
-                  <span key={index} className="skill-badge">
-                    {<ProjectSkillTag text={skill} />}
-                  </span>
-                ))}
               </div>
+              <span className="info-label">근무 시작일</span>
+              <span className="info-value">
+                {formatDate(project.registerDate)} ({project.duration}일)
+              </span>
+              <p>
+                <span className="info-label">
+                  <i className="bi bi-geo-alt"></i> {project.locationName}
+                </span>
+              </p>
+              {project.skillNameList.map((skill, index) => (
+                <span key={index}>{<ProjectSkillTag text={skill} />}</span>
+              ))}
             </div>
           </div>
         ))}
         {/* 제안하기 버튼 */}
-        <div className="suggest-button-container">
+        <div className="popup-actions">
+          <button className="btnclose" onClick={onClose}>
+            닫기
+          </button>
           <button
-            className={`suggest-button ${selectedProject ? "active" : ""}`}
+            className={`btn-suggest ${selectedProject ? "active" : ""}`}
             disabled={!selectedProject}
             onClick={handleSuggestClick}
           >

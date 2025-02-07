@@ -3,7 +3,7 @@ import FreelancerInfo from "../components/FreelancerInfo";
 import MultiSelector from "../components/MultiSelector";
 import SingleSelector from "../components/SingleSelector";
 import SwitchButton from "../components/SwitchButton";
-import "../style/RecommendFreelancer.css";
+import "../style/SearchPages.css";
 import profile1 from "../assets/profile_example1.jpg";
 import profile2 from "../assets/profile_example2.jpg";
 import profile3 from "../assets/profile_example3.jpg";

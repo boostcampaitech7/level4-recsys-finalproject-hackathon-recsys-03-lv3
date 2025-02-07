@@ -205,3 +205,19 @@
 .skill-container {
   padding-top: 10px;
 }
+
+@media screen and (max-width: 950px) {
+  .predict-things {
+    flex-direction: column; /* 요소들을 세로 정렬 */
+    align-items: center;
+  }
+
+  .predict-left {
+    max-width: 100%; /* 전체 너비 사용 */
+  }
+
+  .predict-right {
+    width: 100%; /* 전체 너비 사용 */
+    flex-direction: column;
+  }
+}
