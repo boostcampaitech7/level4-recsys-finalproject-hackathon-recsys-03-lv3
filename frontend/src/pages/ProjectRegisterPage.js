@@ -7,6 +7,10 @@ import ProfileIcon from "../components/ProfileIcon";
 import SimilarProject from "../components/SimilarProject";
 import ProjectSkillTag from "../components/ProjectSkillTag";
 
+const projectSummary = JSON.parse(
+  sessionStorage.getItem("projectSummary") || "[]"
+);
+
 const similarProjects = [
   {
     projectId: 101,
@@ -93,38 +97,48 @@ const ProjectRegisterPage = () => {
                   <tr>
                     <td className="table-label">프로젝트 명</td>
                     <td className="table-value">
-                      {projectData.projectContent || "미정"}
+                      {projectSummary.projectName || "미정"}
                     </td>
                   </tr>
                   <tr>
                     <td className="table-label">프로젝트 기간</td>
                     <td className="table-value">
-                      {projectData.duration || "미정"}일
+                      {projectSummary.duration || "미정"}일
                     </td>
                   </tr>
                   <tr>
                     <td className="table-label">근무 형태</td>
                     <td className="table-value">
-                      {projectData.workMode || "미정"}
+                      {projectSummary.workType === 0
+                        ? "대면"
+                        : "원격" || "미정"}
                     </td>
                   </tr>
                   <tr>
                     <td className="table-label">계약 유형</td>
                     <td className="table-value">
-                      {projectData.projectType || "미정"}
+                      {projectSummary.contractType === 0
+                        ? "월 단위"
+                        : "프로젝트 단위" || "미정"}
                     </td>
                   </tr>
                   <tr>
                     <td className="table-label">계약 시 우선순위</td>
                     <td className="table-value">
-                      {projectData.priority || "미정"}
+                      {projectSummary.priority === 0
+                        ? "스킬"
+                        : projectSummary.priority === 1
+                          ? "금액"
+                          : "상관없음" || "미정"}
                     </td>
                   </tr>
                   <tr>
                     <td className="table-label">예상 금액</td>
                     <td className="table-value">
-                      {projectData.budget || "미정"}원 (
-                      {projectData.contrastType || "월"} 단위)
+                      {projectSummary.expectedBudget || "미정"}원 /
+                      {projectSummary.contractType === 0
+                        ? "월"
+                        : "프로젝트" || "월"}
                     </td>
                   </tr>
                   <tr>
@@ -186,7 +200,7 @@ const ProjectRegisterPage = () => {
         </div>
         <div className="predict-things">
           <div className="predict-left">
-            <SimilarProject projects={similarProjects} />
+            <SimilarProject projects={projectSummary.similarProjects} />
           </div>
           <div className="predict-right">
             <div className="predict-top">
@@ -204,11 +218,13 @@ const ProjectRegisterPage = () => {
                 </div>
                 <div className="estimate-row">
                   <p className="estimate-label">AI의 예상 금액</p>
-                  <p className="ai-estimate">3,000,000원</p>
+                  <p className="ai-estimate">{projectSummary.expectedBudget}</p>
                 </div>
               </div>
               <div className="slider-container">
-                <span className="min-value">최저 100만</span>
+                <span className="min-value">
+                  최저 {projectSummary.minBudget}
+                </span>
                 <input
                   type="range"
                   min="1000000"
@@ -216,7 +232,9 @@ const ProjectRegisterPage = () => {
                   value="3000000"
                   readOnly
                 />
-                <span className="max-value">최고 400만</span>
+                <span className="max-value">
+                  최고 {projectSummary.maxBudget}
+                </span>
               </div>
             </div>
             <div className="predict-bottom">
@@ -226,7 +244,7 @@ const ProjectRegisterPage = () => {
                 요구사항입니다.
               </p>
               <div className="skill-container">
-                {skillNameList.map((skill, i) => (
+                {projectSummary.simSkillNameList.map((skill, i) => (
                   <span key={i} className="badge">
                     <ProjectSkillTag text={skill} />
                   </span>
