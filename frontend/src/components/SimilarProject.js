@@ -28,7 +28,7 @@ const SimilarProject = ({ projects }) => {
                     <div className="col-md-12">
                       <div className="cus-card1 p-3">
                         <a href="#">
-                          <h5 className="project-title">
+                          <h5 className="projects-title">
                             {projects[index].projectName}
                           </h5>
                         </a>
@@ -71,7 +71,7 @@ const SimilarProject = ({ projects }) => {
                       <div className="col-md-12">
                         <div className="cus-card p-3">
                           <a href="#">
-                            <h5 className="project-title">
+                            <h5 className="projects-title">
                               {projects[index + 1].projectName}
                             </h5>
                           </a>

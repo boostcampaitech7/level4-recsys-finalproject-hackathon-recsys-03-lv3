@@ -75,7 +75,7 @@ const RegisteredProjects = () => {
   const navigate = useNavigate();
 
   const handleRegisterClick = () => {
-    navigate("/chat");
+    navigate("/register-input");
   };
 
   return (

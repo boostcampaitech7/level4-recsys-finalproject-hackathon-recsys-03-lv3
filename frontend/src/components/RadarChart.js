@@ -19,7 +19,7 @@ ChartJS.register(
   Legend
 );
 
-const RadarChart = ({ data }) => {
+const RadarChart = ({ data, style = {} }) => {
   const chartData = {
     labels: ["전문성", "적극성", "일정준수", "유지보수", "의사소통"],
     datasets: [
@@ -60,7 +60,7 @@ const RadarChart = ({ data }) => {
   };
 
   return (
-    <div style={{ width: "250px", height: "250px" }}>
+    <div style={{ width: "250px", height: "250px", ...style }}>
       <Radar data={chartData} options={options} />
     </div>
   );

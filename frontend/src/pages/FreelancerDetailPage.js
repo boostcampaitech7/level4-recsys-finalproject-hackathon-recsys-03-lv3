@@ -3,6 +3,7 @@ import axios from "axios";
 import ProfileIcon from "../components/ProfileIcon";
 import profileExample from "../assets/profile_example5.jpg";
 import "../style/FreelancerDetailPage.css";
+import FreelancerSuggest from "../components/FreelancerSuggest";
 import RadarChart from "../components/RadarChart";
 import FreelancerSkillTag from "../components/FreelancerSkillTag";
 import DoughnutChart from "../components/DoughnutChart";
@@ -60,49 +61,62 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="profile-page container-fluid">
+    <div className="profile-page">
       <ProfileHeader freelancerInfo={freelancerInfo} />
-      <div className="container-fluid detail-card bg-light mt-4">
-        <div className="row">
-          <h3>프로젝트 히스토리</h3>
-          <div className="col-md-6 d-flex">
-            <ProjectRates freelancerInfo={freelancerInfo} progress={progress} />
-          </div>
-          <div className="col-md-6 d-flex">
-            <ProjectStatus progress={progress} />
-          </div>
-          <ProjectHistory history={history} />
+      <div className="history-card">
+        <h3 className="history-header">프로젝트 히스토리</h3>
+        <div className="project-stats">
+          <ProjectRates freelancerInfo={freelancerInfo} progress={progress} />
+          <ProjectStatus progress={progress} />
         </div>
+      </div>
+      <div className="history-card">
+        <h3 className="history-header">프로젝트 리스트</h3>
+        <ProjectHistory history={history} />
       </div>
     </div>
   );
 };
 
 const ProfileHeader = ({ freelancerInfo }) => {
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
   return (
-    <div className="profile-header container-fluid detail-card scrollable">
-      <div className="row">
-        <div className="d-flex align-items-center">
-          <div className="mx-5">
-            <ProfileIcon profileImage={profileExample} />
-          </div>
-          <div>
-            <h3>{freelancerInfo.freelancerName}</h3>
-            <p>
-              {freelancerInfo.role} | {freelancerInfo.workExp}년 |{" "}
-              {freelancerInfo.locationName}
-            </p>
-            <div>
-              {freelancerInfo.skillList.map((skill, index) => (
-                <FreelancerSkillTag
-                  key={index}
-                  text={skill.skillName}
-                  score={skill.skillScore}
-                />
-              ))}
-            </div>
-          </div>
+    <div className="mypage-header">
+      <div className="header-image">
+        <ProfileIcon profileImage={profileExample} />
+      </div>
+      <div className="header-details">
+        <h3 className="free-name">{freelancerInfo.freelancerName}</h3>
+        <p className="free-role">
+          {freelancerInfo.role} | {freelancerInfo.workExp}년 |{" "}
+          {freelancerInfo.locationName}
+        </p>
+
+        <div className="free-skills">
+          {freelancerInfo.skillList
+            .map((skillName, index) => ({
+              name: skillName,
+              score: freelancerInfo.skillScoreList[index],
+            })) // 이름과 점수를 객체로 매핑
+            .sort((a, b) => b.score - a.score) // 점수를 기준으로 내림차순 정렬
+            .map(({ name, score }, index) => (
+              <FreelancerSkillTag key={index} text={name} score={score} />
+            ))}
         </div>
+      </div>
+      <div className="for-suggest">
+        {/* {userType === 1 ? (
+        <button className="btn-suggest" onClick={() => setIsPopupOpen(true)}>
+          제안하기
+        </button>
+        <FreelancerSuggest
+          isOpen={isPopupOpen}
+          onClose={() => setIsPopupOpen(false)}
+        />
+        ) : (
+        <button className="btn-suggest">정보 수정</button>
+          )} */}
       </div>
     </div>
   );
@@ -110,10 +124,11 @@ const ProfileHeader = ({ freelancerInfo }) => {
 
 const ProjectRates = ({ freelancerInfo, progress }) => {
   return (
-    <div className="profile-stats container-fluid detail-card">
-      <div className="row">
-        <h4>프로젝트 평점</h4>
+    <div className="profile-rates">
+      <div className="rates-header">
+        <h4 className="sm-header">프로젝트 평점</h4>
         <StaticStarRating
+          className="star-rates"
           rating={
             (freelancerInfo.expertise +
               freelancerInfo.proactiveness +
@@ -124,6 +139,8 @@ const ProjectRates = ({ freelancerInfo, progress }) => {
           }
           numRates={progress.projectCount}
         />
+      </div>
+      <div className="radar-chart-container">
         <RadarChart
           data={[
             freelancerInfo.expertise,
@@ -132,6 +149,7 @@ const ProjectRates = ({ freelancerInfo, progress }) => {
             freelancerInfo.communication,
             freelancerInfo.maintainability,
           ]}
+          style={{ width: "300px", height: "300px" }}
         />
       </div>
     </div>
@@ -140,59 +158,96 @@ const ProjectRates = ({ freelancerInfo, progress }) => {
 
 const ProjectStatus = ({ progress }) => {
   return (
-    <div className="project-status container-fluid detail-card">
-      <div className="row">
-        <div>
-          <h4>프로젝트 진행 상황</h4>
-          {progress.projectCount}건
-        </div>
-        <DoughnutChart
-          data={[progress.completedCount, progress.ongoingCount]}
-        />
+    <div className="project-status">
+      <div className="rates-header">
+        <h4 className="sm-header">프로젝트 진행 상황</h4>
+        <p>{progress.projectCount}건</p>
       </div>
+      <DoughnutChart
+        data={[progress.completedCount, progress.ongoingCount]}
+        style={{ margin: "30px 0" }}
+      />
     </div>
   );
 };
 
 const ProjectHistory = ({ history }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const handleNext = () => {
+    if (currentIndex + 2 < history.length) {
+      setCurrentIndex(currentIndex + 2);
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentIndex - 2 >= 0) {
+      setCurrentIndex(currentIndex - 2);
+    }
+  };
+
   return (
-    <div className="project-history container-fluid detail-card mt-4">
-      <div className="history-list">
-        <div className="row">
-          {history.map((project, index) => (
-            <div key={index} className="card mb-3 d-flex">
-              <div className="card-body">
-                <div className="row">
-                  <div className="col-md-8">
-                    <h5 className="card-title">{project.projectName}</h5>
-                    <p className="card-text">
-                      금액: {project.budget.toLocaleString()}원
-                    </p>
-                    <p className="card-text">기간: {project.duration}일</p>
+    <div className="project-history-container">
+      <div className="project-history">
+        {/* Display two items at a time */}
+        {history.slice(currentIndex, currentIndex + 2).map((project, index) => (
+          <div key={index} className="history-item">
+            <h5 className="history-title">{project.projectName}</h5>
+            <div className="history-info">
+              <div>
+                <span className="info-label">금액</span>{" "}
+                <span className="budget">
+                  {project.budget.toLocaleString()}원
+                </span>
+              </div>
+              <div className="info-items">
+                <div className="rates-header">
+                  <div className="info-du">
+                    <span className="info-label">기간</span>{" "}
+                    <span className="info-value">
+                      {typeof project.duration === "string"
+                        ? project.duration.replace(
+                            /(\d{4})(\d{2})(\d{2})/,
+                            "$1년 $2월 $3일"
+                          )
+                        : `${project.duration}일`}
+                    </span>
                   </div>
-                  <div className="col-md-4">
-                    <div className="rating">
-                      <div>
-                        <ScoreDisplay score={project.feedbackScore} />
-                      </div>
-                    </div>
-                    <div className="radar-chart">
-                      <RadarChart
-                        data={[
-                          project.expertise,
-                          project.proactiveness,
-                          project.punctuality,
-                          project.communication,
-                          project.maintainability,
-                        ]}
-                      />
-                    </div>
-                  </div>
+                  <ScoreDisplay score={project.feedbackScore} />
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+            <div className="radar-chart-container">
+              <RadarChart
+                data={[
+                  project.expertise,
+                  project.proactiveness,
+                  project.punctuality,
+                  project.communication,
+                  project.maintainability,
+                ]}
+              />
+            </div>
+            <p className="review-comment"> {project.feedbackContent}</p>
+          </div>
+        ))}
+      </div>
+      {/* Navigation Buttons */}
+      <div className="navigation-buttons">
+        <button
+          className="prev-button"
+          onClick={handlePrev}
+          disabled={currentIndex === 0}
+        >
+          &lt; 이전
+        </button>
+        <button
+          className="next-button"
+          onClick={handleNext}
+          disabled={currentIndex + 2 >= history.length}
+        >
+          다음 &gt;
+        </button>
       </div>
     </div>
   );
