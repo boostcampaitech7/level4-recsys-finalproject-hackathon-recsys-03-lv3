@@ -7,6 +7,7 @@
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
   padding: 20px;
   box-sizing: border-box;
+  min-height: 500px;
 }
 
 .similar-project-container .section-title {
@@ -17,19 +18,18 @@
 .carousel-control-next {
   position: absolute;
   top: 50%;
-  transform: translateY(-35%);
   z-index: 10;
   height: 40px;
   width: 35px;
 }
 
 .carousel-control-prev {
-  left: -25px; /* 패딩 기준 왼쪽 정렬 */
+  left: -5px; /* 패딩 기준 왼쪽 정렬 */
 }
 
 /* 다음 버튼: 컨테이너의 오른쪽 패딩 위치 */
 .carousel-control-next {
-  right: -25px; /* 패딩 기준 오른쪽 정렬 */
+  right: -5px; /* 패딩 기준 오른쪽 정렬 */
 }
 
 .carousel-control-prev i,
@@ -83,12 +83,7 @@
   color: #333333;
 }
 
-.info-value {
-  margin-left: 8px;
-}
-
 .budget {
   color: var(--color-primary);
   font-weight: bold;
-  margin-left: 8px;
 }

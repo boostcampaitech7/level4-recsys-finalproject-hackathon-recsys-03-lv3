@@ -81,7 +81,7 @@ const SimilarProject = ({ projects }) => {
                           <div className="project-info">
                             <div className="info-item">
                               <span className="info-label">예상 금액</span>{" "}
-                              <span className="info-value budget">
+                              <span className="budget">
                                 {projects[index + 1].budget.toLocaleString()}원
                               </span>
                               <span className="info-value">
@@ -120,27 +120,27 @@ const SimilarProject = ({ projects }) => {
             return acc;
           }, [])}
         </div>
-        {/* 이전 버튼 */}
-        <button
-          className="carousel-control-prev"
-          type="button"
-          data-bs-target="#carouselExample"
-          data-bs-slide="prev"
-        >
-          <i className="fa-solid fa-caret-left"></i>
-          <span className="visually-hidden">Previous</span>
-        </button>
-        {/* 다음 버튼 */}
-        <button
-          className="carousel-control-next"
-          type="button"
-          data-bs-target="#carouselExample"
-          data-bs-slide="next"
-        >
-          <i className="fa-solid fa-caret-right"></i>
-          <span className="visually-hidden">Next</span>
-        </button>
       </div>
+      {/* 이전 버튼 */}
+      <button
+        className="carousel-control-prev"
+        type="button"
+        data-bs-target="#carouselExample"
+        data-bs-slide="prev"
+      >
+        <i className="fa-solid fa-caret-left"></i>
+        <span className="visually-hidden">Previous</span>
+      </button>
+      {/* 다음 버튼 */}
+      <button
+        className="carousel-control-next"
+        type="button"
+        data-bs-target="#carouselExample"
+        data-bs-slide="next"
+      >
+        <i className="fa-solid fa-caret-right"></i>
+        <span className="visually-hidden">Next</span>
+      </button>
     </div>
   );
 };
