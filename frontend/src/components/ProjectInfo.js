@@ -49,7 +49,7 @@ const ProjectInfo = ({ content, className = "", onClick = null }) => {
         </div>
 
         <h3 className="project-title">
-          <a className="project-link" onClick={onClick}>
+          <a className="project-link pointer" onClick={onClick}>
             {projectName}
           </a>
         </h3>

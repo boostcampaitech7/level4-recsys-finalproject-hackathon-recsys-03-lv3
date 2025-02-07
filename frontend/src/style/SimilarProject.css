@@ -87,3 +87,8 @@
   color: var(--color-primary);
   font-weight: bold;
 }
+
+.pointer {
+  cursor: pointer;
+  text-decoration: none;
+}
