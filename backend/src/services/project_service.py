@@ -15,7 +15,6 @@ from src.services.filter_service import FilterService
 from src.utils.error_messages import ERROR_MESSAGES
 
 MAX_CNT = 50
-memory = ConversationBufferMemory(return_messages=True)
 
 
 class ProjectService:
@@ -400,21 +399,23 @@ class ProjectService:
         except HTTPException as e:
             raise e
 
-        if len(memory.chat_memory.messages) == 0:
-            system_message = "너의 이름은 HRmony야. 한글 데이터를 입력받고 한글로 답변해야 해. 기업이 프리랜서를 모집할 프로젝트 공고를 올릴 때 도움을 주는 AI야."
-            memory.chat_memory.add_message(SystemMessage(content=system_message))
-            memory.chat_memory.add_message(HumanMessage(content="다음은 프로젝트 등록을 위한 카테고리 및 스킬 정보야."))
+        # 1. 대화 memory 생성
+        memory = ConversationBufferMemory(return_messages=True)
 
-            # 카테고리 & 스킬 정보 저장
-            category_info = json.dumps(category_list, ensure_ascii=False)
-            skill_info = json.dumps(skill_list, ensure_ascii=False)
-            memory.chat_memory.add_message(HumanMessage(content="카테고리 정보: " + category_info))
-            memory.chat_memory.add_message(HumanMessage(content="스킬 정보: " + skill_info))
+        # 2. 설정 정보 생성
+        system_message = "너의 이름은 HRmony야. 한글 데이터를 입력받고 한글로 답변해야 해. 기업이 프리랜서를 모집할 프로젝트 공고를 올릴 때 도움을 주는 AI야."
+        memory.chat_memory.add_message(SystemMessage(content=system_message))
+
+        # 3. 첫번째 대화: 프로젝트 정보 생성
+        memory.chat_memory.add_message(HumanMessage(content="다음은 프로젝트 등록을 위한 카테고리 및 스킬 정보야."))
+        category_info = json.dumps([category.__dict__ for category in category_list], ensure_ascii=False)
+        skill_info = json.dumps([skill.__dict__ for skill in skill_list], ensure_ascii=False)
+        memory.chat_memory.add_message(HumanMessage(content="카테고리 정보: " + category_info))
+        memory.chat_memory.add_message(HumanMessage(content="스킬 정보: " + skill_info))
 
         chat_history = [msg.content for msg in memory.chat_memory.messages]
         project_info = json.dumps(project_data.dict(), ensure_ascii=False)
         memory.chat_memory.add_message(HumanMessage(content="새로운 프로젝트 등록 요청: " + project_info))
-
         new_project_instruction = """
         다음은 프로젝트 등록 정보야.
         이 정보들을 기반으로 projectName, categoryId, skillList, projectContent를 전달해줘.
@@ -424,6 +425,7 @@ class ProjectService:
         4) projectContent의 내용 형식은 <프로젝트 진행 방식>, <프로젝트의 현재 상황>, <상세한 업무 내용>, <참고 자료 / 유의 사항> 영역으로 나누어서 적어줘. 말투는 '~ 입니다.' 존댓말로 정리해줘. '개행기호'을 포함해서 적어줘.
         * 제약 조건: 이 모든 데이터들은 json(Key-Value) 형식으로 전달해줘. Key는 proejctName, categoryId, categoryName, skillIdList, skillNameList, projectContent 로 해줘.
         """
+
         solar_payload = [
             {"role": "system", "content": chat_history[0]},
             {"role": "user", "content": "\n".join(chat_history[1:])},
@@ -434,6 +436,7 @@ class ProjectService:
         project_data = {**project_data.dict(), **response}
         memory.chat_memory.add_message(HumanMessage(content="새로운 프로젝트 정보: " + json.dumps(project_data, ensure_ascii=False)))
 
+        # 4. 두번째 대화: 유사한 프로젝트 정보 생성
         try:
             project_list = ProjectService.get_project_similar(
                 project_id=100000,
