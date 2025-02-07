@@ -422,10 +422,11 @@ class ProjectService:
         1) projectName은 projectContent를 요약하는 내용으로 넣어줘.
         2) categoryId는 프로젝트 내용을 보고 카테고리 목록 중 어떤 카테고리에 해당할 지 id값으로 넣어줘. id에 해당하는 categoryName도 넣어줘.
         3) skillId는 projectContent를 보고 어떤 스킬이 필요할 지 스킬 목록에서 찾아서 id값으로 넣어줘 (skillIdList). (최대 6개) projectContent에서 개발 언어가 나오는 경우 스킬정보에서 찾아줘. 예를 들어, mysql이라면 skillId 121, skillName MySQL으로 해줘. 해당하는 skillName도 넣어줘 (skillNameList)
-        4) projectContent의 내용 형식은 <프로젝트 진행 방식>, <프로젝트의 현재 상황>, <상세한 업무 내용>, <참고 자료 / 유의 사항> 영역으로 나누어서 적어줘. 말투는 '~ 입니다.' 존댓말로 정리해줘. '개행기호'을 포함해서 적어줘. (projectContent 예시: <프로젝트 진행 방식>\n\n시작시점에 미팅, 주 2회 미팅을 요청드립니다.\n협업은 원격에서 진행됩니다. 재택근무를 진행해주시고 미팅 시,\n혹은 이슈 발생 시에는 On-Site 작업이 있을 수 있습니다.\n\n모든 개발은 30일내에 마무리되도록 내부 개발자와 업무 분담을 진행합니다.\n\n<프로젝트의 현재 상황>\n\nPM이 개발 내용 제공합니다.\n개발 중인 소스가 있습니다.\n\n<상세한 업무 내용>\n\n프로젝트의 개요는 다음과 같습니다.\n-- Open API를 사용하는 안드로이드 클라이언트 앱이 있음\n-- 앱과 Open API 서버간 인증을 OAuth 서버로 이용\n-- 앱 사용자가 인증 포탈 서버에 회원 가입, 프로젝트 생성, key 발급 등을 수행한 후 앱에서 해당 정보로 로그인 하면 token 발급\n-- 이후 token을 이용해 Open API를 사용\n-- Open API 서버는 사용자의 API 사용 이력 정보를 DB에 저장\n-- 인증 포탈 서버에서 이력 정보 UI를 제공( UI가 작업된 소스 제공 가능 )\n\n1) 인증 포탈 서버\n+ 사용자 등록/수정/삭제\n+ 사용자 로그인 / 로그아웃\n+ 프로젝트 생성\n-> 인증 키 발급/갱신\n-> API 권한 부여\n-> Quota 적용/갱신 (하루/일주일/월 단위 API 사용 통계 chart 제공)\n-> 프로젝트 수정\n-> 프로젝트 삭제\n-> 프로젝트 history(이력)\n-> API 사용 가이드 (자사 제공)\n- Spring Framework 기반으로 개발\n\n2) OAuth 2.x 기반 인증 서버\n+ Spring OAuth 2.x를 이용한 인증 서버 구축\n+ 인증 포탈 서버 연동\n+ Open API에서 인증을 사용할 수 있도록 연동 방안 제공 및 테스트 지원\n\n3) 개발 환경\n+ Spring Frmaework 4.x\n+ spring-security-oauth2 라이브러리 사용\n+ DB : mysql 사용하며, 관련 DB 스키마 준비되어 있음, 제공 기능에 따라 좀 더 늘어날 수 있음.\n\n4) 테스트 : 전체 연동 테스트\n\n<참고자료 / 유의사항>\n\nGoogle Open API 관리 페이지와 유사합니다.)
+        4) projectContent의 내용은 입력 받은 projectContent를 5)와 같이 형식에 맞추어서 요약해서 적어줘.
+        5) projectContent의 내용 형식은 <프로젝트 진행 방식>, <프로젝트의 현재 상황>, <상세한 업무 내용>, <참고 자료 / 유의 사항> 영역으로 나누어서 적어줘. 말투는 '~ 입니다.' 존댓말로 정리해줘. '개행기호'을 포함해서 적어줘. (projectContent 예시: <프로젝트 진행 방식>\n내용1\n내용2\n<프로젝트의 현재 상황>\n내용1\n내용2\n<상세한 업무 내용>\n내용1\n내용2\n<참고자료 / 유의사항>\n내용1\n내용2
         * 제약 조건: 이 모든 데이터들은 json(Key-Value) 형식으로 전달해줘. Key는 proejctName, categoryId, categoryName, skillIdList, skillNameList, projectContent 로 해줘. 각각의 value 형식은 str, int, str, List[int], List[str], str 이야.
         """
-        
+
         solar_payload = [
             {"role": "system", "content": chat_history[0]},
             {"role": "user", "content": "\n".join(chat_history[1:])},
