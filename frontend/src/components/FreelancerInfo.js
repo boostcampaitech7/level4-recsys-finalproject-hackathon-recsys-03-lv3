@@ -125,13 +125,17 @@ const FreelancerInfo = ({ freelancerInfo, pageType }) => {
           </div>
           <div className="intro">{freelancerContent}</div>
           <div className="skillList d-flex flex-wrap mt-3">
-            {skillList.map((skillName, index) => (
-              <FreelancerSkillTag
-                key={index}
-                text={skillName}
-                score={skillScoreList[index]}
-              />
-            ))}
+            {skillList
+              .map((skillName, index) => ({
+                name: skillName,
+                score: skillScoreList[index],
+              })) // 이름과 점수를 객체로 매핑
+              .sort((a, b) => b.score - a.score) // 점수를 기준으로 내림차순 정렬
+              .slice(0, 7) // 상위 7개만 선택
+              .map(({ name, score }, index) => (
+                <FreelancerSkillTag key={index} text={name} score={score} />
+              ))}
+            {skillList.length > 7 && <span className="more-skills">...</span>}
           </div>
         </div>
 

@@ -1,6 +1,6 @@
-.info-card {
+.search-freelancer-container .info-card {
   max-width: 1000px;
-  height: 280px;
+  max-height: 280px;
   justify-content: center;
 }
 

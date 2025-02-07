@@ -320,6 +320,7 @@ const ProjectInputPage = () => {
                       placeholder={`${selectedContractType} 금액`}
                       value={selectedBudget}
                       onChange={(e) => setSelectedBudget(e.target.value)}
+                      step="100000"
                     />
                     <span className="unit-text">원</span>
                     <button
@@ -362,6 +363,11 @@ const ProjectInputPage = () => {
           placeholder="메시지를 입력하세요..."
           value={userInput}
           onChange={(e) => setUserInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && userInput.trim()) {
+              handleUserInput();
+            }
+          }}
           disabled={step >= questions.length}
         />
         <button
