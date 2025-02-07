@@ -49,8 +49,8 @@ def register_freelancer(
         db (Session): SQLAlchemy 세션 객체
     """
     AuthService.register_freelancer(db, freelancer_data)
-    
-    
+
+
 @auth.post("/register/company")
 def register_company(
     company_data: CompanyRegisterRequest, db: Session = Depends(get_db)

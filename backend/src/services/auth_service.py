@@ -73,7 +73,7 @@ class AuthService:
             userName=user.name,
             userType=user.type,
         )
-    
+
     def register_freelancer(db: Session, freelancer_data: FreelancerRegisterRequest) -> dict:
         """
         프리랜서 회원가입을 처리하는 메서드
@@ -118,7 +118,7 @@ class AuthService:
         db.bulk_save_objects(skill_entries)
 
         db.commit()
-    
+
     def register_company(db: Session, company_data: CompanyRegisterRequest):
         """
         기업 회원가입을 처리하는 메서드
@@ -142,7 +142,7 @@ class AuthService:
         new_company = Company(
             name=company_data.companyName,
             email=company_data.email,
-            content=company_data.projectContent,
+            content=company_data.companyContent,
             password=hashed_password,
             location_id=company_data.locationId,
         )
