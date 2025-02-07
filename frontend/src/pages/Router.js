@@ -17,7 +17,6 @@ import RegisteredProjectsPage from "./RegisteredProjectsPage";
 import FreelancerDetailPage from "./FreelancerDetailPage";
 import AppliedProjectPage from "./AppliedProjectPage";
 import FinishedProjectPage from "./FinishedProjectPage";
-import FreelancerSuggestPage from "./FreelancerSuggestPage";
 import CompanyMyPage from "./CompanyMyPage";
 
 const AppRouter = () => {
@@ -83,7 +82,6 @@ const AppRouter = () => {
             path="/registered-projects"
             element={<RegisteredProjectsPage />}
           />
-          <Route path="/suggest" element={<FreelancerSuggestPage />} />
           <Route path="/finished" element={<FinishedProjectPage />} />
           <Route path="/applied" element={<AppliedProjectPage />} />
           <Route

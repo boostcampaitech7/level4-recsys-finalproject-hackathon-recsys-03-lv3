@@ -2,7 +2,6 @@
 
 .info-card {
   position: relative;
-  min-height: 280px;
   overflow-x: visible;
   max-width: 1000px;
   white-space: nowrap;
@@ -14,6 +13,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  padding: 0 20px;
   max-width: 1000px;
   min-height: 250px;
 }
@@ -57,7 +57,7 @@
 .finished-project-info-grid {
   display: grid;
   grid-template-columns: 0.5fr 1fr;
-  gap: 20px;
+  gap: 30px;
   align-items: start;
   max-width: 800px;
 }
@@ -135,6 +135,7 @@
   border-top: 2px solid #ddd;
   margin-top: 10px;
   padding-top: 15px;
+  padding-left: 15px;
   font-size: 18px;
   font-style: italic;
   text-align: start;

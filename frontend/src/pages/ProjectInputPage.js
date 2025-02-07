@@ -5,7 +5,7 @@ import "../style/ProjectInputPage.css";
 import ProfileIcon from "../components/ProfileIcon";
 import botphoto from "../assets/chat_logo.png";
 
-const WorkMode = ["상주", "원격"];
+const WorkMode = ["대면", "원격"];
 const ProjectType = ["외주", "기간제"];
 const Priority = ["스킬", "금액", "상관없음"];
 
@@ -275,6 +275,7 @@ const ProjectInputPage = () => {
                       placeholder={`${selectedContractType} 금액`}
                       value={selectedBudget}
                       onChange={(e) => setSelectedBudget(e.target.value)}
+                      step="100000"
                     />
                     <span className="unit-text">원</span>
                     <button
@@ -317,6 +318,11 @@ const ProjectInputPage = () => {
           placeholder="메시지를 입력하세요..."
           value={userInput}
           onChange={(e) => setUserInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && userInput.trim()) {
+              handleUserInput();
+            }
+          }}
           disabled={step >= questions.length}
         />
         <button
