@@ -18,7 +18,7 @@ import FreelancerDetailPage from "./FreelancerDetailPage";
 import AppliedProjectPage from "./AppliedProjectPage";
 import FinishedProjectPage from "./FinishedProjectPage";
 import CompanyMyPage from "./CompanyMyPage";
-import ProjectDetail from "./ProjectDetail";
+import ProjectDetailPage from "./ProjectDetailPage";
 
 const AppRouter = () => {
   // 로그인 정보 상태(state) 저장
@@ -91,8 +91,9 @@ const AppRouter = () => {
               userType === "0" ? <FreelancerDetailPage /> : <CompanyMyPage />
             }
           />
+
+          <Route path="/project-detail" element={<ProjectDetailPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
-          <Route path="/project-detail" element={<ProjectDetail />} />
         </Route>
       </Routes>
     </Router>

@@ -34,7 +34,6 @@ function convertToJSX(text) {
 const ProjectRegisterPage = () => {
   const location = useLocation();
   const { projectSummary } = location.state || {};
-  const skillNameList = ["Java", "Spring", "REST"];
   const navigate = useNavigate();
 
   if (!projectSummary) {
