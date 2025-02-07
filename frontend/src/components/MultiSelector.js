@@ -3,7 +3,9 @@ import "../style/Selectors.css";
 
 const MultiSelector = ({ title, options, value = [], onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedValues, setSelectedValues] = useState(options);
+  const [selectedValues, setSelectedValues] = useState(value || []);
+  const [searchTerm, setSearchTerm] = useState(""); // 검색어 상태
+  const [filteredOptions, setFilteredOptions] = useState(options); // 필터링된 옵션
 
   // 외부에서 value가 변경되면 내부 상태를 업데이트
   useEffect(() => {
@@ -11,6 +13,19 @@ const MultiSelector = ({ title, options, value = [], onChange }) => {
       setSelectedValues(value);
     }
   }, [value]);
+
+  // 검색어가 변경될 때 옵션 필터링
+  useEffect(() => {
+    if (searchTerm === "") {
+      setFilteredOptions(options); // 검색어 없을 때 전체 옵션 표시
+    } else {
+      setFilteredOptions(
+        options.filter((option) =>
+          option.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    }
+  }, [searchTerm, options]);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -70,8 +85,24 @@ const MultiSelector = ({ title, options, value = [], onChange }) => {
               ) : null}
               전체
             </li>
-            <li className="divider"></li>
-            {options.map((option) => (
+          </ul>
+          {/* 검색 필드 추가 - title이 "스킬"일 때만 */}
+          {title === "스킬" && (
+            <>
+              <li className="divider"></li>
+              <div className="search-bar">
+                <input
+                  type="text"
+                  className="search-input"
+                  placeholder="검색"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </>
+          )}
+          <ul className="dropdown-list">
+            {filteredOptions.map((option) => (
               <li
                 key={option}
                 className={`dropdown-item ${

@@ -75,15 +75,15 @@ const FreelancerSuggest = ({ isOpen, onClose }) => {
             style={{ width: "inherit" }}
           >
             <div className="card-content">
-              <h5 className="sm-header mb-3">{project.projectName}</h5>
+              <h5 className="sm-header mb-4">{project.projectName}</h5>
               <div className="history-info">
-                <span className="info-label">예상 금액</span>
+                <span className="info-label me-4">예상 금액</span>
                 <span className="budget">
                   {" "}
-                  {project.budget.toLocaleString()}원{" "}
+                  {project.budget.toLocaleString()}원
                 </span>
               </div>
-              <span className="info-label">근무 시작일</span>
+              <span className="info-label me-3">근무 시작일</span>
               <span className="info-value">
                 {formatDate(project.registerDate)} ({project.duration}일)
               </span>

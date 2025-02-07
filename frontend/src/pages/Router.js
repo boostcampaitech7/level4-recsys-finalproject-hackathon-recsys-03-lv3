@@ -8,6 +8,7 @@ import {
 import Layout from "../components/Layout";
 import LoginPage from "./LoginPage";
 import MainPage from "./MainPage";
+import ScrollToTop from "../components/ScrollToTop";
 import SearchProjectPage from "./SearchProjectPage";
 import SearchFreelancerPage from "./SearchFreelancerPage";
 import RecommendFreelancerPage from "./RecommendFreelancerPage";
@@ -62,6 +63,7 @@ const AppRouter = () => {
 
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         {/* 로그인 페이지 */}
         <Route path="/login" element={<LoginPage />} />
@@ -72,13 +74,13 @@ const AppRouter = () => {
           <Route index element={<MainPage />} />
           <Route path="/search-project" element={<SearchProjectPage />} />
           <Route path="/search-freelancer" element={<SearchFreelancerPage />} />
+          <Route path="/freelancer-detail" element={<FreelancerDetailPage />} />
           <Route
             path="/recommend-freelancer"
             element={<RecommendFreelancerPage />}
           />
           <Route path="/register-input" element={<ProjectInputPage />} />
           <Route path="/register-result" element={<ProjectRegisterPage />} />
-          <Route path="/freelancer-detail" element={<FreelancerDetailPage />} />
           <Route
             path="/registered-projects"
             element={<RegisteredProjectsPage />}

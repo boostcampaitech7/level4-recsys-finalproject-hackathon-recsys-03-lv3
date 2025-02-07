@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import FreelancerInfo from "../components/FreelancerInfo";
 import MultiSelector from "../components/MultiSelector";
@@ -11,6 +12,8 @@ import profile3 from "../assets/profile_example3.jpg";
 const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/resource`;
 
 const SearchFreelancer = () => {
+  const navigate = useNavigate();
+
   const [freelancers, setFreelancers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -244,6 +247,11 @@ const SearchFreelancer = () => {
   const [filterSkillList, setFilterSkillList] = useState(skillList);
   const [sortOption, setSortOption] = useState("피드백 점수 높은순");
 
+  // 프리랜서를 클릭하면 freelancerId만 전달
+  const handleFreelancerClick = (freelancerId) => {
+    navigate("/freelancer-detail", { state: { freelancerId } });
+  };
+
   useEffect(() => {
     const token = sessionStorage.getItem("token");
 
@@ -319,14 +327,14 @@ const SearchFreelancer = () => {
     setSortOption("피드백 점수 높은순");
   };
 
-  console.log(filteredFreelancers);
-  console.log(freelancers);
+  // console.log(filteredFreelancers);
+  // console.log(freelancers);
 
   return (
     <div className="search-freelancer-container">
       <div className="header-container">
         <h3 className="header">프리랜서 리스트</h3>
-        <p>총 {freelancers.length}명의 프리랜서가 있습니다.</p>
+        <p>총 {filteredFreelancers.length}명의 프리랜서가 있습니다.</p>
       </div>
       <div className="filters">
         <div className="filter-group-left">
@@ -370,12 +378,20 @@ const SearchFreelancer = () => {
           />
         </div>
       </div>
+
+      {/* 필터링된 프리랜서 리스트 */}
       {filteredFreelancers.map((freelancer) => (
-        <FreelancerInfo
+        <div
           key={freelancer.freelancerId}
-          freelancerInfo={freelancer}
-          pageType="search"
-        />
+          onClick={() => handleFreelancerClick(freelancer.freelancerId)}
+          style={{ cursor: "pointer" }}
+        >
+          <FreelancerInfo
+            key={freelancer.freelancerId}
+            freelancerInfo={freelancer}
+            pageType="search"
+          />
+        </div>
       ))}
     </div>
   );
