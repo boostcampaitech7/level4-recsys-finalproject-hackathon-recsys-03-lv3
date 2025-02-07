@@ -408,8 +408,8 @@ class ProjectService:
 
         # 3. 첫번째 대화: 프로젝트 정보 생성
         memory.chat_memory.add_message(HumanMessage(content="다음은 프로젝트 등록을 위한 카테고리 및 스킬 정보야."))
-        category_info = json.dumps(category_list, ensure_ascii=False)
-        skill_info = json.dumps(skill_list, ensure_ascii=False)
+        category_info = json.dumps([category.__dict__ for category in category_list], ensure_ascii=False)
+        skill_info = json.dumps([skill.__dict__ for skill in skill_list], ensure_ascii=False)
         memory.chat_memory.add_message(HumanMessage(content="카테고리 정보: " + category_info))
         memory.chat_memory.add_message(HumanMessage(content="스킬 정보: " + skill_info))
 
