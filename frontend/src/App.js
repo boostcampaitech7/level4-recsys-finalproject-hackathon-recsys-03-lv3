@@ -22,6 +22,9 @@ const handleLogout = () => {
 };
 
 const App = () => {
+  const [skillList, setSkillList] = useState([]);
+  const [categoryList, setCategoryList] = useState([]);
+  const [locationList, setLocationList] = useState([]);
   const [message, setMessage] = useState("");
   const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/filter`;
   const headers = {
@@ -48,9 +51,9 @@ const App = () => {
           axios.get(`${API_BASE_URL}/location`, { headers }),
         ]);
 
-        sessionStorage.setItem("skill", skillRes.data);
-        sessionStorage.setItem("category", categoryRes.data);
-        sessionStorage.setItem("location", locationRes.data);
+        setSkillList(JSON.stringify(skillRes.data));
+        setCategoryList(JSON.stringify(categoryRes.data));
+        setLocationList(JSON.stringify(locationRes.data));
       } catch (error) {
         console.error("필터 불러오기 실패: ", error);
       }
@@ -58,6 +61,10 @@ const App = () => {
 
     fetchFilterData();
   }, []);
+
+  sessionStorage.setItem("skill", skillList);
+  sessionStorage.setItem("category", categoryList);
+  sessionStorage.setItem("location", locationList);
 
   return (
     <div>
