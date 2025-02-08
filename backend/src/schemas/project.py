@@ -11,10 +11,10 @@ class ProjectRequest(BaseModel):
     contractType: int
     priority: int
     projectContent: str
-    projectId: Optional[str] = None
+    projectId: Optional[int] = None
     projectName: Optional[str] = None
     categoryId: Optional[int] = None
-    skillList: Optional[List[int]] = None
+    skillList: Optional[List[int]] = []
 
 
 class FeedbackRequest(BaseModel):

@@ -137,8 +137,8 @@ def create_solar_response(
         end_time = time.time()
 
         logger.info(f"💫 Solar API 요청 완료 | 소요 시간: {end_time - start_time:.3f}초")
-        logger.debug(f"- 요청 데이터: {json.dumps(project_data.dict(), ensure_ascii=False)}")
-        logger.debug(f"- 응답 데이터: {json.dumps(response_data.dict(), ensure_ascii=False)}")
+        logger.info(f"- 요청 데이터: {json.dumps(project_data.model_dump(), ensure_ascii=False)}")
+        logger.info(f"- 응답 데이터: {json.dumps(response_data, ensure_ascii=False)}")
 
         return response_data
     except HTTPException as e:

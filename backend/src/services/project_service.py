@@ -3,17 +3,18 @@ import pickle
 import logging
 import pandas as pd
 from typing import List, Optional
+from datetime import datetime
 
 from fastapi import HTTPException
 from sqlalchemy import func, case, select, and_, update
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
-
 from langchain.memory import ConversationBufferMemory
 from langchain.schema import SystemMessage, HumanMessage
+from catboost import Pool
 
 from api.upstage import chat_with_solar
-from src.models import Project, Category, ProjectSkill, Skill, Company, Location, ProjectRanking, ProjectApplicants, Feedback, FreelancerSkill, Freelancer
+from src.models import Project, Category, ProjectSkill, Skill, Company, Location, ProjectRanking, ProjectApplicants, Feedback, Freelancer, FreelancerSkill, FreelancerCategory
 from src.schemas.project import ProjectRequest, FeedbackRequest, ProjectListResponse, ProjectDetailResponse, ProjectFeedbackResponse, SolarResponse, CompanyResponse, ProjectProgressResponse
 from src.services.filter_service import FilterService
 from src.routes.websocket_route import notify_client
@@ -513,13 +514,13 @@ class ProjectService:
                 priority=project_data.priority,
                 content=project_data.projectContent,
                 status=0,
-                register_date=project_data.registerDate,
                 category_id=project_data.categoryId,
-                company_id=user_id
+                company_id=user_id,
+                register_date=datetime.today().strftime("%Y%m%d")
             )
 
             db.add(new_project)
-            db.flush(new_project)  # PROJECT_ID 가져오기
+            db.flush()  # PROJECT_ID 가져오기
 
             # PROJECT_SKILL
             project_skills = [
@@ -559,43 +560,47 @@ class ProjectService:
             db (Session): SQLAlchemy 데이터베이스 세션
         """
         # X 만들기
-        query = db.query(
-            Freelancer.id.label("freelancerId"),
-            Freelancer.work_exp.label("freelancerExperience"),
-            Freelancer.price.label("freelancerPrice"),
-            func.LISTAGG(FreelancerSkill.skill_id, ",").within_group(FreelancerSkill.skill_id).label("freelancerSkills")
-            .join(FreelancerSkill, Freelancer.freelancer_id == FreelancerSkill.freelancer_id)
-            .group_by(Freelancer.freelancer_id, Freelancer.work_exp, Freelancer.price)
-        ).all()
+        result = (
+            db.query(
+                Freelancer.id.label("freelancer_id"),
+                Freelancer.work_exp.label("freelancer_experience"),
+                Freelancer.price.label("freelancer_price"),
+                func.LISTAGG(FreelancerCategory.category_id, ",").within_group(FreelancerCategory.category_id).label("freelancer_category"),
+                func.LISTAGG(FreelancerSkill.skill_id, ",").within_group(FreelancerSkill.skill_id).label("freelancer_skills")
+            )
+            .join(FreelancerSkill, Freelancer.id == FreelancerSkill.freelancer_id)
+            .join(FreelancerCategory, Freelancer.id == FreelancerCategory.freelancer_id)
+            .group_by(Freelancer.id, Freelancer.work_exp, Freelancer.price)
+            .all()
+        )
 
-        df = pd.DataFrame(query, columns=["freelancer_id",
-                                          "freelancer_experience",
-                                          "freelancer_price",
-                                          "freelancer_skills"])
+        df = pd.DataFrame(result, columns=["freelancer_id",
+                                           "freelancer_experience",
+                                           "freelancer_price",
+                                           "freelancer_category",
+                                           "freelancer_skills"])
 
         project_skills = ",".join(map(str, project_data.skillList))
         df = df.assign(
             project_id=project_data.projectId,
             project_budget=project_data.budget,
             project_skills=project_skills,
-            project_category=project_data.categoryId
+            project_category=str(project_data.categoryId)
         )
         numerical_features = ["project_budget", "freelancer_experience", "freelancer_price"]
-        categorical_features = ["project_skills", "project_category", "freelancer_skills"]
+        categorical_features = ["project_skills", "project_category", "freelancer_skills", "freelancer_category"]
         features = numerical_features + categorical_features
         X = df[features]
+        X_pool = Pool(data=X, cat_features=categorical_features)
 
         # 모델 로드
-        file_path = download_model_file(
-            repo_name="TaroSin/HRmony",
-            file_name="model.pkl"
-        )
+        file_path = download_model_file(file_name="model.pkl")
 
         with open(file_path, "rb") as f:
             model = pickle.load(f)
 
         # 모델 예측
-        predictions = model.predict(X)
+        predictions = model.predict(X_pool)
         result_df = df[["project_id", "freelancer_id"]].copy()
         result_df["matching_score"] = predictions
 
@@ -605,11 +610,14 @@ class ProjectService:
                 new_entry = ProjectRanking(
                     project_id=row["project_id"],
                     freelancer_id=row["freelancer_id"],
-                    matching_score=row["matching_score"]
+                    matching_score=row["matching_score"] * 100
                 )
                 db.add(new_entry)
 
             db.commit()
+
+            # WebSocket으로 알림 전송
+            notify_client(user_id, f"🔔 프로젝트 {project_data.projectId} 매칭이 완료되었습니다!")
 
         except IntegrityError as e:
             db.rollback()
@@ -618,9 +626,6 @@ class ProjectService:
         except Exception as e:
             db.rollback()
             logging.error(f"Unexpected Error while creating ProjectMatching for project_id={row['project_id']} | Error: {str(e)}")
-
-        # WebSocket으로 알림 전송
-        notify_client(user_id, f"✅ 프로젝트 {project_data.projectId} 매칭이 완료되었습니다!")
 
     def get_project_feedbacks(
         db: Session,
