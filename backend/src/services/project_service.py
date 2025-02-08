@@ -653,6 +653,7 @@ class ProjectService:
                 Project.contract_type.label("contractType"),
                 Project.status.label("status"),
                 Project.register_date.label("registerDate"),
+                Project.freelancer_id.label("freelancerId"),
                 Category.name.label("categoryName"),
                 Company.name.label("companyName"),
                 func.json_arrayagg(Skill.id).label("skillIdList"),
@@ -699,6 +700,7 @@ class ProjectService:
                 Project.work_type,
                 Project.contract_type,
                 Project.status,
+                Project.freelancer_id,
                 Project.register_date,
                 Category.name,
                 Company.name
@@ -762,18 +764,33 @@ class ProjectService:
 
             db.add(new_feedback)
 
+            # 현재 프리랜서가 보유한 스킬 조회
+            existing_skills = db.query(FreelancerSkill.skill_id).filter(
+                FreelancerSkill.freelancer_id == feedback_data.freelancerId
+            ).all()
+            existing_skill_ids = {row[0] for row in existing_skills}  # Set으로 변환
+
             # FREELANCER_SKILL의 SKILL_SCORE 수정
             for skill_id in feedback_data.skillIdList:
-                db.execute(
-                    update(FreelancerSkill)
-                    .where(
-                        FreelancerSkill.freelancer_id == feedback_data.freelancerId,
-                        FreelancerSkill.skill_id == skill_id
+                if skill_id in existing_skill_ids:
+                    db.execute(
+                        update(FreelancerSkill)
+                        .where(
+                            FreelancerSkill.freelancer_id == feedback_data.freelancerId,
+                            FreelancerSkill.skill_id == skill_id
+                        )
+                        .values(skill_score=func.least(
+                            func.greatest(FreelancerSkill.skill_score * 0.8 + feedback_data.expertise * 0.2, 0), 5)
+                        )
                     )
-                    .values(skill_score=func.least(
-                        func.greatest(FreelancerSkill.skill_score * 0.8 + feedback_data.expertise * 0.2, 0), 5)
+
+                else:
+                    new_skill = FreelancerSkill(
+                        freelancer_id=feedback_data.freelancerId,
+                        skill_id=skill_id,
+                        skill_score=func.least(func.greatest(2 + feedback_data.expertise * 0.2, 0), 5)
                     )
-                )
+                    db.add(new_skill)
 
             db.commit()
 

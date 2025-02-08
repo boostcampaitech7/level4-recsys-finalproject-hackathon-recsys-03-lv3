@@ -89,6 +89,7 @@ const FinishedProjectPage = () => {
 
   const handleFeedbackSubmit = async (projectId, feedbackData) => {
     const token = sessionStorage.getItem("token");
+    console.log(feedbackData);
 
     if (!token) {
       setError("인증 토큰이 없습니다. 로그인 후 이용해주세요.");
@@ -97,12 +98,16 @@ const FinishedProjectPage = () => {
     }
 
     try {
-      const feedbackRes = await axios.post(`${API_BASE_URL}/${projectId}`, {
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const feedbackRes = await axios.post(
+        `${API_BASE_URL}/feedback`,
+        feedbackData,
+        {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
     } catch (error) {
       console.error("프로젝트 데이터를 불러오는 데 실패했습니다:", error);
     }
@@ -147,7 +152,7 @@ const FinishedProjectPage = () => {
       } catch (error) {
         console.error("프로젝트 데이터를 불러오는 데 실패했습니다:", error);
         setError(
-          `프로젝트 데이터를 불러오는 데 실패했습니다: [${error.response.status}] ${error.response.data.detail}`
+          `프로젝트 데이터를 불러오는 데 실패했습니다: [${error.response.data.detail}`
         );
       } finally {
         setLoading(false);
