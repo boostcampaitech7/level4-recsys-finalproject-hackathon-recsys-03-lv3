@@ -13,10 +13,13 @@ const ProjectFeedback = ({ project, onClose, onSubmit }) => {
     maintainability: null,
     communication: null,
     feedbackContent: "",
+    projectId: project.projectId,
+    freelancerId: project.freelancerId,
+    skillIdList: project.skillIdList,
   });
 
   const handleSubmit = () => {
-    onSubmit(project.projectID, feedback);
+    onSubmit(project.projectId, feedback);
   };
 
   const sliderData = [
