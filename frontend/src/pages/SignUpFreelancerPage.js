@@ -10,39 +10,18 @@ const SignUpFreelancer = () => {
   const navigate = useNavigate();
 
   const [error, setError] = useState(null);
+
   const [locationOptions, setLocationOptions] = useState([]);
   const [locationIdMap, setLocationIdMap] = useState({});
   const [selectedLocation, setSelectedLocation] = useState("거주 지역");
-
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [categoryIdMap, setCategoryIdMap] = useState({});
   const [skillOptions, setSkillOptions] = useState([]);
   const [skillIdMap, setSkillIdMap] = useState({});
-
   const [selectedWorkType, setSelectedWorkType] = useState("근무 형태");
   const [selectedRole, setSelectedRole] = useState("직무");
-
-  // 입력 필드 상태 관리
-  const [formData, setFormData] = useState({
-    freelancerName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    workExp: "",
-    price: "",
-    workType: null,
-    role: null,
-    freelancerContent: "",
-    locationId: null,
-    categoryList: [],
-    skillList: [],
-  });
-
-  // 근무 형태
   const workTypeOptions = ["대면", "원격", "상관 없음"];
   const workTypeIdMap = { 대면: 0, 원격: 1, "상관 없음": 2 };
-
-  // 직무 리스트
   const roleOptions = [
     "풀스택 개발자",
     "백엔드 개발자",
@@ -62,6 +41,22 @@ const SignUpFreelancer = () => {
     "블록체인 엔지니어",
     "DB 관리자",
   ];
+
+  // 입력 필드 상태 관리
+  const [formData, setFormData] = useState({
+    freelancerName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    workExp: "",
+    price: "",
+    workType: null,
+    role: null,
+    freelancerContent: "",
+    locationId: null,
+    categoryList: [],
+    skillList: [],
+  });
 
   // API에서 받아온 데이터 불러오기
   useEffect(() => {
@@ -115,16 +110,12 @@ const SignUpFreelancer = () => {
       return;
     }
 
-    console.log("🔄 useEffect 실행됨!");
-
     setFormData((prev) => ({
       ...prev,
       locationId: locationIdMap[selectedLocation] ?? null,
       workType: workTypeIdMap[selectedWorkType] ?? null,
       role: selectedRole ?? null,
     }));
-
-    console.log("📌 formData 업데이트 완료!");
   }, [selectedLocation, selectedWorkType, selectedRole]);
 
   // 입력 필드 값 변경 핸들러
@@ -143,19 +134,11 @@ const SignUpFreelancer = () => {
     e.preventDefault();
     setError(null);
 
-    console.log(
-      "📌 최종 전송 데이터 크기:",
-      JSON.stringify(formData).length,
-      "bytes"
-    );
-    console.log("📌 최종 전송 데이터:", formData);
-
     if (JSON.stringify(formData).length > 100000) {
       // 100KB 이상이면 경고
       setError("요청 데이터가 너무 큽니다. 선택 항목을 줄여주세요.");
       return;
     }
-    console.log("📌 최종 전송 데이터:", formData);
 
     const headers = {
       Accept: "application/json",
@@ -294,7 +277,6 @@ const SignUpFreelancer = () => {
                     JSON.stringify(formData.categoryList) !==
                     JSON.stringify(newCategoryList)
                   ) {
-                    console.log("🛠 MultiSelector 값 변경됨:", selected);
                     setFormData((prev) => ({
                       ...prev,
                       categoryList: newCategoryList,
@@ -318,7 +300,6 @@ const SignUpFreelancer = () => {
                     JSON.stringify(formData.skillList) !==
                     JSON.stringify(newSkillList)
                   ) {
-                    console.log("🛠 MultiSelector 값 변경됨:", selected);
                     setFormData((prev) => ({
                       ...prev,
                       skillList: newSkillList,
