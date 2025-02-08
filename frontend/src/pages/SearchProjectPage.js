@@ -17,7 +17,7 @@ const SearchProjectPage = () => {
 
   const userType = sessionStorage.getItem("userType");
 
-  const skillList = JSON.parse(sessionStorage.getItem("skill"), "[]").map(
+  const skillList = JSON.parse(sessionStorage.getItem("skill") || "[]").map(
     (skill) => skill.skillName
   );
 
