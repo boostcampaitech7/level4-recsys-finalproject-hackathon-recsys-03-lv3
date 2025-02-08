@@ -91,10 +91,6 @@ const SearchProjectPage = () => {
     setShowOnlyRecruiting(true);
   };
 
-  const handleProjectCard = (project) => {
-    navigate("/project-detail", { state: project.projectId });
-  };
-
   return (
     <div className="search-project-container">
       <div className="header-container">

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import SimilarProject from "../components/SimilarProject";
 import ProjectSkillTag from "../components/ProjectSkillTag";
@@ -9,8 +9,9 @@ import "../style/ProjectDetail.css";
 const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/project`;
 
 const ProjectDetailPage = () => {
+  const navigate = useNavigate();
   const location = useLocation();
-  const projectId = parseInt(location.state.projectId, 10) || null;
+  const projectId = parseInt(location.state.projectId, 10);
 
   // 로그인 정보 상태(state) 저장
   const [token, setToken] = useState(
@@ -27,7 +28,6 @@ const ProjectDetailPage = () => {
   );
   const [project, setProject] = useState(null);
   const [similarProjects, setSimilarProjects] = useState(null);
-  const [isApply, setIsApply] = useState(null);
 
   const headers = {
     Accept: "application/json",
@@ -61,7 +61,6 @@ const ProjectDetailPage = () => {
             headers: headers,
           }
         );
-
         setSimilarProjects(similarRes.data);
       } catch (error) {
         console.error("프로젝트 데이터를 불러오는 데 실패했습니다:", error);
@@ -81,6 +80,14 @@ const ProjectDetailPage = () => {
         {},
         { headers }
       );
+
+      if (applyRes.status === 200) {
+        alert("프로젝트 지원이 완료되었습니다!");
+
+        navigate("/applied", {
+          state: { newProject: project }, // 현재 프로젝트 데이터를 전달
+        });
+      }
     } catch (err) {
       if (err.response.status === 409) {
         alert(err.response.data.detail);
