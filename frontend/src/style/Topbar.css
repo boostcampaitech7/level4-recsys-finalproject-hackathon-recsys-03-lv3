@@ -55,6 +55,7 @@
 .custom-dropdown-menu {
   display: block;
   position: absolute;
+  width: max-content;
   right: 0;
   margin-top: 4px;
   background-color: white;
@@ -65,7 +66,7 @@
   z-index: 1000;
 }
 
-.dropdown-item {
+.custom-dropdown-item {
   display: flex;
   align-items: center;
   width: 100%;
@@ -77,11 +78,11 @@
   cursor: pointer;
 }
 
-.dropdown-item:hover {
+.custom-dropdown-item:hover {
   background-color: var(--color-bg);
 }
 
-.dropdown-item i {
+.custom-dropdown-item i {
   font-size: 14px; /* 아이콘 크기 */
   width: 20px; /* 아이콘이 정렬되도록 고정된 너비 */
   text-align: center;

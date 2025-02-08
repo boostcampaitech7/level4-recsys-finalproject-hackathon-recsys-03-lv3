@@ -132,14 +132,14 @@ const Topbar = () => {
                 aria-labelledby="projectDropdown"
               >
                 <button
-                  className="dropdown-item"
+                  className="custom-dropdown-item"
                   onClick={() => navigate("/registered-projects")}
                 >
                   <i class="fas fa-solid fa-file-import mr-3 text-gray-400"></i>
                   등록한 프로젝트
                 </button>
                 <button
-                  className="dropdown-item"
+                  className="custom-dropdown-item"
                   onClick={() => navigate("/finished")}
                 >
                   <i class="fas fa-solid fa-file-contract mr-3 text-gray-400"></i>
@@ -176,13 +176,13 @@ const Topbar = () => {
                 aria-labelledby="userDropdown"
               >
                 <button
-                  className="dropdown-item"
+                  className="custom-dropdown-item"
                   onClick={() => navigate("/mypage")}
                 >
                   <i className="fas fa-user fa-sm fa-fw mr-3 text-gray-400"></i>
                   마이페이지
                 </button>
-                <button className="dropdown-item" onClick={handleLogout}>
+                <button className="custom-dropdown-item" onClick={handleLogout}>
                   <i className="fas fa-sign-out-alt fa-sm fa-fw mr-3 text-gray-400"></i>
                   로그아웃
                 </button>
