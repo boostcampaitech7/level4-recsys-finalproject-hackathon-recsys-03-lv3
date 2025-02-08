@@ -21,7 +21,25 @@ const RecommendFreelancer = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const roleList = ["백엔드 개발자", "프론트엔드 개발자", "풀스택 개발자"];
+  const roleList = [
+    "풀스택 개발자",
+    "백엔드 개발자",
+    "프론트엔드 개발자",
+    "모바일 개발자",
+    "임베디드 개발자",
+    "데스크톱/엔터프라이즈 개발자",
+    "QA/테스트 개발자",
+    "AI 개발자",
+    "게임/그래픽 개발자",
+    "데이터 엔지니어",
+    "데이터 분석가",
+    "데이터 사이언티스트/ML 전문가",
+    "클라우드 엔지니어",
+    "DevOps 엔지니어",
+    "디자이너",
+    "블록체인 엔지니어",
+    "DB 관리자",
+  ];
   const skillList = JSON.parse(sessionStorage.getItem("skill"), "[]").map(
     (skill) => skill.skillName
   );
@@ -99,6 +117,8 @@ const RecommendFreelancer = () => {
       if (sortOption === "최신순") return b.freelancerId - a.freelancerId;
       if (sortOption === "매칭 점수 높은순")
         return b.matchingScore - a.matchingScore;
+      if (sortOption === "피드백 점수 높은순")
+        return b.feedbackScore - a.feedbackScore;
       return 0;
     });
 
@@ -119,9 +139,9 @@ const RecommendFreelancer = () => {
       </div>
       <div className="filters">
         <div className="filter-group-left">
-          {/* 직군 필터 */}
+          {/* 직무 필터 */}
           <MultiSelector
-            title="직군/직무"
+            title="직무"
             options={roleList}
             onChange={setFilterRoles}
             value={filterRoles}
@@ -130,7 +150,7 @@ const RecommendFreelancer = () => {
           {/* 근무 형태 필터 */}
           <SingleSelector
             title="근무 형태"
-            options={["근무 형태", "원격", "대면"]}
+            options={["근무 형태", "대면", "원격"]}
             onChange={setFilterWorkType}
             value={filterWorkType}
           />
@@ -158,7 +178,7 @@ const RecommendFreelancer = () => {
           />
           <SingleSelector
             title="정렬 기준"
-            options={["최신순", "매칭 점수 높은순"]}
+            options={["최신순", "매칭 점수 높은순", "피드백 점수 높은순"]}
             onChange={setSortOption}
             value={sortOption}
           />
