@@ -100,44 +100,40 @@ const ProfileHeader = ({ freelancerInfo }) => {
 
   useEffect(() => {
     const token = sessionStorage.getItem("token");
-
-    if (isPopupOpen) {
-      if (!token) {
-        setError("인증 토큰이 없습니다. 로그인 후 이용해주세요.");
-        setLoading(false);
-        return;
-      }
-
-      const fetchProjects = async () => {
-        try {
-          const proposeRes = await axios.get(
-            `${API_BASE_URL}/${freelancerId}/propose`,
-            {
-              headers: {
-                Accept: "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-
-          setMyProject(proposeRes.data);
-        } catch (error) {
-          if (error.response.status === 404) {
-            return null;
-          } else {
-            setError(
-              "프로젝트 데이터를 불러오는 데 실패했습니다: ",
-              error.response.data.detail
-            );
-          }
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchProjects();
+    if (!token) {
+      setError("인증 토큰이 없습니다. 로그인 후 이용해주세요.");
+      setLoading(false);
+      return;
     }
-  }, [isPopupOpen]);
+
+    const fetchProjects = async () => {
+      try {
+        const proposeRes = await axios.get(
+          `${API_BASE_URL}/${freelancerId}/propose`,
+          {
+            headers: {
+              Accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setMyProject(proposeRes.data);
+      } catch (error) {
+        if (error.response.status === 404) {
+          return null;
+        } else {
+          setError(
+            "프로젝트 데이터를 불러오는 데 실패했습니다: ",
+            error.response.data.detail
+          );
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProjects();
+  }, []);
 
   return (
     <div className="mypage-header">
