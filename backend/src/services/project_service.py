@@ -653,6 +653,7 @@ class ProjectService:
                 Project.contract_type.label("contractType"),
                 Project.status.label("status"),
                 Project.register_date.label("registerDate"),
+                Project.freelancer_id.label("freelancerId"),
                 Category.name.label("categoryName"),
                 Company.name.label("companyName"),
                 func.json_arrayagg(Skill.id).label("skillIdList"),
@@ -699,6 +700,7 @@ class ProjectService:
                 Project.work_type,
                 Project.contract_type,
                 Project.status,
+                Project.freelancer_id,
                 Project.register_date,
                 Category.name,
                 Company.name
