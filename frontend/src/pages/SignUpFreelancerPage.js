@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import logo from "../assets/logo_primary.png";
@@ -9,70 +9,34 @@ import "../style/SignUpPage.css";
 const SignUpFreelancer = () => {
   const navigate = useNavigate();
 
+  const [error, setError] = useState(null);
   const [locationOptions, setLocationOptions] = useState([]);
-  const [locationIdMap, setLocationIdMap] = useState();
+  const [locationIdMap, setLocationIdMap] = useState({});
   const [selectedLocation, setSelectedLocation] = useState("거주 지역");
 
   const [categoryOptions, setCategoryOptions] = useState([]);
-  const [categoryIdMap, setCategoryIdMap] = useState();
+  const [categoryIdMap, setCategoryIdMap] = useState({});
   const [skillOptions, setSkillOptions] = useState([]);
-  const [skillIdMap, setSkillIdMap] = useState();
+  const [skillIdMap, setSkillIdMap] = useState({});
 
   const [selectedWorkType, setSelectedWorkType] = useState("근무 형태");
   const [selectedRole, setSelectedRole] = useState("직무");
 
-  // API에서 받아온 데이터 불러오기
-  useEffect(() => {
-    const loadData = async () => {
-      const locationList = JSON.parse(
-        sessionStorage.getItem("location") || "[]"
-      );
-      const categoryList = JSON.parse(
-        sessionStorage.getItem("category") || "[]"
-      );
-      const skillList = JSON.parse(sessionStorage.getItem("skill") || "[]");
-
-      if (locationList.length > 0) {
-        setLocationOptions(
-          locationList.map((loc) => loc?.locationName || "알 수 없음")
-        );
-        setLocationIdMap(
-          locationList.reduce((acc, loc) => {
-            acc[loc?.locationName] = loc?.locationId;
-            return acc;
-          }, {})
-        );
-      }
-
-      // 전문 분야(카테고리) 옵션 설정
-      if (categoryList.length > 0) {
-        setCategoryOptions(
-          categoryList.map((cat) => cat?.categoryName || "알 수 없음")
-        );
-        setCategoryIdMap(
-          categoryList.reduce((acc, cat) => {
-            acc[cat?.categoryName] = cat?.categoryId;
-            return acc;
-          }, {})
-        );
-      }
-
-      // 보유 스킬 옵션 설정
-      if (skillList.length > 0) {
-        setSkillOptions(
-          skillList.map((skill) => skill?.skillName || "알 수 없음")
-        );
-        setSkillIdMap(
-          skillList.reduce((acc, skill) => {
-            acc[skill?.skillName] = skill?.skillId;
-            return acc;
-          }, {})
-        );
-      }
-    };
-
-    loadData();
-  }, []);
+  // 입력 필드 상태 관리
+  const [formData, setFormData] = useState({
+    freelancerName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    workExp: "",
+    price: "",
+    workType: null,
+    role: null,
+    freelancerContent: "",
+    locationId: null,
+    categoryList: [],
+    skillList: [],
+  });
 
   // 근무 형태
   const workTypeOptions = ["대면", "원격", "상관 없음"];
@@ -99,44 +63,100 @@ const SignUpFreelancer = () => {
     "DB 관리자",
   ];
 
-  const [error, setError] = useState(null);
+  // API에서 받아온 데이터 불러오기
+  useEffect(() => {
+    const locationList = JSON.parse(sessionStorage.getItem("location") || "[]");
+    const categoryList = JSON.parse(sessionStorage.getItem("category") || "[]");
+    const skillList = JSON.parse(sessionStorage.getItem("skill") || "[]");
 
-  // 입력 필드 상태 관리
-  const [formData, setFormData] = useState({
-    freelancerName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    workExp: "",
-    price: "",
-    workType: null,
-    role: null,
-    freelancerContent: "",
-    locationId: null,
-    categoryList: [],
-    skillList: [],
-  });
+    if (locationList.length > 0) {
+      setLocationOptions(
+        locationList.map((loc) => loc?.locationName || "알 수 없음")
+      );
+      setLocationIdMap(
+        locationList.reduce((acc, loc) => {
+          acc[loc?.locationName] = loc?.locationId;
+          return acc;
+        }, {})
+      );
+    }
 
-  // 가격 입력 포맷팅 (천 단위 콤마)
-  const formatPrice = (value) => {
-    const numericValue = value.replace(/[^0-9]/g, "");
-    return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  };
+    if (categoryList.length > 0) {
+      setCategoryOptions(
+        categoryList.map((cat) => cat?.categoryName || "알 수 없음")
+      );
+      setCategoryIdMap(
+        categoryList.reduce((acc, cat) => {
+          acc[cat?.categoryName] = cat?.categoryId;
+          return acc;
+        }, {})
+      );
+    }
 
-  const handlePriceChange = (e) => {
-    setFormData({ ...formData, price: formatPrice(e.target.value) });
-  };
+    if (skillList.length > 0) {
+      setSkillOptions(
+        skillList.map((skill) => skill?.skillName || "알 수 없음")
+      );
+      setSkillIdMap(
+        skillList.reduce((acc, skill) => {
+          acc[skill?.skillName] = skill?.skillId;
+          return acc;
+        }, {})
+      );
+    }
+  }, []);
+
+  // Selector 값이 변경될 때 formData에도 반영
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    console.log("🔄 useEffect 실행됨!");
+
+    setFormData((prev) => ({
+      ...prev,
+      locationId: locationIdMap[selectedLocation] ?? null,
+      workType: workTypeIdMap[selectedWorkType] ?? null,
+      role: selectedRole ?? null,
+    }));
+
+    console.log("📌 formData 업데이트 완료!");
+  }, [selectedLocation, selectedWorkType, selectedRole]);
 
   // 입력 필드 값 변경 핸들러
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    setFormData({
+      ...formData,
+      [name]: name === "workExp" ? parseInt(value, 10) || "" : value,
+      [name]: name === "price" ? parseInt(value, 10) || "" : value,
+    });
   };
 
   // 회원가입 요청
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-    console.log(formData);
+
+    console.log(
+      "📌 최종 전송 데이터 크기:",
+      JSON.stringify(formData).length,
+      "bytes"
+    );
+    console.log("📌 최종 전송 데이터:", formData);
+
+    if (JSON.stringify(formData).length > 100000) {
+      // 100KB 이상이면 경고
+      setError("요청 데이터가 너무 큽니다. 선택 항목을 줄여주세요.");
+      return;
+    }
+    console.log("📌 최종 전송 데이터:", formData);
+
     const headers = {
       Accept: "application/json",
     };
@@ -153,13 +173,13 @@ const SignUpFreelancer = () => {
           email: formData.email,
           password: formData.password,
           workExp: formData.workExp,
-          price: parseInt(formData.price.replace(/,/g, "")),
-          workType: workTypeIdMap[formData.workType] ?? null,
+          price: formData.price,
+          workType: formData.workType,
           role: formData.role ?? null,
           freelancerContent: formData.freelancerContent,
-          locationId: locationIdMap[formData.locationId] ?? null,
-          categoryList: formData.categoryList.map((cat) => categoryIdMap[cat]),
-          skillList: formData.skillList.map((skill) => skillIdMap[skill]),
+          locationId: formData.locationId,
+          categoryList: formData.categoryList,
+          skillList: formData.skillList,
         },
         { headers }
       );
@@ -234,7 +254,7 @@ const SignUpFreelancer = () => {
                 name="price"
                 placeholder="연봉 (원)"
                 value={formData.price}
-                onChange={handlePriceChange}
+                onChange={handleChange}
                 required
               />
             </div>
@@ -259,22 +279,55 @@ const SignUpFreelancer = () => {
               <MultiSelector
                 title="전문 분야"
                 options={categoryOptions}
-                value={formData.categoryList}
-                onChange={(selected) =>
-                  setFormData({ ...formData, categoryList: selected })
-                }
+                value={formData.categoryList.map((id) =>
+                  Object.keys(categoryIdMap).find(
+                    (key) => categoryIdMap[key] === id
+                  )
+                )}
+                onChange={(selected) => {
+                  const newCategoryList = selected
+                    .map((categoryName) => categoryIdMap[categoryName])
+                    .filter((id) => id !== undefined);
+
+                  // 기존 값과 다를 때만 업데이트
+                  if (
+                    JSON.stringify(formData.categoryList) !==
+                    JSON.stringify(newCategoryList)
+                  ) {
+                    console.log("🛠 MultiSelector 값 변경됨:", selected);
+                    setFormData((prev) => ({
+                      ...prev,
+                      categoryList: newCategoryList,
+                    }));
+                  }
+                }}
               />
               <MultiSelector
                 title="보유 스킬"
                 options={skillOptions}
-                value={formData.skillList}
-                onChange={(selected) =>
-                  setFormData({ ...formData, skillList: selected })
-                }
+                value={formData.skillList.map((id) =>
+                  Object.keys(skillIdMap).find((key) => skillIdMap[key] === id)
+                )}
+                onChange={(selected) => {
+                  const newSkillList = selected
+                    .map((skillName) => skillIdMap[skillName])
+                    .filter((id) => id !== undefined);
+
+                  // 기존 값과 다를 때만 업데이트
+                  if (
+                    JSON.stringify(formData.skillList) !==
+                    JSON.stringify(newSkillList)
+                  ) {
+                    console.log("🛠 MultiSelector 값 변경됨:", selected);
+                    setFormData((prev) => ({
+                      ...prev,
+                      skillList: newSkillList,
+                    }));
+                  }
+                }}
               />
             </div>
           </div>
-
           <button type="submit" className="signup-button">
             회원가입 완료
           </button>
