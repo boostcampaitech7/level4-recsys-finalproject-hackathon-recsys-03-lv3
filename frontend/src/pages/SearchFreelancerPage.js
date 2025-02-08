@@ -4,6 +4,7 @@ import axios from "axios";
 import FreelancerInfo from "../components/FreelancerInfo";
 import MultiSelector from "../components/MultiSelector";
 import SingleSelector from "../components/SingleSelector";
+import Loading from "../components/Loading";
 import "../style/SearchPages.css";
 import profile1 from "../assets/profile_example1.jpg";
 import profile2 from "../assets/profile_example2.jpg";
@@ -82,8 +83,14 @@ const SearchFreelancer = () => {
     fetchFreelancers();
   }, []);
 
-  if (loading) return <div>로딩 중...</div>;
-  if (error) return <div className="error-message">{error}</div>;
+  if (loading) return <Loading />;
+  if (error) {
+    return (
+      <div className="no-projects-container">
+        <p className="error-message">{error}</p>
+      </div>
+    );
+  }
 
   freelancers.forEach((freelancer) => {
     const {

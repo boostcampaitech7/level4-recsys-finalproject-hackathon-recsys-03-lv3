@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ProjectInfo from "../components/ProjectInfo";
+import Loading from "../components/Loading";
 import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/mymony/prestart-project`;
@@ -54,8 +55,14 @@ const RegisteredProjects = () => {
     navigate(`/recommend-freelancer/${projectId}`, { state: { projectName } });
   };
 
-  if (loading) return <div>로딩 중...</div>;
-  if (error) return <div className="error-message">{error}</div>;
+  if (loading) return <Loading />;
+  if (error) {
+    return (
+      <div className="no-projects-container">
+        <p className="error-message">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="registered-project-container">

@@ -5,6 +5,7 @@ import FreelancerInfo from "../components/FreelancerInfo";
 import MultiSelector from "../components/MultiSelector";
 import SingleSelector from "../components/SingleSelector";
 import SwitchButton from "../components/SwitchButton";
+import Loading from "../components/Loading";
 import "../style/SearchPages.css";
 import profile1 from "../assets/profile_example1.jpg";
 import profile2 from "../assets/profile_example2.jpg";
@@ -82,7 +83,13 @@ const RecommendFreelancer = () => {
   }, []);
 
   if (loading) return <div>로딩 중...</div>;
-  if (error) return <div className="error-message">{error}</div>;
+  if (error) {
+    return (
+      <div className="no-projects-container">
+        <p className="error-message">{error}</p>
+      </div>
+    );
+  }
 
   freelancers.forEach((freelancer) => {
     const {

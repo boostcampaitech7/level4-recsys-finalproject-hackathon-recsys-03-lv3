@@ -4,6 +4,7 @@ import axios from "axios";
 import SwitchButton from "../components/SwitchButton";
 import SingleSelector from "../components/SingleSelector";
 import ProjectInfo from "../components/ProjectInfo";
+import Loading from "../components/Loading";
 import "../style/AppliedProjectPage.css";
 
 const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/mymony/applied-project`;
@@ -53,7 +54,7 @@ const AppliedProjectPage = () => {
         }
       } catch (err) {
         console.error("기업 데이터를 불러오는 데 실패했습니다:", err);
-        setError("기업 데이터를 불러오는 데 실패했습니다.");
+        setError("신청한 프로젝트가 없습니다.");
       } finally {
         setLoading(false);
       }
@@ -94,8 +95,29 @@ const AppliedProjectPage = () => {
     setDisplayedProjects([...updatedProjects]);
   }, [sortOption, filterOption, showOnlyNotMatched, projects]); // 옵션(정렬/필터/스위치) 변경 시 실행
 
-  if (loading) return <div>로딩 중...</div>;
-  if (error) return <div className="error-message">{error}</div>;
+  if (loading) return <Loading />;
+  if (error) {
+    return (
+      <div className="no-projects-container">
+        <p className="error-message">{error}</p>
+        {error === "신청한 프로젝트가 없습니다." && (
+          <>
+            <p>
+              자신에게 맞는 프로젝트를 찾아보세요 !<br></br>
+              <i class="fa-solid fa-arrow-down mt-3"></i>
+            </p>
+
+            <button
+              className="search-project-button"
+              onClick={() => navigate("/search-project")}
+            >
+              프로젝트 찾기
+            </button>
+          </>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="applied-project-page-container">

@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import InfoCard from "../components/InfoCard";
 import ProfileIcon from "../components/ProfileIcon.js";
+import Loading from "../components/Loading";
 import photo from "../assets/profile_example1.jpg";
 import "../style/CompanyMyPage.css";
 import "../style/colors.css";
@@ -47,8 +48,14 @@ const CompanyMyPage = () => {
     fetchCompanyData();
   }, [companyId]);
 
-  if (loading) return <div>로딩 중...</div>;
-  if (error) return <div className="error-message">{error}</div>;
+  if (loading) return <Loading />;
+  if (error) {
+    return (
+      <div className="no-projects-container">
+        <p className="error-message">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <>
