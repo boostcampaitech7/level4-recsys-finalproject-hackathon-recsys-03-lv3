@@ -10,6 +10,7 @@ import FreelancerSkillTag from "../components/FreelancerSkillTag";
 import DoughnutChart from "../components/DoughnutChart";
 import StaticStarRating from "../components/StaticStarRating";
 import ScoreDisplay from "../components/ScoreDisplay";
+import Loading from "../components/Loading";
 
 const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/resource`;
 const userType = parseInt(sessionStorage.getItem("userType"), 10);
@@ -69,7 +70,7 @@ const ProfilePage = () => {
   }, [freelancerId]);
 
   if (!freelancerInfo || !progress) {
-    return <div>로딩 중...</div>;
+    return <Loading />;
   }
 
   return (

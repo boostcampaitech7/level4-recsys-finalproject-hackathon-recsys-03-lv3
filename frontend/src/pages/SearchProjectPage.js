@@ -5,6 +5,7 @@ import ProjectInfo from "../components/ProjectInfo";
 import SingleSelector from "../components/SingleSelector";
 import MultiSelector from "../components/MultiSelector";
 import SwitchButton from "../components/SwitchButton";
+import Loading from "../components/Loading";
 import "../style/SearchPages.css";
 
 const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/project`;
@@ -57,8 +58,14 @@ const SearchProjectPage = () => {
     fetchProjects();
   }, []);
 
-  if (loading) return <div>로딩 중...</div>;
-  if (error) return <div className="error-message">{error}</div>;
+  if (loading) return <Loading />;
+  if (error) {
+    return (
+      <div className="no-projects-container">
+        <p className="error-message">{error}</p>
+      </div>
+    );
+  }
 
   const workTypeMapping = { 0: "대면", 1: "원격" };
 

@@ -4,6 +4,7 @@ import axios from "axios";
 import SwitchButton from "../components/SwitchButton";
 import SingleSelector from "../components/SingleSelector";
 import FinishedProjectContent from "../components/FinishedProjectContent";
+import Loading from "../components/Loading";
 import ProjectFeedback from "./ProjectFeedback";
 import "../style/FinishedProjectPage.css";
 
@@ -162,7 +163,14 @@ const FinishedProjectPage = () => {
     fetchProjects();
   }, []);
 
-  if (loading) return <div>로딩 중...</div>;
+  if (loading) return <Loading />;
+  if (error) {
+    return (
+      <div className="no-projects-container">
+        <p className="error-message">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="finished-project-page-container">
