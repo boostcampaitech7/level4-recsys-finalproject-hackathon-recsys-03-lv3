@@ -1,66 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { Box, Modal } from "@mui/material";
+import axios from "axios";
 import SwitchButton from "../components/SwitchButton";
 import SingleSelector from "../components/SingleSelector";
 import FinishedProjectContent from "../components/FinishedProjectContent";
 import ProjectFeedback from "./ProjectFeedback";
 import "../style/FinishedProjectPage.css";
 
+const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/mymony/completed-project`;
+
 const FinishedProjectPage = () => {
+  const token = sessionStorage.getItem("token");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [sortOption, setSortOption] = useState("최신순");
   const [filterOption, setFilterOption] = useState("전체");
   const [showOnlyUnreviewed, setShowOnlyUnreviewed] = useState(false);
   const [displayedProjects, setDisplayedProjects] = useState([]);
+  const [projects, setProjects] = useState([]);
 
   const [selectedProject, setSelectedProject] = useState(null); // 선택한 프로젝트 저장
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false); // 모달 상태 관리
-
-  const [projects, setProjects] = useState([
-    {
-      projectID: 1,
-      projectName: "기업-매칭 프리랜서 매칭 플랫폼 프론트엔드 개발",
-      duration: 30,
-      budget: 3000000,
-      workType: 0, // 근무 형태(상주: 0, 원격: 1), 필터링에 사용할 속성
-      // contractType: ,
-      status: 0, // 진행 상태(시작 전: 0, 진행 중: 1, 완료: 2)
-      registerDate: "20250113",
-      categoryRole: "개발", // 직군
-      categoryName: "소프트웨어/IT",
-      // skillIdList: ,
-      skillNameList: ["React", "TypeScript", "Next.js"],
-      expertise: null, // 전문성
-      proactiveness: null, // 적극성
-      punctuality: null, // 일정준수
-      maintainability: null, // 유지보수
-      communication: null, // 의사소통
-      feedbackContent: "",
-      isReviewed: false, // 스위치에 사용할 속성
-      locationName: "서울특별시 강남구",
-    },
-    {
-      projectID: 2,
-      projectName: "AI Chatbot Development",
-      duration: 30,
-      budget: 4000000,
-      workType: 1, // 근무 형태(상주: 0, 원격: 1), 필터링에 사용할 속성
-      status: 2, // 진행 상태(시작 전: 0, 진행 중: 1, 완료: 2)
-      registerDate: "20241213",
-      // endDate: "20250112",
-      categoryRole: "개발",
-      categoryName: "소프트웨어/IT", // 직군
-      // skillIdList: ,
-      skillNameList: ["Python", "Machine Learning", "Deep Learning"],
-      expertise: null, // 전문성
-      proactiveness: null, // 적극성
-      punctuality: null, // 일정준수
-      maintainability: null, // 유지보수
-      communication: null, // 의사소통
-      feedbackContent: "",
-      isReviewed: false, // 스위치에 사용할 속성
-      locationName: "서울특별시 서초구",
-    },
-  ]);
 
   // endDate 계산 함수
   const calculateEndDate = (registerDate, duration) => {
@@ -93,6 +53,7 @@ const FinishedProjectPage = () => {
               project.communication,
             ]
           : [],
+      isReviewed: project.feedbackScore ? true : false,
     }));
 
     // 평가하지 않은 프로젝트만 보기 기능 적용
@@ -128,10 +89,29 @@ const FinishedProjectPage = () => {
     setIsFeedbackOpen(true); // 모달 열기
   };
 
-  const handleFeedbackSubmit = (projectID, feedbackData) => {
+  const handleFeedbackSubmit = async (projectId, feedbackData) => {
+    const token = sessionStorage.getItem("token");
+
+    if (!token) {
+      setError("인증 토큰이 없습니다. 로그인 후 이용해주세요.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const feedbackRes = await axios.post(`${API_BASE_URL}/${projectId}`, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } catch (error) {
+      console.error("프로젝트 데이터를 불러오는 데 실패했습니다:", error);
+    }
+
     setProjects((prevProjects) =>
       prevProjects.map((project) =>
-        project.projectID === projectID
+        project.projectId === projectId
           ? {
               ...project,
               ...feedbackData,
@@ -149,6 +129,37 @@ const FinishedProjectPage = () => {
     );
     setIsFeedbackOpen(false); // 모달 닫기
   };
+
+  useEffect(() => {
+    if (!token) {
+      setError("인증 토큰이 없습니다. 로그인 후 이용해주세요.");
+      setLoading(false);
+      return;
+    }
+
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get(API_BASE_URL, {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setProjects(response.data);
+      } catch (error) {
+        console.error("프로젝트 데이터를 불러오는 데 실패했습니다:", error);
+        setError(
+          `프로젝트 데이터를 불러오는 데 실패했습니다: [${error.response.status}] ${error.response.data.detail}`
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  if (loading) return <div>로딩 중...</div>;
 
   return (
     <div className="finished-project-page-container">
@@ -187,7 +198,7 @@ const FinishedProjectPage = () => {
       {/* 필터링 + 정렬된 프로젝트 리스트 */}
       {displayedProjects.map((project) => (
         <FinishedProjectContent
-          key={project.projectID}
+          key={project.projectId}
           content={project}
           onReview={() => handleReview(project)}
         /> // 평가 버튼 클릭 시 호출

@@ -5,6 +5,14 @@ import ScoreDisplay from "./ScoreDisplay";
 import RadarChart from "./RadarChart";
 import "../style/FinishedProjectContent.css";
 
+const formatDate = (dateNumber) => {
+  let year = Math.floor(dateNumber / 10000); // 2025
+  let month = Math.floor((dateNumber % 10000) / 100); // 2
+  let day = dateNumber % 100; // 12
+
+  return `${year}년 ${month}월 ${day}일`;
+};
+
 const FinishedProjectContent = ({ content, onReview }) => {
   const {
     projectId,
@@ -22,7 +30,7 @@ const FinishedProjectContent = ({ content, onReview }) => {
     radarData,
     feedbackScore,
     feedbackContent,
-    isReviewed, // 부모에서 직접 받은 값 사용
+    isReviewed,
   } = content;
 
   return (
@@ -47,10 +55,10 @@ const FinishedProjectContent = ({ content, onReview }) => {
                 <strong>기간:</strong> {duration}일
               </p>
               <p>
-                <strong>작업 시작일:</strong> {registerDate}
+                <strong>작업 시작일:</strong> {formatDate(registerDate)}
               </p>
               <p>
-                <strong>작업 종료일:</strong> {endDate}
+                <strong>작업 종료일:</strong> {formatDate(endDate)}
               </p>
             </div>
             <div className="project-info-right">
