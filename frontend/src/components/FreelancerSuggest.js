@@ -4,40 +4,9 @@ import ProjectSkillTag from "./ProjectSkillTag";
 import "../style/InfoCard.css";
 import "../style/FreelancerDetailPage.css";
 
-const FreelancerSuggest = ({ isOpen, onClose }) => {
+const FreelancerSuggest = ({ isOpen, onClose, projectList }) => {
   const [selectedProject, setSelectedProject] = useState(null); // 선택된 프로젝트 ID 저장
   const navigate = useNavigate();
-
-  const projectList = [
-    {
-      projectId: 101,
-      projectName: "기업 - 프리랜서 매칭 플랫폼 프론트엔드 개발",
-      duration: 30,
-      budget: 3000000,
-      workType: "개발",
-      contractType: 0,
-      status: 1,
-      registerDate: "20250212",
-      categoryName: "IT•정보통신업",
-      skillIdList: [1, 2, 3],
-      skillNameList: ["스킬 1", "스킬 2", "스킬 3"],
-      locationName: "서울시 종로구",
-    },
-    {
-      projectId: 102,
-      projectName: "기업 - 프리랜서 매칭 플랫폼 프론트엔드 개발",
-      duration: 30,
-      budget: 3000000,
-      workType: "개발",
-      contractType: 0,
-      status: 1,
-      registerDate: "20250212",
-      categoryName: "IT•정보통신업",
-      skillIdList: [1, 2, 3],
-      skillNameList: ["스킬 1", "스킬 2", "스킬 3"],
-      locationName: "서울시 종로구",
-    },
-  ];
 
   const handleCardClick = (projectId) => {
     setSelectedProject(projectId); // 클릭한 카드 선택 (기존 선택된 카드 해제)

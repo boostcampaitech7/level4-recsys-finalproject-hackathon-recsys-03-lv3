@@ -32,7 +32,8 @@ const RegisteredProjects = () => {
         setProjects(response.data);
       } catch (error) {
         if (error.response.status === 404) {
-          setError(error.response.data.detail);
+          setProjects([]);
+          return [];
         } else {
           console.error("프로젝트 데이터를 불러오는 데 실패했습니다:", error);
           setError("프로젝트 데이터를 불러오는 데 실패했습니다.");
