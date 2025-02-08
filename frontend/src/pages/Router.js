@@ -7,6 +7,9 @@ import {
 } from "react-router-dom";
 import Layout from "../components/Layout";
 import LoginPage from "./LoginPage";
+import SignUpSelectPage from "./SignUpSelectPage";
+import SignUpFreelancerPage from "./SignUpFreelancerPage";
+import SignUpCompanyPage from "./SignUpCompanyPage";
 import MainPage from "./MainPage";
 import ScrollToTop from "../components/ScrollToTop";
 import SearchProjectPage from "./SearchProjectPage";
@@ -67,6 +70,11 @@ const AppRouter = () => {
       <Routes>
         {/* 로그인 페이지 */}
         <Route path="/login" element={<LoginPage />} />
+
+        {/* 회원가입 관련 경로 */}
+        <Route path="/signup" element={<SignUpSelectPage />} />
+        <Route path="/signup/freelancer" element={<SignUpFreelancerPage />} />
+        <Route path="/signup/company" element={<SignUpCompanyPage />} />
 
         {/* Layout 적용된 경로 */}
         <Route path="/" element={<Layout />}>
