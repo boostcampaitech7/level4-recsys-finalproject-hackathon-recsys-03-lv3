@@ -11,26 +11,6 @@ const MainPage = () => {
     Accept: "application/json",
   };
 
-  useEffect(() => {
-    const fetchFilterData = async () => {
-      try {
-        const [skillRes, categoryRes, locationRes] = await Promise.all([
-          axios.get(`${API_BASE_URL}/skill`, { headers }),
-          axios.get(`${API_BASE_URL}/category`, { headers }),
-          axios.get(`${API_BASE_URL}/location`, { headers }),
-        ]);
-
-        sessionStorage.setItem("skill", JSON.stringify(skillRes.data));
-        sessionStorage.setItem("category", JSON.stringify(categoryRes.data));
-        sessionStorage.setItem("location", JSON.stringify(locationRes.data));
-      } catch (error) {
-        console.error("필터 불러오기 실패: ", error);
-      }
-    };
-
-    fetchFilterData();
-  }, []);
-
   return (
     <div className="magnet">
       <div className="magnet-content">
