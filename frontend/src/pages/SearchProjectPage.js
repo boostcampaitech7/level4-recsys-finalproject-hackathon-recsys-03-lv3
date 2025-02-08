@@ -24,7 +24,7 @@ const SearchProjectPage = () => {
   // 필터 상태
   const [showOnlyRecruiting, setShowOnlyRecruiting] = useState(true);
   const [sortOption, setSortOption] = useState("최신순");
-  const [categoryFilterOption, setCategoryFilterOption] = useState("직군");
+  const [categoryFilterOption, setCategoryFilterOption] = useState("산업 분야");
   const [workTypeFilterOption, setWorkTypeFilterOption] = useState("근무 형태");
   const [skillFilterOption, setSkillFilterOption] = useState(skillList);
 
@@ -69,7 +69,7 @@ const SearchProjectPage = () => {
         (!showOnlyRecruiting || project.status === 0) &&
         (workTypeFilterOption === "근무 형태" ||
           workTypeMapping[project.workType] === workTypeFilterOption) &&
-        (categoryFilterOption === "직군" ||
+        (categoryFilterOption === "산업 분야" ||
           project.categoryName === categoryFilterOption) &&
         project.skillNameList.some((skill) => skillFilterOption.includes(skill))
       );
@@ -84,7 +84,7 @@ const SearchProjectPage = () => {
     });
 
   const resetFilters = () => {
-    setCategoryFilterOption("직군");
+    setCategoryFilterOption("산업 분야");
     setWorkTypeFilterOption("근무 형태");
     setSkillFilterOption(skillList);
     setSortOption("최신순");
@@ -102,7 +102,6 @@ const SearchProjectPage = () => {
         <div className="filter-group-left">
           <SingleSelector
             options={[
-              "직군",
               "소프트웨어/IT",
               "금융",
               "소매/소비자",
@@ -119,7 +118,7 @@ const SearchProjectPage = () => {
           />
           <SingleSelector
             title="근무 형태"
-            options={["전체", "대면", "원격"]}
+            options={["근무 형태", "대면", "원격"]}
             onChange={setWorkTypeFilterOption}
             value={workTypeFilterOption}
           />
