@@ -13,11 +13,12 @@ import ScoreDisplay from "../components/ScoreDisplay";
 
 const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/resource`;
 const userType = parseInt(sessionStorage.getItem("userType"), 10);
+const userId = parseInt(sessionStorage.getItem("userId"), 10);
 
 const ProfilePage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const freelancerId = location.state?.freelancerId;
+  const freelancerId = location.state?.freelancerId || userId;
 
   const [freelancerInfo, setFreelancerInfo] = useState(null);
   const [progress, setProgress] = useState(null);
