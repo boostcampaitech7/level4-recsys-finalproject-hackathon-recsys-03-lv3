@@ -16,18 +16,18 @@ const userType = parseInt(sessionStorage.getItem("userType"), 10);
 const userId = parseInt(sessionStorage.getItem("userId"), 10);
 
 const ProfilePage = () => {
-  const location = useLocation();
   const navigate = useNavigate();
-  const freelancerId = location.state?.freelancerId || userId;
 
   const [freelancerInfo, setFreelancerInfo] = useState(null);
   const [progress, setProgress] = useState(null);
   const [history, setHistory] = useState([]);
+  const location = useLocation();
+  const freelancerId = location.state?.freelancerId || userId;
   //const freelancerId = parseInt(sessionStorage.getItem("userId"), 10); // 실제 사용 시 동적으로 설정 필요
 
   useEffect(() => {
     if (!freelancerId) {
-      navigate("/search-freelancer"); // 🔹 freelancerId가 없으면 목록 페이지로 이동
+      navigate("/search-freelancer"); // freelancerId가 없으면 목록 페이지로 이동
       return;
     }
 
@@ -92,6 +92,52 @@ const ProfilePage = () => {
 
 const ProfileHeader = ({ freelancerInfo }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [myProject, setMyProject] = useState(null);
+  const location = useLocation();
+  const freelancerId = location.state?.freelancerId || userId;
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+
+    if (isPopupOpen) {
+      if (!token) {
+        setError("인증 토큰이 없습니다. 로그인 후 이용해주세요.");
+        setLoading(false);
+        return;
+      }
+
+      const fetchProjects = async () => {
+        try {
+          const proposeRes = await axios.get(
+            `${API_BASE_URL}/${freelancerId}/propose`,
+            {
+              headers: {
+                Accept: "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          setMyProject(proposeRes.data);
+        } catch (error) {
+          if (error.response.status === 404) {
+            return null;
+          } else {
+            setError(
+              "프로젝트 데이터를 불러오는 데 실패했습니다: ",
+              error.response.data.detail
+            );
+          }
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchProjects();
+    }
+  }, [isPopupOpen]);
 
   return (
     <div className="mypage-header">
@@ -122,12 +168,19 @@ const ProfileHeader = ({ freelancerInfo }) => {
           <>
             <button
               className="btn-suggest"
-              onClick={() => setIsPopupOpen(true)}
+              onClick={() => {
+                if (myProject) {
+                  setIsPopupOpen(true);
+                } else {
+                  alert("등록한 프로젝트가 없습니다.");
+                }
+              }}
             >
               제안하기
             </button>
             <FreelancerSuggest
               isOpen={isPopupOpen}
+              projectList={myProject}
               onClose={() => setIsPopupOpen(false)}
             />
           </>
