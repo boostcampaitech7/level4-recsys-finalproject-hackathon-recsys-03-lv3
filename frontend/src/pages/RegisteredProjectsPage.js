@@ -10,7 +10,6 @@ const RegisteredProjects = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const userId = sessionStorage.getItem("userId");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,7 +24,6 @@ const RegisteredProjects = () => {
     const fetchProjects = async () => {
       try {
         const response = await axios.get(API_BASE_URL, {
-          params: { userId },
           headers: {
             Accept: "application/json",
             Authorization: `Bearer ${token}`,
@@ -33,8 +31,12 @@ const RegisteredProjects = () => {
         });
         setProjects(response.data);
       } catch (error) {
-        console.error("프로젝트 데이터를 불러오는 데 실패했습니다:", error);
-        setError("프로젝트 데이터를 불러오는 데 실패했습니다.");
+        if (error.response.status === 404) {
+          setError(error.response.data.detail);
+        } else {
+          console.error("프로젝트 데이터를 불러오는 데 실패했습니다:", error);
+          setError("프로젝트 데이터를 불러오는 데 실패했습니다.");
+        }
       } finally {
         setLoading(false);
       }

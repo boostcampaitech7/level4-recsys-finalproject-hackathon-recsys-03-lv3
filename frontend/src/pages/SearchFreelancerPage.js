@@ -19,7 +19,7 @@ const SearchFreelancer = () => {
   const [error, setError] = useState(null);
 
   const roleList = ["백엔드 개발자", "프론트엔드 개발자", "풀스택 개발자"];
-  const skillList = JSON.parse(sessionStorage.getItem("skill"), "[]").map(
+  const skillList = JSON.parse(sessionStorage.getItem("skill") || "[]").map(
     (skill) => skill.skillName
   );
 
