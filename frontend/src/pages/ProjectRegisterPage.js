@@ -5,12 +5,12 @@ import botphoto from "../assets/chat_logo.png";
 import ProfileIcon from "../components/ProfileIcon";
 import SimilarProject from "../components/SimilarProject";
 import ProjectSkillTag from "../components/ProjectSkillTag";
+import axios from "axios";
+
+const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/mymony/project/register`;
 
 function convertToJSX(text) {
-  const sections = text
-    .slice(1, -1)
-    .split(/<([^<>]+)>/)
-    .filter(Boolean); // 꺽쇠 괄호를 기준으로 텍스트 분리
+  const sections = text.split(/<([^<>]+)>/).filter(Boolean); // 꺽쇠 괄호를 기준으로 텍스트 분리
   let jsxElements = [];
 
   for (let i = 0; i < sections.length; i++) {
@@ -18,12 +18,12 @@ function convertToJSX(text) {
 
     if (i % 2 === 1) {
       // 짝수 인덱스 -> 제목 (꺽쇠 안의 내용)
-      jsxElements.push(<h5 key={i}>{content}</h5>);
+      jsxElements.push(<p key={i}>{content}</p>);
     } else {
       // 홀수 인덱스 -> 본문 (꺽쇠 괄호 밖의 내용)
       const paragraphs = content.split(/\n+/).filter(Boolean); // 개행 문자 기준으로 나누고 빈 문자열 제거
       paragraphs.forEach((para, index) => {
-        jsxElements.push(<p key={`${i}-${index}`}>{para.trim()}</p>);
+        jsxElements.push(<h5 key={`${i}-${index}`}>{para.trim()}</h5>);
       });
     }
   }
@@ -34,11 +34,46 @@ function convertToJSX(text) {
 const ProjectRegisterPage = () => {
   const location = useLocation();
   const { projectSummary } = location.state || {};
+  console.log("projectSummary: ", projectSummary);
   const navigate = useNavigate();
+  const posting = {
+    duration: projectSummary.duration,
+    budget: projectSummary.budget,
+    workType: projectSummary.workType,
+    contractType: projectSummary.contractType,
+    priority: projectSummary.priority,
+    projectContent: projectSummary.projectContent,
+    projectName: projectSummary.projectName,
+    categoryId: projectSummary.categoryId,
+    skillList: projectSummary.skillIdList,
+  };
+
+  const token = sessionStorage.getItem("token");
+
+  const headers = {
+    Accept: "application/json",
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+  };
 
   if (!projectSummary) {
     return <div>프로젝트 데이터가 없습니다. 다시 시도해주세요.</div>;
   }
+
+  const handleRegister = async (data) => {
+    console.log(headers);
+    console.log(data);
+    try {
+      const response = await axios.post(API_BASE_URL, data, {
+        headers: headers,
+      });
+      console.log("데이터 전송 성공");
+      alert("프로젝트 등록을 완료했습니다.");
+      navigate("/registered-projects");
+    } catch (error) {
+      console.error("데이터 전송 실패: ", error);
+    }
+  };
 
   return (
     <div className="chat-page result">
@@ -155,8 +190,7 @@ const ProjectRegisterPage = () => {
                   type="button"
                   id="sendRequest"
                   onClick={() => {
-                    alert("요청이 완료되었습니다.");
-                    navigate("/registered-projects");
+                    handleRegister(posting);
                   }}
                 >
                   등록
