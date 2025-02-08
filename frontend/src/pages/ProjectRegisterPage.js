@@ -66,7 +66,7 @@ const ProjectRegisterPage = () => {
               <table className="custom-table rounded-table">
                 <tbody>
                   <tr>
-                    <td className="table-label">프로젝트 명</td>
+                    <td className="table-label">프로젝트 이름</td>
                     <td className="table-value">
                       {projectSummary.projectName || "미정"}
                     </td>

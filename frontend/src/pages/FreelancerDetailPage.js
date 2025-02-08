@@ -181,7 +181,9 @@ const ProfileHeader = ({ freelancerInfo }) => {
             />
           </>
         ) : (
-          <button className="btn-suggest">정보 수정</button>
+          freelancerId === userId && (
+            <button className="btn-suggest">정보 수정</button>
+          )
         )}
       </div>
     </div>

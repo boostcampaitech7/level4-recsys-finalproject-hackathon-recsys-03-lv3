@@ -14,7 +14,7 @@ const FinishedProjectPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sortOption, setSortOption] = useState("최신순");
-  const [filterOption, setFilterOption] = useState("전체");
+  const [filterOption, setFilterOption] = useState("근무 형태");
   const [showOnlyUnreviewed, setShowOnlyUnreviewed] = useState(false);
   const [displayedProjects, setDisplayedProjects] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -63,11 +63,9 @@ const FinishedProjectPage = () => {
       );
     }
 
-    // 필터링 적용 (근무 형태: 전체 / 상주(0) / 원격(1))
-    if (filterOption !== "전체") {
-      const mappedValue = Number(filterOption); // "0" → 0, "1" → 1 변환
+    if (filterOption !== "근무 형태") {
       updatedProjects = updatedProjects.filter(
-        (project) => project.workType === mappedValue
+        (project) => (project.workType === 0 ? "대면" : "원격") === filterOption
       );
     }
 
@@ -172,11 +170,9 @@ const FinishedProjectPage = () => {
           {/* 필터용 SingleSelector */}
           <SingleSelector
             title="근무 형태"
-            options={["전체", "상주", "원격"]}
-            onChange={(value) => {
-              const mapping = { 전체: "전체", 상주: "0", 원격: "1" }; // 숫자가 아닌 문자열로 저장
-              setFilterOption(mapping[value]);
-            }}
+            options={["근무 형태", "대면", "원격"]}
+            onChange={setFilterOption}
+            value={filterOption}
           />
         </div>
         <div className="filter-group-right">

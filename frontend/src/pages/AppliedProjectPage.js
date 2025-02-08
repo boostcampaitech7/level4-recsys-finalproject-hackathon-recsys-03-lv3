@@ -17,8 +17,8 @@ const AppliedProjectPage = () => {
   const [error, setError] = useState(null);
 
   const [sortOption, setSortOption] = useState("최신순");
-  const [filterOption, setFilterOption] = useState("전체");
-  const [showOnlyNotMatched, setShowOnlyUnreviewed] = useState(false);
+  const [filterOption, setFilterOption] = useState("근무 형태");
+  const [showOnlyNotMatched, setShowOnlyNotMatched] = useState(false);
   const [displayedProjects, setDisplayedProjects] = useState([]);
 
   useEffect(() => {
@@ -60,12 +60,11 @@ const AppliedProjectPage = () => {
     };
 
     fetchProjects();
-  }, [freelancerId]);
+  }, []);
 
   // 필터링 & 정렬 기능 적용
   useEffect(() => {
     let updatedProjects = [...projects];
-
     // 매칭 전 프로젝트만 보기 기능 적용
     if (showOnlyNotMatched) {
       updatedProjects = updatedProjects.filter(
@@ -73,11 +72,9 @@ const AppliedProjectPage = () => {
       );
     }
 
-    // 필터링 적용 (근무 형태: 전체 / 상주(0) / 원격(1))
-    if (filterOption !== "전체") {
-      const mappedValue = Number(filterOption); // "0" → 0, "1" → 1 변환
+    if (filterOption !== "근무 형태") {
       updatedProjects = updatedProjects.filter(
-        (project) => project.workType === mappedValue
+        (project) => (project.workType === 0 ? "대면" : "원격") === filterOption
       );
     }
 
@@ -111,19 +108,17 @@ const AppliedProjectPage = () => {
           {/* 필터용 SingleSelector */}
           <SingleSelector
             title="근무 형태"
-            options={["전체", "상주", "원격"]}
-            onChange={(value) => {
-              const mapping = { 전체: "전체", 상주: "0", 원격: "1" }; // 숫자가 아닌 문자열로 저장
-              setFilterOption(mapping[value]);
-            }}
+            options={["근무 형태", "대면", "원격"]}
+            onChange={setFilterOption}
+            value={filterOption}
           />
         </div>
 
         <div className="filter-group-right">
-          {/* SwitchButton을 클릭하면 setShowOnlyUnreviewed 값 변경 */}
+          {/* SwitchButton을 클릭하면 setShowOnlyNotMatched 값 변경 */}
           <SwitchButton
-            text="매칭 전 프로젝트만 표시"
-            onChange={setShowOnlyUnreviewed}
+            text="모집 중인 프로젝트만 표시"
+            onChange={setShowOnlyNotMatched}
           />
 
           {/* 정렬용 SingleSelector */}
@@ -146,17 +141,17 @@ const AppliedProjectPage = () => {
             key={project.projectId}
             content={{
               projectName: project.projectName,
+              duration: project.duration,
+              budget: project.budget,
+              workType: project.workType,
               skillNameList: project.skillNameList,
               locationName: project.locationName,
               registerDate: project.registerDate,
-              duration: project.duration,
-              budget: project.budget,
               categoryRole: "개발",
               categoryName: project.categoryName,
               status: project.status,
             }}
           />
-          //<ProjectInfo key={project.projectName} content={project} />
         ))}
       </div>
     </div>

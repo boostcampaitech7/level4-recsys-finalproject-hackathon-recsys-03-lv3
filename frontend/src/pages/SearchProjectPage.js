@@ -60,7 +60,7 @@ const SearchProjectPage = () => {
   if (loading) return <div>로딩 중...</div>;
   if (error) return <div className="error-message">{error}</div>;
 
-  const workTypeMapping = { 0: "상주", 1: "원격" };
+  const workTypeMapping = { 0: "대면", 1: "원격" };
 
   // 필터링 로직
   const filteredProjects = projects
@@ -117,6 +117,12 @@ const SearchProjectPage = () => {
             onChange={setCategoryFilterOption}
             value={categoryFilterOption}
           />
+          <SingleSelector
+            title="근무 형태"
+            options={["전체", "대면", "원격"]}
+            onChange={setWorkTypeFilterOption}
+            value={workTypeFilterOption}
+          />
           <MultiSelector
             title="스킬"
             options={skillList}
@@ -159,11 +165,12 @@ const SearchProjectPage = () => {
           key={project.projectId}
           content={{
             projectName: project.projectName,
+            duration: project.duration,
+            budget: project.budget,
+            workType: project.workType,
             skillNameList: project.skillNameList,
             locationName: project.locationName,
             registerDate: project.registerDate,
-            duration: project.duration,
-            budget: project.budget,
             categoryRole: "개발",
             categoryName: project.categoryName,
             status: project.status,

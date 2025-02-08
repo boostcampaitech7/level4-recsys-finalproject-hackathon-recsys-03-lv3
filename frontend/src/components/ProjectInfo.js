@@ -19,7 +19,7 @@ const ProjectInfo = ({ content, className = "", onClick = null }) => {
     projectName, // 프로젝트 이름
     duration, // 기간(단위: 일)
     budget, // 예상 금액
-    workType, // 근무 형태 (상주: 0, 원격: 1)
+    workType, // 근무 형태 (대면: 0, 원격: 1)
     contractType, // 계약 형태(월 단위: 0, 프로젝트 단위: 1)
     status, // 진행상태 (시작 전: 0, 진행 중: 1, 완료: 2)
     registerDate, // 작업 시작일 (YYYYMMDD 형식)
@@ -41,7 +41,7 @@ const ProjectInfo = ({ content, className = "", onClick = null }) => {
             <ProjectKeywordIcon color="var(--color-star)" text="모집 완료" />
           )}
           {workType === 0 ? (
-            <ProjectKeywordIcon color="var(--color-secondary)" text="상주" />
+            <ProjectKeywordIcon color="var(--color-secondary)" text="대면" />
           ) : (
             <ProjectKeywordIcon color="var(--color-secondary)" text="원격" />
           )}

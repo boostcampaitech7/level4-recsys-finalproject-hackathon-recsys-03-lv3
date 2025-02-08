@@ -96,8 +96,7 @@ const SearchFreelancer = () => {
       // 정렬 로직
       if (sortOption === "피드백 점수 높은순")
         return b.feedbackScore - a.feedbackScore;
-      if (sortOption === "매칭 점수 높은순")
-        return b.matchingScore - a.matchingScore;
+      if (sortOption === "최신순") return b.freelancerId - a.freelancerId;
       return 0;
     });
 
@@ -130,7 +129,7 @@ const SearchFreelancer = () => {
           {/* 근무 형태 필터 */}
           <SingleSelector
             title="근무 형태"
-            options={["근무 형태", "원격", "대면"]}
+            options={["근무 형태", "대면", "원격"]}
             onChange={setFilterWorkType}
             value={filterWorkType}
           />
@@ -153,7 +152,7 @@ const SearchFreelancer = () => {
         <div className="filter-group-right">
           <SingleSelector
             title="정렬 기준"
-            options={["피드백 점수 높은순", "매칭 점수 높은순"]}
+            options={["최신순", "피드백 점수 높은순"]}
             onChange={setSortOption}
             value={sortOption}
           />
