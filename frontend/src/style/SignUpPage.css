@@ -1,0 +1,206 @@
+@import "colors.css";
+
+/* 전체 페이지 스타일 */
+.signup-select-container,
+.signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4f6f9;
+}
+
+/* 회원가입 카드 */
+.signup-select-card {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 500px;
+}
+
+.signup-card {
+  position: relative;
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 550px;
+  max-width: 100%;
+  overflow: visible;
+}
+
+/* 로고 */
+.signup-logo img {
+  width: 60px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+/* 제목 */
+.signup-header p {
+  color: black;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+.signup-header {
+  border-bottom: 1px solid var(--color-secondary);
+  padding-bottom: 20px;
+}
+
+/* 캐치프레이즈 */
+.signup-select-caption {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 25px;
+}
+
+/* 선택 버튼 컨테이너 */
+.signup-select-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+/* 공통 버튼 스타일 */
+.signup-select-btn {
+  width: 48%;
+  padding: 20px 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* 프리랜서 버튼 */
+.freelancer-signup {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+/* 기업 버튼 */
+.company-signup {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+/* 아이콘 스타일 */
+.signup-icon {
+  font-size: 28px;
+}
+
+/* 설명 스타일 */
+.signup-description {
+  font-size: 14px;
+  color: #f8f8f8;
+  margin-top: 4px;
+  font-weight: normal;
+}
+
+/* 회원가입 폼 */
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.signup-form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.signup-form input:focus {
+  border-color: var(--color-primary);
+}
+
+.form-content {
+  width: 100%;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.form-grid {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  width: 100%;
+}
+
+.form-left {
+  flex: 7;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.form-right {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.single-selector,
+.multi-selector {
+  margin-bottom: 11px;
+}
+
+#signup-freelancer-page .label-container {
+  display: flex;
+  justify-content: space-between;
+  min-width: 220px;
+  width: 100%;
+}
+
+#signup-company-page .label-container {
+  width: 100%;
+  min-width: 470px;
+}
+
+/* 회원가입 버튼 */
+.signup-button {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* 로그인 페이지 이동 */
+.login-text {
+  font-size: 14px;
+  margin-top: 15px;
+}
+
+.login-text a {
+  color: var(--color-primary);
+  font-weight: bold;
+  text-decoration: none;
+}
+
+/* 에러 메시지 */
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+}

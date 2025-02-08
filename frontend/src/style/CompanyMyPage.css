@@ -9,17 +9,16 @@
 .profile-photo {
   display: flex; /* Flexbox 사용 */
   align-items: center; /* 세로 가운데 정렬 */
-  /* 필요한 경우 추가 스타일링 */
-  margin-left: 50px;
+  margin-left: 10px;
 }
 
 .company-info {
-  margin-left: 50px;
+  margin-left: 40px;
 }
 
 .company-name {
   font-size: 30px;
-  margin-bottom: 5px;
+  margin-top: 15px;
   font-weight: bold;
   color: black;
 }
@@ -31,31 +30,47 @@
   margin-top: 20px;
 }
 
+.intro-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 0 30px;
+  gap: 60px;
+}
+
 .company-introduction {
+  margin-top: 4px;
+  margin-left: 15px;
+  font-size: 18px;
+  font-weight: 600;
   color: black;
-  margin-left: 50px;
-  font-weight: bold;
+  padding: 5px 20px;
+  border-left: 1px solid hsl(0 0% 0% / 0.3);
+  border-right: 1px solid hsl(0 0% 0% / 0.3);
 }
 
 .company-content {
   font-size: 1rem;
   color: black;
   font-weight: 500;
-  margin-left: 50px;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 .button-container {
   display: flex; /* Flexbox 사용 */
   justify-content: flex-end; /* 오른쪽 정렬 */
-  width: 1400px;
+  width: 1000px;
   margin: 20px auto;
 }
 
-.edit-button {
+.edit-btn {
   background-color: var(--color-primary); /* 녹색 버튼 */
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 10px 30px;
+  margin-right: 10px;
   border-radius: 20px;
   cursor: pointer;
 }

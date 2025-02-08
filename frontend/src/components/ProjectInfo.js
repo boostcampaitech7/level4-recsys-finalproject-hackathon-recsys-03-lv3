@@ -5,7 +5,7 @@ import ProjectSkillTag from "./ProjectSkillTag";
 import "../style/ProjectInfo.css";
 import "../style/colors.css";
 
-const ProjectInfo = ({ content, className = "" }) => {
+const ProjectInfo = ({ content, className = "", onClick = null }) => {
   const formatDateUsingMath = (dateNumber) => {
     let year = Math.floor(dateNumber / 10000); // 2025
     let month = Math.floor((dateNumber % 10000) / 100); // 2
@@ -29,7 +29,7 @@ const ProjectInfo = ({ content, className = "" }) => {
     skillNameList, // 스킬 이름 리스트
     locationName, // 지역명
     isReviewed, // 평가 여부
-  } = content;
+  } = content || {};
 
   return (
     <InfoCard className={className}>
@@ -49,7 +49,7 @@ const ProjectInfo = ({ content, className = "" }) => {
         </div>
 
         <h3 className="project-title">
-          <a className="project-link" href="#">
+          <a className="project-link pointer" onClick={onClick}>
             {projectName}
           </a>
         </h3>
@@ -75,7 +75,7 @@ const ProjectInfo = ({ content, className = "" }) => {
             </p>
             <p>{categoryName}</p>
             <div className="skills">
-              {skillNameList.length > 0 ? (
+              {skillNameList && skillNameList.length > 0 ? (
                 skillNameList.map((skill, index) => (
                   // 각 스킬 태그 출력
                   <ProjectSkillTag key={index} text={skill} />

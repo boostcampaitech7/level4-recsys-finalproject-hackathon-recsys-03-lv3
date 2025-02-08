@@ -1,74 +1,198 @@
-@import "colors.css";
-
-.profile-page,
-.suggest-page {
-  overflow-x: auto;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-
-.suggest-page {
-  width: 100%;
-  max-width: 900px; /* 부모 요소 최대 너비 제한 */
-}
-
-.container-fluid.detail-card {
-  width: 100%;
-  max-width: 900px;
-  margin-bottom: 20px;
-  overflow: hidden; /* 부모 너비를 넘어서지 않도록 설정 */
-}
-
-.detail-card {
-  background-color: #ffffff;
-  min-height: 200px;
-  margin: 20px auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 25px;
+.profile-page {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
   width: 100%;
-  max-width: 900px;
-  margin: auto;
+}
+
+.history-card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg-green);
+  border-radius: 12px;
+  padding: 40px;
+  gap: 40px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  height: 100%;
+  max-width: 1000px;
+  height: auto;
+  box-sizing: border-box;
   overflow: hidden;
 }
 
-.scrollable {
-  min-width: 800px;
-  width: 1000px;
+.history-header {
+  color: black;
+  font-size: 25px;
+  font-weight: 500;
+}
+
+.mypage-header {
+  display: flex;
+  flex-direction: row;
+  background-color: white;
+  border-radius: 12px;
+  padding: 40px;
+  gap: 40px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 1000px;
+  min-height: 300px;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.header-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.free-name {
+  color: black;
+  font-size: 25px;
+  font-weight: 600;
+}
+
+.free-role {
+  color: black;
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.project-stats {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  flex-wrap: nowrap;
+}
+
+.profile-rates {
+  flex: 1 1 55%;
+  max-width: 600px;
+  white-space: nowrap;
+  background-color: white;
+  border-radius: 12px;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.project-status {
+  flex: 1 1 40%;
+  background-color: white;
+  border-radius: 12px;
+  padding: 40px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.sm-header {
+  color: black;
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.rates-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 50px;
+}
+
+.star-rates {
+  font-size: 16px;
+  gap: 0;
+}
+
+.radar-chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 30px;
+}
+
+.project-history-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  align-items: center;
 }
 
 .project-history {
-  height: 600px;
   display: flex;
-  flex-direction: column; /* ✅ 제목을 상단에 고정 */
+  gap: 20px;
 }
 
-.history-list {
-  overflow-y: auto; /* ✅ 내부 스크롤 적용 */
-  flex-grow: 1; /* ✅ 남은 공간을 차지하면서 확장 */
-  padding-right: 20px; /* ✅ 스크롤바가 나타날 경우 오른쪽 여백 */
-  padding-left: 20px;
+.history-info {
+  margin-right: 20px;
 }
 
-.profile-stats,
-.project-status {
-  background-color: #f3fbfa;
+.history-item {
+  background-color: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.history-title {
+  color: black;
+  font-size: 17px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.info-items {
+  margin-bottom: 10px;
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.prev-button,
+.next-button {
+  padding: 10px 20px;
+  background-color: #17b294;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.prev-button:disabled,
+.next-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 .btn-suggest,
 .btn-register {
   background-color: var(--color-primary);
-  color: var(--color-secondary);
+  color: var(--color-bg);
   border: None;
   border-radius: 100px;
   width: 100px;
   height: 40px;
-  font-weight: 550;
+  font-weight: 400;
 }
 
+.prev-button:hover,
+.next-button:hover,
 .btn-suggest:hover {
-  background-color: var(--color-primary);
+  background-color: #138d74;
   border: None;
 }
 
@@ -79,20 +203,70 @@
   border: None;
 }
 
+.btnclose {
+  border: None;
+  border-radius: 100px;
+  width: 100px;
+  height: 40px;
+  font-weight: 400;
+  background: #b3b3b3;
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+
+.btnclose:hover {
+  background-color: #999;
+  border: None;
+}
+
 .button-right {
   display: flex;
   justify-content: flex-end;
   align-items: center;
 }
 
-.container-fluid.detail-card {
-  display: flex;
-  flex-direction: column; /* 📌 카드들을 세로로 배치 */
-  gap: 15px; /* 카드 사이 간격 추가 */
-}
-
 .suggest-project {
   width: 100%; /* 가로폭을 부모 크기에 맞춤 */
   max-width: 800px; /* 카드의 최대 너비 설정 */
-  margin: 0 auto; /* 가운데 정렬 */
+  margin: 10px auto; /* 가운데 정렬 */
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  color: black;
+  max-width: 90%;
+}
+
+.popup-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.btn-close {
+  background: gray;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  color: white;
+}
+
+.suggest-project.selected {
+  border: 2px solid #17b294;
+  background-color: #eafaf7;
 }

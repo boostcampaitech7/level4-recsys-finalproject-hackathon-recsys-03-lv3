@@ -9,7 +9,6 @@ class ProjectRanking(Base):
     project_id = Column("PROJECT_ID", Integer, ForeignKey("PROJECT.PROJECT_ID"), primary_key=True)
     freelancer_id = Column("FREELANCER_ID", Integer, ForeignKey("FREELANCER.FREELANCER_ID"), primary_key=True)
     matching_score = Column("MATCHING_SCORE", Float, nullable=False)
-    applied = Column("APPLIED", Integer, nullable=False)
 
     # 관계 정의
     project = relationship(

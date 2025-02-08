@@ -7,17 +7,22 @@ import {
 } from "react-router-dom";
 import Layout from "../components/Layout";
 import LoginPage from "./LoginPage";
+import SignUpSelectPage from "./SignUpSelectPage";
+import SignUpFreelancerPage from "./SignUpFreelancerPage";
+import SignUpCompanyPage from "./SignUpCompanyPage";
 import MainPage from "./MainPage";
-import SearchFreelancer from "./SearchFreelancerPage";
-import RecommendFreelancer from "./RecommendFreelancerPage";
+import ScrollToTop from "../components/ScrollToTop";
 import SearchProjectPage from "./SearchProjectPage";
-import RegisteredProjects from "./RegisteredProjectsPage";
-import Chat from "./ChatPage";
+import SearchFreelancerPage from "./SearchFreelancerPage";
+import RecommendFreelancerPage from "./RecommendFreelancerPage";
+import ProjectInputPage from "./ProjectInputPage";
+import ProjectRegisterPage from "./ProjectRegisterPage";
+import RegisteredProjectsPage from "./RegisteredProjectsPage";
 import FreelancerDetailPage from "./FreelancerDetailPage";
 import AppliedProjectPage from "./AppliedProjectPage";
 import FinishedProjectPage from "./FinishedProjectPage";
-import FreelancerSuggestPage from "./FreelancerSuggestPage";
 import CompanyMyPage from "./CompanyMyPage";
+import ProjectDetailPage from "./ProjectDetailPage";
 
 const AppRouter = () => {
   // 로그인 정보 상태(state) 저장
@@ -61,24 +66,33 @@ const AppRouter = () => {
 
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         {/* 로그인 페이지 */}
         <Route path="/login" element={<LoginPage />} />
+
+        {/* 회원가입 관련 경로 */}
+        <Route path="/signup" element={<SignUpSelectPage />} />
+        <Route path="/signup/freelancer" element={<SignUpFreelancerPage />} />
+        <Route path="/signup/company" element={<SignUpCompanyPage />} />
 
         {/* Layout 적용된 경로 */}
         <Route path="/" element={<Layout />}>
           {/* Layout 내부의 하위 경로 */}
           <Route index element={<MainPage />} />
           <Route path="/search-project" element={<SearchProjectPage />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/search-freelancer" element={<SearchFreelancer />} />
-          <Route
-            path="/recommend-freelancer"
-            element={<RecommendFreelancer />}
-          />
+          <Route path="/search-freelancer" element={<SearchFreelancerPage />} />
           <Route path="/freelancer-detail" element={<FreelancerDetailPage />} />
-          <Route path="/registered-projects" element={<RegisteredProjects />} />
-          <Route path="/suggest" element={<FreelancerSuggestPage />} />
+          <Route
+            path="/recommend-freelancer/:projectId"
+            element={<RecommendFreelancerPage />}
+          />
+          <Route path="/register-input" element={<ProjectInputPage />} />
+          <Route path="/register-result" element={<ProjectRegisterPage />} />
+          <Route
+            path="/registered-projects"
+            element={<RegisteredProjectsPage />}
+          />
           <Route path="/finished" element={<FinishedProjectPage />} />
           <Route path="/applied" element={<AppliedProjectPage />} />
           <Route
@@ -87,6 +101,8 @@ const AppRouter = () => {
               userType === "0" ? <FreelancerDetailPage /> : <CompanyMyPage />
             }
           />
+
+          <Route path="/project-detail" element={<ProjectDetailPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

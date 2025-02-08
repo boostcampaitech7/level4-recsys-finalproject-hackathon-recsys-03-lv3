@@ -1,37 +1,76 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 import InfoCard from "../components/InfoCard";
 import ProfileIcon from "../components/ProfileIcon.js";
 import photo from "../assets/profile_example1.jpg";
 import "../style/CompanyMyPage.css";
 import "../style/colors.css";
 
+const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/mymony`;
+const companyId = sessionStorage.getItem("userId");
+
 const CompanyMyPage = () => {
-  const company = {
-    companyId: 1,
-    companyName: "(주) 왕균이 증권",
-    companyContent:
-      "최고의 단짝을 찾아주는 미팅주선 업체최고의 단짝을 찾아주는 미팅주선팅주선 업체최고의 단짝을 찾아주는 미팅주선 업체최고의 단짝을 찾아주는 미팅주선 업체",
-    locationName: "서울특별시 강남구",
-  };
+  const [company, setCompany] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+
+    if (!token) {
+      setError("인증 토큰이 없습니다. 로그인 후 이용해주세요.");
+      setLoading(false);
+      return;
+    }
+
+    const fetchCompanyData = async () => {
+      try {
+        const response = await axios.get(
+          `${API_BASE_URL}/${companyId}/profile`,
+          {
+            headers: {
+              Accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setCompany(response.data);
+      } catch (err) {
+        console.error("기업 데이터를 불러오는 데 실패했습니다:", err);
+        setError("기업 데이터를 불러오는 데 실패했습니다.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCompanyData();
+  }, [companyId]);
+
+  if (loading) return <div>로딩 중...</div>;
+  if (error) return <div className="error-message">{error}</div>;
 
   return (
     <>
       <div className="page-container">
         <InfoCard>
-          <div className="profile-photo p-3 me-5">
+          <div className="profile-photo p-3">
             <ProfileIcon profileImage={photo} />
             <div className="company-info">
               <h2 className="company-name">{company.companyName}</h2>
-              <p className="company-address">{company.locationName}</p>
+              <p className="company-address">
+                <i class="bi bi-geo-alt pe-1"></i>
+                {company.locationName}
+              </p>
             </div>
           </div>
-          <div>
-            <h3 className="company-introduction">소개</h3>
+          <div className="intro-section">
+            <p className="company-introduction">기업 소개</p>
             <p className="company-content">{company.companyContent}</p>
           </div>
         </InfoCard>
         <div class="button-container">
-          <button class="edit-button">정보수정</button>
+          <button class="btn-suggest">정보수정</button>
         </div>
       </div>
     </>

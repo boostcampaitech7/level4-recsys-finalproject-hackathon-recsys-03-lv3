@@ -1,0 +1,18 @@
+# Data Settings
+USER_ID_FIELD: user_id
+ITEM_ID_FIELD: item_id
+RATING_FIELD: rating
+
+local_col: # 모델이 실제로 학습할 때 사용하는 특정 컬럼
+  inter: [user_id, item_id, rating]
+  user: [user_id]
+  item: [item_id]
+
+user_inter_num_interval: "[0,inf)"
+item_inter_num_interval: "[0,inf)"
+
+# Model settings
+model: NeuMF
+dataset: NeuMF
+embedding_size: 32
+mlp_hidden_size: [64, 32]

@@ -5,7 +5,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 // ✅ Chart.js에 필요한 모듈 등록
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const DoughnutChart = ({ data }) => {
+const DoughnutChart = ({ data, style = {} }) => {
   const chartData = {
     labels: ["완료된 프로젝트", "진행 중 프로젝트"],
     datasets: [
@@ -21,13 +21,16 @@ const DoughnutChart = ({ data }) => {
     plugins: {
       legend: {
         display: true, // ✅ 범례 표시
-        position: "right",
+        position: "bottom",
+        labels: {
+          padding: 30,
+        },
       },
     },
   };
 
   return (
-    <div style={{ width: "400px", height: "300px" }}>
+    <div style={{ ...style }}>
       <Doughnut data={chartData} options={options} />
     </div>
   );

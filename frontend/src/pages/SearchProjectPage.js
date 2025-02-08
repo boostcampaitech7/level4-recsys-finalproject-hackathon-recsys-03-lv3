@@ -1,271 +1,64 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import ProjectInfo from "../components/ProjectInfo";
 import SingleSelector from "../components/SingleSelector";
 import MultiSelector from "../components/MultiSelector";
 import SwitchButton from "../components/SwitchButton";
 import "../style/SearchPages.css";
 
-const SearchProjectPage = () => {
-  // 프로젝트 데이터
-  const [projects, setProjects] = useState([
-    {
-      projectId: 101,
-      projectName: "AI 기반 추천 시스템 개발",
-      duration: 6,
-      budget: 5000000,
-      workType: 1,
-      contractType: 0,
-      status: 0,
-      registerDate: "20250127",
-      categoryName: "소프트웨어/IT",
-      skillIdList: [1, 2, 3],
-      skillNameList: ["Python", "Machine Learning", "Deep Learning"],
-      locationName: "서울시 강남구",
-    },
-    {
-      projectId: 102,
-      projectName: "프리랜서 여행 플랫폼 프론트엔드 개발",
-      duration: 30,
-      budget: 3000000,
-      workType: 1,
-      contractType: 0,
-      status: 1,
-      registerDate: "20250212",
-      categoryName: "소매/소비자",
-      skillIdList: [4, 5],
-      skillNameList: ["React", "TypeScript"],
-      locationName: "서울시 종로구",
-    },
-  ]);
+const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/project`;
 
-  const skillList = [
-    "Bash/Shell (all shells)",
-    "Go",
-    "HTML/CSS",
-    "Java",
-    "JavaScript",
-    "Python",
-    "TypeScript",
-    "Dynamodb",
-    "MongoDB",
-    "PostgreSQL",
-    "Amazon Web Services (AWS)",
-    "Heroku",
-    "Netlify",
-    "Express",
-    "Next.js",
-    "Node.js",
-    "React",
-    "Docker",
-    "Homebrew",
-    "Kubernetes",
-    "npm",
-    "Vite",
-    "Webpack",
-    "C#",
-    "Firebase Realtime Database",
-    "Google Cloud",
-    "ASP.NET CORE",
-    ".NET (5+) ",
-    ".NET Framework (1.0 - 4.8)",
-    ".NET MAUI",
-    "MSBuild",
-    "MySQL",
-    "Redis",
-    "Digital Ocean",
-    "Firebase",
-    "Vercel",
-    "C",
-    "C++",
-    "Delphi",
-    "PowerShell",
-    "SQL",
-    "VBA",
-    "Visual Basic (.Net)",
-    "Microsoft Access",
-    "Microsoft SQL Server",
-    "SQLite",
-    "Cloudflare",
-    "ASP.NET",
-    "jQuery",
-    "RabbitMQ",
-    "Xamarin",
-    "Yarn",
-    "Hetzner",
-    "VMware",
-    "Ansible",
-    "Chocolatey",
-    "Make",
-    "NuGet",
-    "Pacman",
-    "Pip",
-    "Terraform",
-    "Oracle",
-    "Blazor",
-    "Roslyn",
-    "React Native",
-    "PHP",
-    "Microsoft Azure",
-    "MariaDB",
-    "Apache Kafka",
-    "Godot",
-    "Maven (build tool)",
-    "F#",
-    "Django",
-    "WordPress",
-    "Pandas",
-    "Clojure",
-    "Snowflake",
-    "Cordova",
-    "DirectX",
-    "OpenCL",
-    "Opencv",
-    "Visual Studio Solution",
-    "Scala",
-    "Presto",
-    "Apache Spark",
-    "Lua",
-    "Nix",
-    "AngularJS",
-    "Perl",
-    "Angular",
-    "Flask",
-    "Keras",
-    "NumPy",
-    "Scikit-Learn",
-    "TensorFlow",
-    "Databricks SQL",
-    "DuckDB",
-    "Databricks",
-    "Elasticsearch",
-    "CodeIgniter",
-    "NestJS",
-    "Cassandra",
-    "FastAPI",
-    "Ruff",
-    "OCaml",
-    "H2",
-    "Oracle Cloud Infrastructure (OCI)",
-    "Spring Boot",
-    "Spring Framework",
-    "Torch/PyTorch",
-    "Gradle",
-    "Neo4J",
-    "PythonAnywhere",
-    "CUDA",
-    "Hugging Face Transformers",
-    "mlflow",
-    "Ruby",
-    "Ruby on Rails",
-    "Vue.js",
-    "pnpm",
-    "Fly.io",
-    "Render",
-    "OpenGL",
-    "Rust",
-    "Fastify",
-    "Tauri",
-    "Bun",
-    "Assembly",
-    "MATLAB",
-    "Unity 3D",
-    "Unreal Engine",
-    "Cosmos DB",
-    "Dart",
-    "Fortran",
-    "Julia",
-    "BigQuery",
-    "Qt",
-    "Ninja",
-    "Crystal",
-    "R",
-    "Tidyverse",
-    "Firebird",
-    "Clickhouse",
-    "Cloud Firestore",
-    "Supabase",
-    "Solid.js",
-    "Electron",
-    "Kotlin",
-    "Managed Hosting",
-    "Laravel",
-    "OpenShift",
-    "Flutter",
-    "Haskell",
-    "Hadoop",
-    "Ada",
-    "Elixir",
-    "Erlang",
-    "Groovy",
-    "Lisp",
-    "Zig",
-    "InfluxDB",
-    "Deno",
-    "Htmx",
-    "Phoenix",
-    "Remix",
-    "Svelte",
-    "Capacitor",
-    "Ionic",
-    "Composer",
-    "APT",
-    "Google Test",
-    "Quarkus",
-    "Ant",
-    "GDScript",
-    "Symfony",
-    "SwiftUI",
-    "IBM DB2",
-    "Drupal",
-    "OVH",
-    "Elm",
-    "Gatsby",
-    "Nuxt.js",
-    "Objective-C",
-    "Swift",
-    "Strapi",
-    "Yii 2",
-    "GTK",
-    "Podman",
-    "Astro",
-    "Ktor",
-    "Dagger",
-    "Prolog",
-    "Solr",
-    "MFC",
-    "Vultr",
-    "EventStoreDB",
-    "RavenDB",
-    "Couch DB",
-    "JAX",
-    "Cockroachdb",
-    "IBM Cloud Or Watson",
-    "Pulumi",
-    "Couchbase",
-    "Cobol",
-    "Puppet",
-    "Linode, now Akamai",
-    "Scaleway",
-    "Play Framework",
-    "Nim",
-    "Apex",
-    "OpenStack",
-    "Solidity",
-    "Colocation",
-    "MicroPython",
-    "Chef",
-    "Alibaba Cloud",
-    "Zephyr",
-    "TiDB",
-    "Datomic",
-  ];
+const SearchProjectPage = () => {
+  const navigate = useNavigate();
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const userType = sessionStorage.getItem("userType");
+
+  const skillList = JSON.parse(sessionStorage.getItem("skill") || "[]").map(
+    (skill) => skill.skillName
+  );
 
   // 필터 상태
-  const [showOnlyRecruiting, setShowOnlyRecruiting] = useState(false);
+  const [showOnlyRecruiting, setShowOnlyRecruiting] = useState(true);
   const [sortOption, setSortOption] = useState("최신순");
   const [categoryFilterOption, setCategoryFilterOption] = useState("직군");
   const [workTypeFilterOption, setWorkTypeFilterOption] = useState("근무 형태");
   const [skillFilterOption, setSkillFilterOption] = useState(skillList);
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+
+    if (!token) {
+      setError("인증 토큰이 없습니다. 로그인 후 이용해주세요.");
+      setLoading(false);
+      return;
+    }
+
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get(API_BASE_URL, {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setProjects(response.data);
+      } catch (error) {
+        console.error("프로젝트 데이터를 불러오는 데 실패했습니다:", error);
+        setError("프로젝트 데이터를 불러오는 데 실패했습니다.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  if (loading) return <div>로딩 중...</div>;
+  if (error) return <div className="error-message">{error}</div>;
 
   const workTypeMapping = { 0: "상주", 1: "원격" };
 
@@ -283,6 +76,8 @@ const SearchProjectPage = () => {
     })
     .sort((a, b) => {
       // 정렬 로직
+      if (sortOption === "매칭 점수 높은순")
+        return b.matchingScore - a.matchingScore;
       if (sortOption === "최신순") return b.projectId - a.projectId;
       if (sortOption === "금액 높은순") return b.budget - a.budget;
       return 0;
@@ -293,7 +88,7 @@ const SearchProjectPage = () => {
     setWorkTypeFilterOption("근무 형태");
     setSkillFilterOption(skillList);
     setSortOption("최신순");
-    setShowOnlyRecruiting(false);
+    setShowOnlyRecruiting(true);
   };
 
   return (
@@ -342,7 +137,11 @@ const SearchProjectPage = () => {
           />
 
           <SingleSelector
-            options={["최신순", "금액 높은순"]}
+            options={
+              userType === "1"
+                ? ["최신순", "금액 높은순"]
+                : ["최신순", "매칭 점수 높은순", "금액 높은순"]
+            }
             onChange={setSortOption}
             value={sortOption}
           />
@@ -352,6 +151,11 @@ const SearchProjectPage = () => {
       {/* 필터링된 프로젝트 리스트 */}
       {filteredProjects.map((project) => (
         <ProjectInfo
+          onClick={() =>
+            navigate("/project-detail", {
+              state: { projectId: project.projectId },
+            })
+          }
           key={project.projectId}
           content={{
             projectName: project.projectName,

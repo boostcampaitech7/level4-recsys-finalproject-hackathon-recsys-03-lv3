@@ -16,6 +16,7 @@ Chart.register(ArcElement, Tooltip, Legend);
 const FreelancerInfo = ({ freelancerInfo, pageType }) => {
   const {
     photo,
+    applied,
     freelancerName,
     workExp,
     workType,
@@ -23,6 +24,7 @@ const FreelancerInfo = ({ freelancerInfo, pageType }) => {
     freelancerContent,
     locationName,
     skillList,
+    skillScoreList,
     feedbackCount,
     feedbackScore,
     expertise,
@@ -31,7 +33,6 @@ const FreelancerInfo = ({ freelancerInfo, pageType }) => {
     communication,
     maintainability,
     matchingScore,
-    applied,
   } = freelancerInfo;
 
   const chartRef = useRef(null); // 차트를 그릴 캔버스 참조
@@ -119,17 +120,22 @@ const FreelancerInfo = ({ freelancerInfo, pageType }) => {
             </div>
           </div>
           <div className="field mb-2">
-            {role} | {workExp} | {workType} | {locationName}
+            {role} | {workExp}년 | {workType === 0 ? "대면" : "원격"} |{" "}
+            {locationName}
           </div>
           <div className="intro">{freelancerContent}</div>
           <div className="skillList d-flex flex-wrap mt-3">
-            {skillList.map(({ skillName, skillScore }, index) => (
-              <FreelancerSkillTag
-                key={index}
-                text={skillName}
-                score={skillScore}
-              />
-            ))}
+            {skillList
+              .map((skillName, index) => ({
+                name: skillName,
+                score: skillScoreList[index],
+              })) // 이름과 점수를 객체로 매핑
+              .sort((a, b) => b.score - a.score) // 점수를 기준으로 내림차순 정렬
+              .slice(0, 7) // 상위 7개만 선택
+              .map(({ name, score }, index) => (
+                <FreelancerSkillTag key={index} text={name} score={score} />
+              ))}
+            {skillList.length > 7 && <span className="more-skills">...</span>}
           </div>
         </div>
 

@@ -11,7 +11,7 @@ class ResourceListResponse(BaseModel):
     price: Optional[int] = None
     workType: int
     role: str
-    freelancerContent: str
+    freelancerContent: Optional[str] = None
     locationName: str
     categoryList: List[str]
     skillList: List[str]

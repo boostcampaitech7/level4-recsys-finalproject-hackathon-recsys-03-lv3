@@ -1,41 +1,94 @@
 @import "colors.css";
 
-/* 이전 버튼 */
-.carousel-control-prev {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
-  height: 40px;
-  width: 40px;
+.similar-project-container {
+  position: relative;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  box-sizing: border-box;
+  min-height: 500px;
 }
 
-/* 다음 버튼 */
+.similar-project-container .section-title {
+  margin-left: 5px;
+}
+
+.carousel-control-prev,
 .carousel-control-next {
   position: absolute;
   top: 50%;
-  transform: translateY(-50%);
   z-index: 10;
   height: 40px;
-  width: 40px;
+  width: 35px;
 }
 
-/* 버튼 아이콘 크기 조정 */
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-  width: 30px;
-  height: 30px;
-  background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
-  border-radius: 50%; /* 둥근 모양 */
+.carousel-control-prev {
+  left: -5px; /* 패딩 기준 왼쪽 정렬 */
 }
 
-/* 버튼 호버 시 효과 */
-.carousel-control-prev-icon:hover,
-.carousel-control-next-icon:hover {
-  background-color: rgba(0, 0, 0, 0.8); /* 더 진한 배경 */
+/* 다음 버튼: 컨테이너의 오른쪽 패딩 위치 */
+.carousel-control-next {
+  right: -5px; /* 패딩 기준 오른쪽 정렬 */
 }
 
-.f-12 {
-  font-size: 12px;
-  font-weight: 700;
+.carousel-control-prev i,
+.carousel-control-next i {
+  font-size: 20px; /* 아이콘 크기 */
+  color: var(--color-secondary); /* 아이콘 색상 */
+}
+
+.carousel-control-prev i:hover,
+.carousel-control-next i:hover {
+  color: black; /* 호버 시 색상 */
+}
+
+.cus-card1 {
+  border-top: 1px solid #e5e5e5;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 20px;
+  margin-top: 10px;
+}
+
+.projects-title {
+  color: black;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.category {
+  font-size: 14px;
+  color: #555555;
+  margin-bottom: 15px;
+}
+
+.project-info {
+  display: flex;
+  flex-direction: column; /* 세로로 정렬 */
+  align-items: flex-start; /* 왼쪽 정렬 */
+  gap: 8px; /* 항목 간 간격 */
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+}
+
+.info-label {
+  min-width: 80px;
+  font-weight: bold;
+  color: #333333;
+}
+
+.budget {
+  color: var(--color-primary);
+  font-weight: bold;
+}
+
+.pointer {
+  cursor: pointer;
+  text-decoration: none;
 }

@@ -49,13 +49,15 @@
   position: absolute;
   top: 100%;
   left: 0;
-  width: 100%;
+  width: auto;
   margin-top: 4px;
   border: 1px solid var(--color-secondary);
   border-radius: 4px;
   background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+  overflow: hidden;
+  overflow-y: auto;
   display: block;
 }
 
@@ -64,6 +66,11 @@
   list-style: none;
   margin: 0;
   padding: 0;
+  max-height: 300px;
+  max-width: 200px;
+  overflow-x: inherit;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-secondary) transparent;
 }
 
 /* 드롭다운 아이템 */
@@ -71,6 +78,8 @@
   padding: 8px 12px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  white-space: normal;
+  hyphens: auto;
 }
 .dropdown-item:hover {
   background-color: #f8f9fa;
@@ -117,6 +126,27 @@
 .divider {
   height: 1px;
   background-color: var(--color-secondary);
-  margin: 8px 0;
+  margin: 4px 0;
   border: none;
+}
+
+/* 검색 바 */
+.search-bar {
+  padding: 4px 8px 8px;
+  border-bottom: 1px solid var(--color-secondary);
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--color-secondary);
+  border-radius: 4px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  border-color: var(--color-point);
+  box-shadow: 0 0 4px var(--color-point);
 }

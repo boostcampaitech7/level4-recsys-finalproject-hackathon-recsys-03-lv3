@@ -1,7 +1,11 @@
+import logging
+import time
+import json
 from typing import List
 
 from fastapi import APIRouter, Depends, Path, HTTPException, Request, BackgroundTasks
 from sqlalchemy.orm import Session
+import concurrent.futures
 
 from api.db import get_db
 from src.schemas.project import ProjectRequest, FeedbackRequest, ProjectListResponse, ProjectFeedbackResponse, SolarResponse, CompanyResponse
@@ -14,6 +18,8 @@ from src.utils.error_messages import ERROR_MESSAGES
 mymony = APIRouter(
     dependencies=[Depends(AuthRequired())]
 )
+executor = concurrent.futures.ThreadPoolExecutor(max_workers=5)
+logger = logging.getLogger(__name__)
 
 
 @mymony.get("/applied-project", response_model=List[ProjectListResponse])
@@ -126,7 +132,15 @@ def create_solar_response(
                             detail=ERROR_MESSAGES["FORBIDDEN"]["message"])
 
     try:
-        return ProjectService.create_solar_response(project_data, db)
+        start_time = time.time()
+        response_data = ProjectService.create_solar_response(project_data, db)
+        end_time = time.time()
+
+        logger.info(f"💫 Solar API 요청 완료 | 소요 시간: {end_time - start_time:.3f}초")
+        logger.info(f"- 요청 데이터: {json.dumps(project_data.model_dump(), ensure_ascii=False)}")
+        logger.info(f"- 응답 데이터: {json.dumps(response_data, ensure_ascii=False)}")
+
+        return response_data
     except HTTPException as e:
         raise e
 
@@ -162,9 +176,10 @@ def create_project(
     try:
         # 1. 프로젝트 등록
         project_id = ProjectService.create_project(user_id, project_data, db)
+        project_data.projectId = project_id
 
         # 2. 매칭정보 추론 및 저장 (비동기 실행)
-        background_tasks.add_task(ProjectService.create_project_matching, project_id, db)
+        background_tasks.add_task(ProjectService.create_project_matching, project_data, user_id, db)
 
         return project_id
     except HTTPException as e:
