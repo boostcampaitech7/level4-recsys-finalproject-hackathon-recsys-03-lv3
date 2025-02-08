@@ -18,7 +18,27 @@ const SearchFreelancer = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const roleList = ["백엔드 개발자", "프론트엔드 개발자", "풀스택 개발자"];
+  const userType = sessionStorage.getItem("userType");
+
+  const roleList = [
+    "풀스택 개발자",
+    "백엔드 개발자",
+    "프론트엔드 개발자",
+    "모바일 개발자",
+    "임베디드 개발자",
+    "데스크톱/엔터프라이즈 개발자",
+    "QA/테스트 개발자",
+    "AI 개발자",
+    "게임/그래픽 개발자",
+    "데이터 엔지니어",
+    "데이터 분석가",
+    "데이터 사이언티스트/ML 전문가",
+    "클라우드 엔지니어",
+    "DevOps 엔지니어",
+    "디자이너",
+    "블록체인 엔지니어",
+    "DB 관리자",
+  ];
   const skillList = JSON.parse(sessionStorage.getItem("skill") || "[]").map(
     (skill) => skill.skillName
   );
@@ -96,6 +116,8 @@ const SearchFreelancer = () => {
       // 정렬 로직
       if (sortOption === "피드백 점수 높은순")
         return b.feedbackScore - a.feedbackScore;
+      if (sortOption === "매칭 점수 높은순")
+        return b.matchingScore - a.matchingScore;
       if (sortOption === "최신순") return b.freelancerId - a.freelancerId;
       return 0;
     });
@@ -107,9 +129,6 @@ const SearchFreelancer = () => {
     setSortOption("피드백 점수 높은순");
   };
 
-  // console.log(filteredFreelancers);
-  // console.log(freelancers);
-
   return (
     <div className="search-freelancer-container">
       <div className="header-container">
@@ -120,7 +139,7 @@ const SearchFreelancer = () => {
         <div className="filter-group-left">
           {/* 직군 필터 */}
           <MultiSelector
-            title="직군/직무"
+            title="직무"
             options={roleList}
             onChange={setFilterRoles}
             value={filterRoles}
@@ -152,7 +171,11 @@ const SearchFreelancer = () => {
         <div className="filter-group-right">
           <SingleSelector
             title="정렬 기준"
-            options={["최신순", "피드백 점수 높은순"]}
+            options={
+              userType === "1"
+                ? ["최신순", "매칭 점수 높은순", "피드백 점수 높은순"]
+                : ["최신순", "피드백 점수 높은순"]
+            }
             onChange={setSortOption}
             value={sortOption}
           />
