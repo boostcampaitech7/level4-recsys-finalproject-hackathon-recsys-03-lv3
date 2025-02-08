@@ -166,6 +166,7 @@ dist
 
 ### BE
 backend/model/
+backend/hrmony.log
 
 ### ML
 model_training/output/

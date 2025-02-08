@@ -5,15 +5,16 @@ from src.utils.utils import parse_json_to_list
 
 
 class ProjectRequest(BaseModel):
-    projectName: Optional[str] = None
     duration: int
     budget: int
     workType: int
     contractType: int
     priority: int
     projectContent: str
+    projectId: Optional[int] = None
+    projectName: Optional[str] = None
     categoryId: Optional[int] = None
-    skillList: Optional[List[int]] = None
+    skillList: Optional[List[int]] = []
 
 
 class FeedbackRequest(BaseModel):
