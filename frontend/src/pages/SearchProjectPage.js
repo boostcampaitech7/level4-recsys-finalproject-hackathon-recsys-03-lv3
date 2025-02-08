@@ -78,7 +78,7 @@ const SearchProjectPage = () => {
       // 정렬 로직
       if (sortOption === "매칭 점수 높은순")
         return b.matchingScore - a.matchingScore;
-      if (sortOption === "최신순") return b.projectId - a.projectId;
+      if (sortOption === "최신순") return b.registerDate - a.registerDate;
       if (sortOption === "금액 높은순") return b.budget - a.budget;
       return 0;
     });

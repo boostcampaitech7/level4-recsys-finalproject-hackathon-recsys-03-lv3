@@ -46,7 +46,7 @@ const SearchFreelancer = () => {
   const [filterRoles, setFilterRoles] = useState(roleList);
   const [filterWorkType, setFilterWorkType] = useState("근무 형태");
   const [filterSkillList, setFilterSkillList] = useState(skillList);
-  const [sortOption, setSortOption] = useState("피드백 점수 높은순");
+  const [sortOption, setSortOption] = useState("기본 정렬순");
 
   // 프리랜서를 클릭하면 freelancerId만 전달
   const handleFreelancerClick = (freelancerId) => {
@@ -116,9 +116,6 @@ const SearchFreelancer = () => {
       // 정렬 로직
       if (sortOption === "피드백 점수 높은순")
         return b.feedbackScore - a.feedbackScore;
-      if (sortOption === "매칭 점수 높은순")
-        return b.matchingScore - a.matchingScore;
-      if (sortOption === "최신순") return b.freelancerId - a.freelancerId;
       return 0;
     });
 
@@ -126,7 +123,7 @@ const SearchFreelancer = () => {
     setFilterRoles(roleList);
     setFilterWorkType("근무 형태");
     setFilterSkillList(skillList);
-    setSortOption("피드백 점수 높은순");
+    setSortOption("기본 정렬순");
   };
 
   return (
@@ -171,11 +168,7 @@ const SearchFreelancer = () => {
         <div className="filter-group-right">
           <SingleSelector
             title="정렬 기준"
-            options={
-              userType === "1"
-                ? ["최신순", "매칭 점수 높은순", "피드백 점수 높은순"]
-                : ["최신순", "피드백 점수 높은순"]
-            }
+            options={["기본 정렬순", "피드백 점수 높은순"]}
             onChange={setSortOption}
             value={sortOption}
           />
