@@ -22,14 +22,7 @@ const handleLogout = () => {
 };
 
 const App = () => {
-  const [skillList, setSkillList] = useState([]);
-  const [categoryList, setCategoryList] = useState([]);
-  const [locationList, setLocationList] = useState([]);
   const [message, setMessage] = useState("");
-  const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/filter`;
-  const headers = {
-    Accept: "application/json",
-  };
 
   useEffect(() => {
     checkTokenExpiration();
@@ -41,30 +34,6 @@ const App = () => {
       .then((data) => setMessage(data.message));
     //.catch((error) => console.error("Error fetching data:", error));
   }, []);
-
-  useEffect(() => {
-    const fetchFilterData = async () => {
-      try {
-        const [skillRes, categoryRes, locationRes] = await Promise.all([
-          axios.get(`${API_BASE_URL}/skill`, { headers }),
-          axios.get(`${API_BASE_URL}/category`, { headers }),
-          axios.get(`${API_BASE_URL}/location`, { headers }),
-        ]);
-
-        setSkillList(JSON.stringify(skillRes.data));
-        setCategoryList(JSON.stringify(categoryRes.data));
-        setLocationList(JSON.stringify(locationRes.data));
-      } catch (error) {
-        console.error("필터 불러오기 실패: ", error);
-      }
-    };
-
-    fetchFilterData();
-  }, []);
-
-  sessionStorage.setItem("skill", skillList);
-  sessionStorage.setItem("category", categoryList);
-  sessionStorage.setItem("location", locationList);
 
   return (
     <div>
