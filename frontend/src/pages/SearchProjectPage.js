@@ -179,7 +179,7 @@ const SearchProjectPage = () => {
             status: project.status,
             matchingScore: project.matchingScore,
           }}
-          showMatchingScore={true}
+          showMatchingScore={userType === "0" ? true : false}
           onClick={() =>
             navigate("/project-detail", {
               state: { projectId: project.projectId },
