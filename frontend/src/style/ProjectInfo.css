@@ -11,13 +11,14 @@
 }
 
 /* 전체 레이아웃 컨테이너 */
-.project-container {
+.project-section {
   justify-content: space-between;
   align-items: center;
   width: 100%;
   min-height: 250px;
-  padding: 10px; /* 여백 추가 */
   box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
 }
 
 /* 상태 아이콘 영역 (모집 상태 등 표시) */
@@ -30,7 +31,7 @@
 /* 프로젝트 제목 */
 .project-title {
   color: black;
-  font-size: 22px;
+  font-size: 21px;
   font-weight: bold;
   margin-bottom: 10px;
 }

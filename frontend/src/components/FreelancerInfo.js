@@ -39,8 +39,8 @@ const FreelancerInfo = ({ freelancerInfo, pageType }) => {
 
   // 매칭 점수에 따라 색상 반환
   const getScoreColor = (score) => {
-    if (score >= 80) return "#18bc9c"; // 초록색
-    if (score >= 50) return "#ffcd29"; // 노란색
+    if (score >= 70) return "#18bc9c"; // 초록색
+    if (score >= 40) return "#ffcd29"; // 노란색
     return "#f27233"; // 빨간색
   };
 
