@@ -4,6 +4,7 @@ import axios from "axios";
 import SwitchButton from "../components/SwitchButton";
 import SingleSelector from "../components/SingleSelector";
 import ProjectInfo from "../components/ProjectInfo";
+import Loading from "../components/Loading";
 import "../style/AppliedProjectPage.css";
 
 const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/mymony/applied-project`;
@@ -17,8 +18,8 @@ const AppliedProjectPage = () => {
   const [error, setError] = useState(null);
 
   const [sortOption, setSortOption] = useState("최신순");
-  const [filterOption, setFilterOption] = useState("전체");
-  const [showOnlyNotMatched, setShowOnlyUnreviewed] = useState(false);
+  const [filterOption, setFilterOption] = useState("근무 형태");
+  const [showOnlyNotMatched, setShowOnlyNotMatched] = useState(false);
   const [displayedProjects, setDisplayedProjects] = useState([]);
 
   useEffect(() => {
@@ -41,9 +42,18 @@ const AppliedProjectPage = () => {
 
         // 기존 프로젝트와 전달된 새 프로젝트를 함께 설정
         const newProject = location.state?.newProject;
-        const updatedProjects = newProject
-          ? [...response.data, newProject]
-          : response.data;
+
+        // 중복 방지: 기존 데이터에 이미 newProject가 포함되어 있는지 확인
+        const isDuplicate = newProject
+          ? response.data.some(
+              (project) => project.projectId === newProject.projectId
+            )
+          : false;
+
+        const updatedProjects =
+          newProject && !isDuplicate
+            ? [...response.data, newProject]
+            : response.data;
 
         setProjects(updatedProjects);
 
@@ -52,20 +62,18 @@ const AppliedProjectPage = () => {
           navigate("/applied", { replace: true, state: {} });
         }
       } catch (err) {
-        console.error("기업 데이터를 불러오는 데 실패했습니다:", err);
-        setError("기업 데이터를 불러오는 데 실패했습니다.");
+        return [];
       } finally {
         setLoading(false);
       }
     };
 
     fetchProjects();
-  }, [freelancerId]);
+  }, []);
 
   // 필터링 & 정렬 기능 적용
   useEffect(() => {
     let updatedProjects = [...projects];
-
     // 매칭 전 프로젝트만 보기 기능 적용
     if (showOnlyNotMatched) {
       updatedProjects = updatedProjects.filter(
@@ -73,11 +81,9 @@ const AppliedProjectPage = () => {
       );
     }
 
-    // 필터링 적용 (근무 형태: 전체 / 상주(0) / 원격(1))
-    if (filterOption !== "전체") {
-      const mappedValue = Number(filterOption); // "0" → 0, "1" → 1 변환
+    if (filterOption !== "근무 형태") {
       updatedProjects = updatedProjects.filter(
-        (project) => project.workType === mappedValue
+        (project) => (project.workType === 0 ? "대면" : "원격") === filterOption
       );
     }
 
@@ -95,10 +101,31 @@ const AppliedProjectPage = () => {
     }
 
     setDisplayedProjects([...updatedProjects]);
-  }, [sortOption, filterOption, showOnlyNotMatched, projects]); // 옵션(정렬/필터/스위치) 변경 시 실행
+  }, [JSON.stringify(projects), sortOption, filterOption, showOnlyNotMatched]); // 옵션(정렬/필터/스위치) 변경 시 실행
 
-  if (loading) return <div>로딩 중...</div>;
-  if (error) return <div className="error-message">{error}</div>;
+  if (loading) return <Loading />;
+  if (error) {
+    return (
+      <div className="no-projects-container">
+        <p className="error-message">{error}</p>
+        {error === "신청한 프로젝트가 없습니다." && (
+          <>
+            <p>
+              자신에게 맞는 프로젝트를 찾아보세요 !<br></br>
+              <i class="fa-solid fa-arrow-down mt-3"></i>
+            </p>
+
+            <button
+              className="search-project-button"
+              onClick={() => navigate("/search-project")}
+            >
+              프로젝트 찾기
+            </button>
+          </>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="applied-project-page-container">
@@ -111,19 +138,17 @@ const AppliedProjectPage = () => {
           {/* 필터용 SingleSelector */}
           <SingleSelector
             title="근무 형태"
-            options={["전체", "상주", "원격"]}
-            onChange={(value) => {
-              const mapping = { 전체: "전체", 상주: "0", 원격: "1" }; // 숫자가 아닌 문자열로 저장
-              setFilterOption(mapping[value]);
-            }}
+            options={["근무 형태", "대면", "원격"]}
+            onChange={setFilterOption}
+            value={filterOption}
           />
         </div>
 
         <div className="filter-group-right">
-          {/* SwitchButton을 클릭하면 setShowOnlyUnreviewed 값 변경 */}
+          {/* SwitchButton을 클릭하면 setShowOnlyNotMatched 값 변경 */}
           <SwitchButton
-            text="매칭 전 프로젝트만 표시"
-            onChange={setShowOnlyUnreviewed}
+            text="모집 중인 프로젝트만 표시"
+            onChange={setShowOnlyNotMatched}
           />
 
           {/* 정렬용 SingleSelector */}
@@ -146,17 +171,17 @@ const AppliedProjectPage = () => {
             key={project.projectId}
             content={{
               projectName: project.projectName,
+              duration: project.duration,
+              budget: project.budget,
+              workType: project.workType,
               skillNameList: project.skillNameList,
               locationName: project.locationName,
               registerDate: project.registerDate,
-              duration: project.duration,
-              budget: project.budget,
               categoryRole: "개발",
               categoryName: project.categoryName,
               status: project.status,
             }}
           />
-          //<ProjectInfo key={project.projectName} content={project} />
         ))}
       </div>
     </div>

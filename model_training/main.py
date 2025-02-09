@@ -103,11 +103,15 @@ if __name__ == "__main__":
 
     set_seed(args.seed)
 
-    # Recbole
+    # Recbole 실행
     if args.type:
         if args.data:
             load_data(data_path=args.data_path)
-            preprocess_data(data_path=args.data_path, n_components=args.n_components, embed=args.embed, similarity=args.similarity)
+            preprocess_data(data_path=args.data_path,
+                            output_path=args.output_path,
+                            n_components=args.n_components,
+                            embed=args.embed,
+                            similarity=args.similarity)
 
         model_type = {"g": "general_recommender", "s": "sequential_recommender", "c": "context_aware_recommender"}
         recbole_model = importlib.import_module("recbole.model." + model_type.get(args.type))

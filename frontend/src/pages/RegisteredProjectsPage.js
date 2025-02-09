@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ProjectInfo from "../components/ProjectInfo";
-import { useNavigate } from "react-router-dom";
+import Loading from "../components/Loading";
 
 const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/mymony/prestart-project`;
 
@@ -50,12 +51,20 @@ const RegisteredProjects = () => {
     navigate("/register-input");
   };
 
-  const handleProjectClick = (projectId, projectName) => {
-    navigate(`/recommend-freelancer/${projectId}`, { state: { projectName } });
+  const handleProjectClick = (projectId, projectName, status) => {
+    navigate(`/recommend-freelancer/${projectId}`, {
+      state: { projectName, status },
+    });
   };
 
-  if (loading) return <div>로딩 중...</div>;
-  if (error) return <div className="error-message">{error}</div>;
+  if (loading) return <Loading />;
+  if (error) {
+    return (
+      <div className="no-projects-container">
+        <p className="error-message">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="registered-project-container">
@@ -70,30 +79,38 @@ const RegisteredProjects = () => {
           </button>
         </div>
       </div>
-      {projects.map((project) => (
-        <div
-          key={project.projectId}
-          onClick={() =>
-            handleProjectClick(project.projectId, project.projectName)
-          }
-          style={{ cursor: "pointer" }}
-        >
-          <ProjectInfo
+      {projects.length > 0 ? (
+        projects.map((project) => (
+          <div
             key={project.projectId}
-            content={{
-              projectName: project.projectName,
-              skillNameList: project.skillNameList,
-              locationName: project.locationName,
-              registerDate: project.registerDate,
-              duration: project.duration,
-              budget: project.budget,
-              categoryRole: "개발",
-              categoryName: project.categoryName,
-              status: project.status,
-            }}
-          />
-        </div>
-      ))}
+            onClick={() =>
+              handleProjectClick(
+                project.projectId,
+                project.projectName,
+                project.status
+              )
+            }
+            style={{ cursor: "pointer" }}
+          >
+            <ProjectInfo
+              key={project.projectId}
+              content={{
+                projectName: project.projectName,
+                skillNameList: project.skillNameList,
+                locationName: project.locationName,
+                registerDate: project.registerDate,
+                duration: project.duration,
+                budget: project.budget,
+                categoryRole: "개발",
+                categoryName: project.categoryName,
+                status: project.status,
+              }}
+            />
+          </div>
+        ))
+      ) : (
+        <p className="error-message mt-5 p-3">등록한 프로젝트가 없습니다.</p>
+      )}
     </div>
   );
 };

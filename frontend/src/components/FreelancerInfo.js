@@ -10,13 +10,13 @@ import {
   Legend,
 } from "chart.js";
 import "../style/FreelancerInfo.css";
+import SingleStarRating from "./SingleStarRating";
 
 Chart.register(ArcElement, Tooltip, Legend);
 
 const FreelancerInfo = ({ freelancerInfo, pageType }) => {
   const {
-    photo,
-    applied,
+    freelancerId,
     freelancerName,
     workExp,
     workType,
@@ -39,8 +39,8 @@ const FreelancerInfo = ({ freelancerInfo, pageType }) => {
 
   // 매칭 점수에 따라 색상 반환
   const getScoreColor = (score) => {
-    if (score >= 80) return "#18bc9c"; // 초록색
-    if (score >= 50) return "#ffcd29"; // 노란색
+    if (score >= 70) return "#18bc9c"; // 초록색
+    if (score >= 40) return "#ffcd29"; // 노란색
     return "#f27233"; // 빨간색
   };
 
@@ -85,11 +85,12 @@ const FreelancerInfo = ({ freelancerInfo, pageType }) => {
         {pageType === "search" && (
           <div className="search-photo p-3 me-5">
             <ProfileIcon
-              profileImage={photo}
+              userId={freelancerId}
               style={{ width: "130px", height: "130px" }}
             />
           </div>
         )}
+
         {/* 프로필 사진 - Recommend */}
         {pageType === "recommend" && (
           <div className="matching-score-container p-3 me-5">
@@ -98,7 +99,7 @@ const FreelancerInfo = ({ freelancerInfo, pageType }) => {
               <canvas ref={chartRef} width={100} height={100}></canvas>
               <div className="profile-icon-recommend">
                 <ProfileIcon
-                  profileImage={photo}
+                  userId={freelancerId}
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
               </div>
@@ -114,9 +115,10 @@ const FreelancerInfo = ({ freelancerInfo, pageType }) => {
           <div className="d-flex justify-content-between align-items-center">
             <h5 className="fw-bold mb-1">{freelancerName}</h5>
             <div className="feedback-score d-flex align-items-center">
-              <span className="text-warning me-">★</span>
-              <span className="fw-bold">{feedbackScore.toFixed(1)}</span>
-              <span className="text-muted ms-1">({feedbackCount})</span>
+              <SingleStarRating
+                score={feedbackScore}
+                reviewCount={feedbackCount}
+              ></SingleStarRating>
             </div>
           </div>
           <div className="field mb-2">

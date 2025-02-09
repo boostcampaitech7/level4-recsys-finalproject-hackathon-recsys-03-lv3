@@ -58,3 +58,30 @@
   max-width: 1000px;
   position: relative;
 }
+
+.no-projects-container {
+  text-align: center;
+  margin-top: 260px;
+  height: 90vh;
+}
+
+.error-message {
+  font-size: 18px;
+  font-weight: 500;
+  color: red;
+  margin-bottom: 20px;
+}
+
+.search-project-button {
+  background-color: var(--color-primary);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.search-project-button:hover {
+  background-color: var(--color-hover);
+}

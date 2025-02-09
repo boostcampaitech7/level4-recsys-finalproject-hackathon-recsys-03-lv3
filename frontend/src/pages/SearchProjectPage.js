@@ -5,6 +5,7 @@ import ProjectInfo from "../components/ProjectInfo";
 import SingleSelector from "../components/SingleSelector";
 import MultiSelector from "../components/MultiSelector";
 import SwitchButton from "../components/SwitchButton";
+import Loading from "../components/Loading";
 import "../style/SearchPages.css";
 
 const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/project`;
@@ -24,7 +25,7 @@ const SearchProjectPage = () => {
   // 필터 상태
   const [showOnlyRecruiting, setShowOnlyRecruiting] = useState(true);
   const [sortOption, setSortOption] = useState("최신순");
-  const [categoryFilterOption, setCategoryFilterOption] = useState("직군");
+  const [categoryFilterOption, setCategoryFilterOption] = useState("산업 분야");
   const [workTypeFilterOption, setWorkTypeFilterOption] = useState("근무 형태");
   const [skillFilterOption, setSkillFilterOption] = useState(skillList);
 
@@ -46,6 +47,8 @@ const SearchProjectPage = () => {
           },
         });
         setProjects(response.data);
+
+        console.log(response.data);
       } catch (error) {
         console.error("프로젝트 데이터를 불러오는 데 실패했습니다:", error);
         setError("프로젝트 데이터를 불러오는 데 실패했습니다.");
@@ -57,10 +60,16 @@ const SearchProjectPage = () => {
     fetchProjects();
   }, []);
 
-  if (loading) return <div>로딩 중...</div>;
-  if (error) return <div className="error-message">{error}</div>;
+  if (loading) return <Loading />;
+  if (error) {
+    return (
+      <div className="no-projects-container">
+        <p className="error-message">{error}</p>
+      </div>
+    );
+  }
 
-  const workTypeMapping = { 0: "상주", 1: "원격" };
+  const workTypeMapping = { 0: "대면", 1: "원격" };
 
   // 필터링 로직
   const filteredProjects = projects
@@ -69,7 +78,7 @@ const SearchProjectPage = () => {
         (!showOnlyRecruiting || project.status === 0) &&
         (workTypeFilterOption === "근무 형태" ||
           workTypeMapping[project.workType] === workTypeFilterOption) &&
-        (categoryFilterOption === "직군" ||
+        (categoryFilterOption === "산업 분야" ||
           project.categoryName === categoryFilterOption) &&
         project.skillNameList.some((skill) => skillFilterOption.includes(skill))
       );
@@ -78,13 +87,13 @@ const SearchProjectPage = () => {
       // 정렬 로직
       if (sortOption === "매칭 점수 높은순")
         return b.matchingScore - a.matchingScore;
-      if (sortOption === "최신순") return b.projectId - a.projectId;
+      if (sortOption === "최신순") return b.registerDate - a.registerDate;
       if (sortOption === "금액 높은순") return b.budget - a.budget;
       return 0;
     });
 
   const resetFilters = () => {
-    setCategoryFilterOption("직군");
+    setCategoryFilterOption("산업 분야");
     setWorkTypeFilterOption("근무 형태");
     setSkillFilterOption(skillList);
     setSortOption("최신순");
@@ -102,7 +111,6 @@ const SearchProjectPage = () => {
         <div className="filter-group-left">
           <SingleSelector
             options={[
-              "직군",
               "소프트웨어/IT",
               "금융",
               "소매/소비자",
@@ -116,6 +124,12 @@ const SearchProjectPage = () => {
             ]}
             onChange={setCategoryFilterOption}
             value={categoryFilterOption}
+          />
+          <SingleSelector
+            title="근무 형태"
+            options={["근무 형태", "대면", "원격"]}
+            onChange={setWorkTypeFilterOption}
+            value={workTypeFilterOption}
           />
           <MultiSelector
             title="스킬"
@@ -151,23 +165,26 @@ const SearchProjectPage = () => {
       {/* 필터링된 프로젝트 리스트 */}
       {filteredProjects.map((project) => (
         <ProjectInfo
+          key={project.projectId}
+          content={{
+            projectName: project.projectName,
+            duration: project.duration,
+            budget: project.budget,
+            workType: project.workType,
+            skillNameList: project.skillNameList,
+            locationName: project.locationName,
+            registerDate: project.registerDate,
+            categoryRole: "개발",
+            categoryName: project.categoryName,
+            status: project.status,
+            matchingScore: project.matchingScore,
+          }}
+          showMatchingScore={userType === "0" ? true : false}
           onClick={() =>
             navigate("/project-detail", {
               state: { projectId: project.projectId },
             })
           }
-          key={project.projectId}
-          content={{
-            projectName: project.projectName,
-            skillNameList: project.skillNameList,
-            locationName: project.locationName,
-            registerDate: project.registerDate,
-            duration: project.duration,
-            budget: project.budget,
-            categoryRole: "개발",
-            categoryName: project.categoryName,
-            status: project.status,
-          }}
         />
       ))}
     </div>

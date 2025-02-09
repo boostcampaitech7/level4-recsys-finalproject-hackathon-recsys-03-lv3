@@ -24,12 +24,14 @@ class CatBoostTrainer:
         return train_data, test_data
 
     def prepare_data(self, train_data, test_data):
-        """Train/Test 데이터에서 Feature와 Target을 분리 (Categorical Features 제외)"""
+        """Train/Test 데이터에서 Feature와 Target을 분리"""
         numerical_features = self.config.data_params["numerical_features"]
         categorical_features = self.config.data_params["categorical_features"]
         target_column = self.config.data_params["target_column"]
+        text_embedding_features = [col for col in train_data.columns if col.startswith("project_content_")]
+        features = numerical_features + categorical_features + text_embedding_features
 
-        features = numerical_features + categorical_features
+        print(f"📌 사용되는 Feature 목록: {len(features)}개 → {features}")
 
         X_train = train_data[features]
         y_train = train_data[target_column]

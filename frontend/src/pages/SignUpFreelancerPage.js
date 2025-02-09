@@ -285,7 +285,7 @@ const SignUpFreelancer = () => {
                 }}
               />
               <MultiSelector
-                title="보유 스킬"
+                title="스킬"
                 options={skillOptions}
                 value={formData.skillList.map((id) =>
                   Object.keys(skillIdMap).find((key) => skillIdMap[key] === id)

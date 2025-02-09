@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/main_logo.png";
-import photo from "../assets/profile_example1.jpg";
 import ProfileIcon from "./ProfileIcon";
 import "../style/Topbar.css";
 
@@ -99,7 +98,6 @@ const Topbar = () => {
 
       {/* 메뉴 영역 */}
       <ul className="nav-menu">
-        {/* Search Dropdown for Mobile */}
         <li>
           <button
             className="nav-link-btn"
@@ -116,6 +114,7 @@ const Topbar = () => {
             프로젝트 찾기
           </button>
         </li>
+
         {/* userType에 따라 프로젝트 관리 버튼 */}
         {userType === "1" ? (
           <li className="nav-item dropdown">
@@ -166,7 +165,7 @@ const Topbar = () => {
               onClick={() => toggleDropdown("freelancer")} // 클릭 시 토글
             >
               <ProfileIcon
-                profileImage={photo}
+                userId={userId}
                 style={{ width: "35px", height: "35px", margin: "0" }}
               />
             </button>

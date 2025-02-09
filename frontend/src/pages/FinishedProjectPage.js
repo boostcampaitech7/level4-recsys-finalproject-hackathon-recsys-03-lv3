@@ -3,7 +3,8 @@ import { Box, Modal } from "@mui/material";
 import axios from "axios";
 import SwitchButton from "../components/SwitchButton";
 import SingleSelector from "../components/SingleSelector";
-import FinishedProjectContent from "../components/FinishedProjectContent";
+import FinishedProjectInfo from "../components/FinishedProjectInfo";
+import Loading from "../components/Loading";
 import ProjectFeedback from "./ProjectFeedback";
 import "../style/FinishedProjectPage.css";
 
@@ -14,7 +15,7 @@ const FinishedProjectPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sortOption, setSortOption] = useState("최신순");
-  const [filterOption, setFilterOption] = useState("전체");
+  const [filterOption, setFilterOption] = useState("근무 형태");
   const [showOnlyUnreviewed, setShowOnlyUnreviewed] = useState(false);
   const [displayedProjects, setDisplayedProjects] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -63,11 +64,9 @@ const FinishedProjectPage = () => {
       );
     }
 
-    // 필터링 적용 (근무 형태: 전체 / 상주(0) / 원격(1))
-    if (filterOption !== "전체") {
-      const mappedValue = Number(filterOption); // "0" → 0, "1" → 1 변환
+    if (filterOption !== "근무 형태") {
       updatedProjects = updatedProjects.filter(
-        (project) => project.workType === mappedValue
+        (project) => (project.workType === 0 ? "대면" : "원격") === filterOption
       );
     }
 
@@ -127,7 +126,7 @@ const FinishedProjectPage = () => {
                   feedbackData.punctuality +
                   feedbackData.maintainability +
                   feedbackData.communication) /
-                5, // ✅ 평균 점수 계산
+                5, // 평균 점수 계산
             }
           : project
       )
@@ -150,7 +149,24 @@ const FinishedProjectPage = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        setProjects(response.data);
+
+        const processedProjects = response.data.map((project) => {
+          const feedbackContent =
+            project.feedbackContent
+              ?.replace(/\\n/g, "\n") // JSON 이스케이프된 줄바꿈 처리
+              .split("\n") // 줄바꿈 기준으로 나누기
+              .map((line) => line.trim()) // 각 줄 공백 제거
+              .filter((line) => line) // 빈 줄 제거
+              .join("\n") // 다시 줄바꿈으로 합치기
+              .trimEnd() || ""; // 마지막 줄의 공백 제거
+
+          return {
+            ...project,
+            feedbackContent,
+          };
+        });
+
+        setProjects(processedProjects);
       } catch (error) {
         console.error("프로젝트 데이터를 불러오는 데 실패했습니다:", error);
         setError(
@@ -164,7 +180,14 @@ const FinishedProjectPage = () => {
     fetchProjects();
   }, []);
 
-  if (loading) return <div>로딩 중...</div>;
+  if (loading) return <Loading />;
+  if (error) {
+    return (
+      <div className="no-projects-container">
+        <p className="error-message">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="finished-project-page-container">
@@ -177,11 +200,9 @@ const FinishedProjectPage = () => {
           {/* 필터용 SingleSelector */}
           <SingleSelector
             title="근무 형태"
-            options={["전체", "상주", "원격"]}
-            onChange={(value) => {
-              const mapping = { 전체: "전체", 상주: "0", 원격: "1" }; // 숫자가 아닌 문자열로 저장
-              setFilterOption(mapping[value]);
-            }}
+            options={["근무 형태", "대면", "원격"]}
+            onChange={setFilterOption}
+            value={filterOption}
           />
         </div>
         <div className="filter-group-right">
@@ -202,7 +223,7 @@ const FinishedProjectPage = () => {
 
       {/* 필터링 + 정렬된 프로젝트 리스트 */}
       {displayedProjects.map((project) => (
-        <FinishedProjectContent
+        <FinishedProjectInfo
           key={project.projectId}
           content={project}
           onReview={() => handleReview(project)}

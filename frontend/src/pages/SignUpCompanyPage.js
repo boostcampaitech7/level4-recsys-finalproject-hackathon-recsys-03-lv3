@@ -20,7 +20,7 @@ const SignUpCompany = () => {
   const [error, setError] = useState(null);
   const [locationOptions, setLocationOptions] = useState([]);
   const [locationIdMap, setLocationIdMap] = useState();
-  const [selectedLocation, setSelectedLocation] = useState("거주 지역");
+  const [selectedLocation, setSelectedLocation] = useState("기업 위치");
 
   // API에서 거주 지역 데이터 불러오기
   useEffect(() => {
@@ -149,7 +149,6 @@ const SignUpCompany = () => {
               className="signup-company-selector"
             />
           </div>
-
           <button type="submit" className="signup-button">
             회원가입 완료
           </button>

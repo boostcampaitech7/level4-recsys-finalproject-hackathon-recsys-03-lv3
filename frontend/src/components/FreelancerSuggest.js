@@ -67,6 +67,7 @@ const FreelancerSuggest = ({ isOpen, onClose, projectList }) => {
             </div>
           </div>
         ))}
+
         {/* 제안하기 버튼 */}
         <div className="popup-actions">
           <button className="btnclose" onClick={onClose}>
