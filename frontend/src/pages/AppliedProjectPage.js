@@ -42,9 +42,18 @@ const AppliedProjectPage = () => {
 
         // 기존 프로젝트와 전달된 새 프로젝트를 함께 설정
         const newProject = location.state?.newProject;
-        const updatedProjects = newProject
-          ? [...response.data, newProject]
-          : response.data;
+
+        // 중복 방지: 기존 데이터에 이미 newProject가 포함되어 있는지 확인
+        const isDuplicate = newProject
+          ? response.data.some(
+              (project) => project.projectId === newProject.projectId
+            )
+          : false;
+
+        const updatedProjects =
+          newProject && !isDuplicate
+            ? [...response.data, newProject]
+            : response.data;
 
         setProjects(updatedProjects);
 
@@ -53,8 +62,7 @@ const AppliedProjectPage = () => {
           navigate("/applied", { replace: true, state: {} });
         }
       } catch (err) {
-        console.error("기업 데이터를 불러오는 데 실패했습니다:", err);
-        setError("신청한 프로젝트가 없습니다.");
+        return [];
       } finally {
         setLoading(false);
       }
@@ -93,7 +101,7 @@ const AppliedProjectPage = () => {
     }
 
     setDisplayedProjects([...updatedProjects]);
-  }, [sortOption, filterOption, showOnlyNotMatched, projects]); // 옵션(정렬/필터/스위치) 변경 시 실행
+  }, [JSON.stringify(projects), sortOption, filterOption, showOnlyNotMatched]); // 옵션(정렬/필터/스위치) 변경 시 실행
 
   if (loading) return <Loading />;
   if (error) {
