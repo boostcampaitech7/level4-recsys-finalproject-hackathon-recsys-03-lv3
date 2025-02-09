@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import FreelancerInfo from "../components/FreelancerInfo";
 import MultiSelector from "../components/MultiSelector";
@@ -13,11 +13,13 @@ const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/mymony/prestart-proj
 const RecommendFreelancer = () => {
   const { projectId } = useParams(); // URL에서 projectId를 가져옴
   const location = useLocation();
-  const { projectName } = location.state || {};
+  const { projectName, status } = location.state || {};
 
   const [freelancers, setFreelancers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
 
   const roleList = [
     "풀스택 개발자",
@@ -69,8 +71,7 @@ const RecommendFreelancer = () => {
         });
         setFreelancers(response.data);
       } catch (error) {
-        console.error("프리랜서 데이터를 불러오는 데 실패했습니다:", error);
-        setError("프리랜서 데이터를 불러오는 데 실패했습니다.");
+        return [];
       } finally {
         setLoading(false);
       }
@@ -78,6 +79,10 @@ const RecommendFreelancer = () => {
 
     fetchFreelancers();
   }, []);
+
+  const handleFreelancerClick = (freelancerId) => {
+    navigate("/freelancer-detail", { state: { freelancerId, status } });
+  };
 
   if (loading) return <Loading />;
   if (error) {
@@ -191,11 +196,17 @@ const RecommendFreelancer = () => {
 
       <div className="freelancers">
         {filteredFreelancers.map((freelancer) => (
-          <FreelancerInfo
+          <div
             key={freelancer.freelancerId}
-            freelancerInfo={freelancer}
-            pageType="recommend"
-          />
+            onClick={() => handleFreelancerClick(freelancer.freelancerId)}
+            style={{ cursor: "pointer" }}
+          >
+            <FreelancerInfo
+              key={freelancer.freelancerId}
+              freelancerInfo={freelancer}
+              pageType="recommend"
+            />
+          </div>
         ))}
       </div>
     </div>

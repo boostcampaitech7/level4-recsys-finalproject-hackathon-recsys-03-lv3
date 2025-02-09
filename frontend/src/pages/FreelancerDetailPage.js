@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ProfileIcon from "../components/ProfileIcon";
-import "../style/FreelancerDetailPage.css";
 import FreelancerSuggest from "../components/FreelancerSuggest";
 import RadarChart from "../components/RadarChart";
 import FreelancerSkillTag from "../components/FreelancerSkillTag";
@@ -10,6 +9,7 @@ import DoughnutChart from "../components/DoughnutChart";
 import StaticStarRating from "../components/StaticStarRating";
 import ScoreDisplay from "../components/ScoreDisplay";
 import Loading from "../components/Loading";
+import "../style/FreelancerDetailPage.css";
 
 const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/resource`;
 const userType = parseInt(sessionStorage.getItem("userType"), 10);
@@ -17,12 +17,14 @@ const userId = parseInt(sessionStorage.getItem("userId"), 10);
 
 const ProfilePage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const freelancerId = location.state?.freelancerId || userId;
+  const status = location.state?.status || 0; // status 기본값 설정 ✅
+  const isRecruiting = status === 0; // 모집 완료 여부 확인 ✅
 
   const [freelancerInfo, setFreelancerInfo] = useState(null);
   const [progress, setProgress] = useState(null);
   const [history, setHistory] = useState([]);
-  const location = useLocation();
-  const freelancerId = location.state?.freelancerId || userId;
 
   useEffect(() => {
     if (!freelancerId) {
@@ -73,7 +75,10 @@ const ProfilePage = () => {
 
   return (
     <div className="profile-page">
-      <ProfileHeader freelancerInfo={freelancerInfo} />
+      <ProfileHeader
+        freelancerInfo={freelancerInfo}
+        isRecruiting={isRecruiting}
+      />
       <div className="history-card">
         <h3 className="history-header">프로젝트 히스토리</h3>
         <div className="project-stats">
@@ -89,7 +94,7 @@ const ProfilePage = () => {
   );
 };
 
-const ProfileHeader = ({ freelancerInfo }) => {
+const ProfileHeader = ({ freelancerInfo, isRecruiting }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [myProject, setMyProject] = useState(null);
@@ -159,7 +164,7 @@ const ProfileHeader = ({ freelancerInfo }) => {
         </div>
       </div>
       <div className="for-suggest">
-        {userType === 1 ? (
+        {userType === 1 && isRecruiting ? (
           <>
             <button
               className="btn-suggest"

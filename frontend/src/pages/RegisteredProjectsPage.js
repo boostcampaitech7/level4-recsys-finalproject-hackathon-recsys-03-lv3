@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ProjectInfo from "../components/ProjectInfo";
 import Loading from "../components/Loading";
-import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/mymony/prestart-project`;
 
@@ -51,8 +51,10 @@ const RegisteredProjects = () => {
     navigate("/register-input");
   };
 
-  const handleProjectClick = (projectId, projectName) => {
-    navigate(`/recommend-freelancer/${projectId}`, { state: { projectName } });
+  const handleProjectClick = (projectId, projectName, status) => {
+    navigate(`/recommend-freelancer/${projectId}`, {
+      state: { projectName, status },
+    });
   };
 
   if (loading) return <Loading />;
@@ -81,7 +83,11 @@ const RegisteredProjects = () => {
         <div
           key={project.projectId}
           onClick={() =>
-            handleProjectClick(project.projectId, project.projectName)
+            handleProjectClick(
+              project.projectId,
+              project.projectName,
+              project.status
+            )
           }
           style={{ cursor: "pointer" }}
         >
