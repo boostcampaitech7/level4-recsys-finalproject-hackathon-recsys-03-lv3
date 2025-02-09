@@ -7,9 +7,6 @@ import SingleSelector from "../components/SingleSelector";
 import SwitchButton from "../components/SwitchButton";
 import Loading from "../components/Loading";
 import "../style/SearchPages.css";
-import profile1 from "../assets/profile_example1.jpg";
-import profile2 from "../assets/profile_example2.jpg";
-import profile3 from "../assets/profile_example3.jpg";
 
 const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/mymony/prestart-project`;
 

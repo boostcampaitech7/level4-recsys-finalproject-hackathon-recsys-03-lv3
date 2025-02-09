@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
 import "../style/ProjectInputPage.css";
-import ProfileIcon from "../components/ProfileIcon";
 import botphoto from "../assets/chat_logo.png";
 
 const workType = ["대면", "원격"];
@@ -213,14 +212,16 @@ const ProjectInputPage = () => {
             {/* 챗봇 메시지에만 아이콘 추가 */}
             {chat.sender === "bot" && (
               <div className="chat-icon m-2">
-                <ProfileIcon
-                  profileImage={botphoto}
+                <img
+                  src={botphoto}
+                  className="profile-image rounded-circle border"
+                  alt="profile-icon"
                   style={{
                     width: "45px",
                     height: "47px",
                     margin: "0",
                   }}
-                />
+                ></img>
               </div>
             )}
             <div className={`chat-content ${chat.sender}`}>

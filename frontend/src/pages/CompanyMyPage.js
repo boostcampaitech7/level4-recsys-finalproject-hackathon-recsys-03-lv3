@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import axios from "axios";
 import InfoCard from "../components/InfoCard";
 import ProfileIcon from "../components/ProfileIcon.js";
 import Loading from "../components/Loading";
-import photo from "../assets/profile_example1.jpg";
 import "../style/CompanyMyPage.css";
 import "../style/colors.css";
 
@@ -62,7 +60,7 @@ const CompanyMyPage = () => {
       <div className="page-container">
         <InfoCard>
           <div className="profile-photo p-3">
-            <ProfileIcon profileImage={photo} />
+            <ProfileIcon userId={companyId} />
             <div className="company-info">
               <h2 className="company-name">{company.companyName}</h2>
               <p className="company-address">

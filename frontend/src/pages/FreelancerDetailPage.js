@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ProfileIcon from "../components/ProfileIcon";
-import profileExample from "../assets/profile_example5.jpg";
 import "../style/FreelancerDetailPage.css";
 import FreelancerSuggest from "../components/FreelancerSuggest";
 import RadarChart from "../components/RadarChart";
@@ -24,7 +23,6 @@ const ProfilePage = () => {
   const [history, setHistory] = useState([]);
   const location = useLocation();
   const freelancerId = location.state?.freelancerId || userId;
-  //const freelancerId = parseInt(sessionStorage.getItem("userId"), 10); // 실제 사용 시 동적으로 설정 필요
 
   useEffect(() => {
     if (!freelancerId) {
@@ -139,7 +137,7 @@ const ProfileHeader = ({ freelancerInfo }) => {
   return (
     <div className="mypage-header">
       <div className="header-image">
-        <ProfileIcon profileImage={profileExample} />
+        <ProfileIcon userId={freelancerId} />
       </div>
       <div className="header-details">
         <h3 className="free-name">{freelancerInfo.freelancerName}</h3>

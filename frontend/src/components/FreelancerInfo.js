@@ -15,8 +15,7 @@ Chart.register(ArcElement, Tooltip, Legend);
 
 const FreelancerInfo = ({ freelancerInfo, pageType }) => {
   const {
-    photo,
-    applied,
+    freelancerId,
     freelancerName,
     workExp,
     workType,
@@ -85,7 +84,7 @@ const FreelancerInfo = ({ freelancerInfo, pageType }) => {
         {pageType === "search" && (
           <div className="search-photo p-3 me-5">
             <ProfileIcon
-              profileImage={photo}
+              userId={freelancerId}
               style={{ width: "130px", height: "130px" }}
             />
           </div>
@@ -98,7 +97,7 @@ const FreelancerInfo = ({ freelancerInfo, pageType }) => {
               <canvas ref={chartRef} width={100} height={100}></canvas>
               <div className="profile-icon-recommend">
                 <ProfileIcon
-                  profileImage={photo}
+                  userId={freelancerId}
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
               </div>

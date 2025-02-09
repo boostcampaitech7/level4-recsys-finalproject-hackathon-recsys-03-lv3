@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/main_logo.png";
-import photo from "../assets/profile_example1.jpg";
 import ProfileIcon from "./ProfileIcon";
 import "../style/Topbar.css";
 
@@ -166,7 +165,7 @@ const Topbar = () => {
               onClick={() => toggleDropdown("freelancer")} // 클릭 시 토글
             >
               <ProfileIcon
-                profileImage={photo}
+                userId={userId}
                 style={{ width: "35px", height: "35px", margin: "0" }}
               />
             </button>

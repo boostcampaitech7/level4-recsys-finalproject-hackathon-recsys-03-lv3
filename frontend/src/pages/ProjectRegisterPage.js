@@ -1,10 +1,9 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../style/ProjectRegisterPage.css";
-import botphoto from "../assets/chat_logo.png";
-import ProfileIcon from "../components/ProfileIcon";
 import SimilarProject from "../components/SimilarProject";
 import ProjectSkillTag from "../components/ProjectSkillTag";
+import botphoto from "../assets/chat_logo.png";
 import axios from "axios";
 
 const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/mymony/project/register`;
@@ -86,14 +85,16 @@ const ProjectRegisterPage = () => {
       <div className="chat-body">
         <div className="chat-bubble bot">
           <div className="chat-icon m-2">
-            <ProfileIcon
-              profileImage={botphoto}
+            <img
+              src={botphoto}
+              className="profile-image rounded-circle border"
+              alt="profile-icon"
               style={{
                 width: "45px",
                 height: "47px",
                 margin: "0",
               }}
-            />
+            ></img>
           </div>
           <div className="chat-content bot">
             <div className="content-box">
