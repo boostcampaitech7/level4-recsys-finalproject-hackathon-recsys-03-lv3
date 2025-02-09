@@ -19,8 +19,8 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const freelancerId = location.state?.freelancerId || userId;
-  const status = location.state?.status || 0; // status 기본값 설정 ✅
-  const isRecruiting = status === 0; // 모집 완료 여부 확인 ✅
+  const status = location.state?.status || 0; // status 기본값 설정
+  const isRecruiting = status === 0; // 모집 완료 여부 확인
 
   const [freelancerInfo, setFreelancerInfo] = useState(null);
   const [progress, setProgress] = useState(null);
@@ -60,7 +60,24 @@ const ProfilePage = () => {
 
         setFreelancerInfo(profileRes.data);
         setProgress(progressRes.data);
-        setHistory(historyRes.data);
+
+        const processedHistory = historyRes.data.map((project) => {
+          const feedbackContent =
+            project.feedbackContent
+              ?.replace(/\\n/g, "\n") // JSON 이스케이프된 줄바꿈 처리
+              .split("\n") // 줄바꿈 기준으로 나누기
+              .map((line) => line.trim()) // 각 줄 공백 제거
+              .filter((line) => line) // 빈 줄 제거
+              .join("\n") // 다시 줄바꿈으로 합치기
+              .trimEnd() || ""; // 마지막 줄 공백 제거
+
+          return {
+            ...project,
+            feedbackContent,
+          };
+        });
+
+        setHistory(processedHistory);
       } catch (error) {
         console.error("데이터 불러오기 실패: ", error);
       }
@@ -261,7 +278,6 @@ const ProjectHistory = ({ history }) => {
   return (
     <div className="project-history-container">
       <div className="project-history">
-        {/* Display two items at a time */}
         {history.slice(currentIndex, currentIndex + 2).map((project, index) => (
           <div key={index} className="history-item">
             <h5 className="history-title">{project.projectName}</h5>
@@ -300,11 +316,18 @@ const ProjectHistory = ({ history }) => {
                 ]}
               />
             </div>
-            <p className="review-comment"> {project.feedbackContent}</p>
+            <p className="review-comment">
+              {project.feedbackContent.split("\n").map((line, index) => (
+                <React.Fragment key={index}>
+                  {line}
+                  <br />
+                </React.Fragment>
+              ))}
+            </p>
           </div>
         ))}
       </div>
-      {/* Navigation Buttons */}
+      {/* 네비게이션 버튼 */}
       <div className="navigation-buttons">
         <button
           className="prev-button"

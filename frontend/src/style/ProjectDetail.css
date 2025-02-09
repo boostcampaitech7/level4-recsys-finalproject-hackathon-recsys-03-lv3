@@ -83,6 +83,10 @@
   margin: 20px auto;
 }
 
+.review-comment {
+  margin-bottom: 0px;
+}
+
 .edit-button {
   background-color: var(--color-primary); /* 녹색 버튼 */
   color: white;
