@@ -100,7 +100,7 @@ const ProjectInputPage = () => {
 
   useEffect(() => {
     if (!isLoading && isSuccess) {
-      navigate("/register-result", { state: { projectSummary } });
+      navigate("/register-result", { state: { projectSummary, projectData } });
     }
   }, [isLoading]);
 
