@@ -64,27 +64,29 @@ const ProjectInfo = ({ content, className = "", onClick = null }) => {
             <p>
               <strong>근무 시작일:</strong> {formatDateUsingMath(registerDate)}
             </p>
+          </div>
+          <div className="project-info-right">
+            <p>
+              <strong>직군:</strong> {categoryRole}
+            </p>
+            <p>
+              <strong>분야:</strong> {categoryName}
+            </p>
             <div className="project-location">
               <i className="fas fa-map-marker-alt"></i>
               <p>{locationName}</p>
             </div>
           </div>
-          <div className="project-info-right">
-            <p>
-              <strong>{categoryRole}</strong>
-            </p>
-            <p>{categoryName}</p>
-            <div className="skills">
-              {skillNameList && skillNameList.length > 0 ? (
-                skillNameList.map((skill, index) => (
-                  // 각 스킬 태그 출력
-                  <ProjectSkillTag key={index} text={skill} />
-                ))
-              ) : (
-                <span>스킬 정보 없음</span>
-              )}
-            </div>
-          </div>
+        </div>
+        <div className="skills">
+          {skillNameList && skillNameList.length > 0 ? (
+            skillNameList.map((skill, index) => (
+              // 각 스킬 태그 출력
+              <ProjectSkillTag key={index} text={skill} />
+            ))
+          ) : (
+            <span>스킬 정보 없음</span>
+          )}
         </div>
       </div>
     </InfoCard>

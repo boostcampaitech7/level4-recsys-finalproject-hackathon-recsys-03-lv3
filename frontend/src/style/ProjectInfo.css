@@ -38,10 +38,10 @@
 /* 프로젝트 정보 그리드 */
 .project-info-grid {
   display: grid;
-  grid-template-columns: 0.25fr 1fr;
-  gap: 20px;
+  grid-template-columns: 0.5fr 1fr;
+  gap: 30px;
   align-items: start;
-  width: 100%;
+  max-width: 800px;
 }
 
 /* 좌측 및 우측 정보 영역 */
