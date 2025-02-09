@@ -13,7 +13,7 @@
   background-color: var(--color-bg-green);
   border-radius: 12px;
   padding: 40px;
-  gap: 40px;
+  gap: 22px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
   height: 100%;
@@ -96,6 +96,11 @@
   color: black;
   font-size: 22px;
   font-weight: 500;
+  margin-bottom: 0px;
+}
+
+.status-count {
+  margin-bottom: 0px;
 }
 
 .rates-header {
@@ -158,7 +163,6 @@
   display: flex;
   justify-content: center;
   gap: 20px;
-  margin-top: 20px;
 }
 
 .prev-button,

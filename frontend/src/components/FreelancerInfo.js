@@ -10,6 +10,7 @@ import {
   Legend,
 } from "chart.js";
 import "../style/FreelancerInfo.css";
+import SingleStarRating from "./SingleStarRating";
 
 Chart.register(ArcElement, Tooltip, Legend);
 
@@ -89,6 +90,7 @@ const FreelancerInfo = ({ freelancerInfo, pageType }) => {
             />
           </div>
         )}
+
         {/* 프로필 사진 - Recommend */}
         {pageType === "recommend" && (
           <div className="matching-score-container p-3 me-5">
@@ -113,9 +115,10 @@ const FreelancerInfo = ({ freelancerInfo, pageType }) => {
           <div className="d-flex justify-content-between align-items-center">
             <h5 className="fw-bold mb-1">{freelancerName}</h5>
             <div className="feedback-score d-flex align-items-center">
-              <span className="text-warning me-">★</span>
-              <span className="fw-bold">{feedbackScore.toFixed(1)}</span>
-              <span className="text-muted ms-1">({feedbackCount})</span>
+              <SingleStarRating
+                score={feedbackScore}
+                reviewCount={feedbackCount}
+              ></SingleStarRating>
             </div>
           </div>
           <div className="field mb-2">

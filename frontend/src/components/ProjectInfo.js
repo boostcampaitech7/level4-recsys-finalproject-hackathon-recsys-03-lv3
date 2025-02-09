@@ -23,7 +23,7 @@ const ProjectInfo = ({ content, className = "", onClick = null }) => {
     contractType, // 계약 형태(월 단위: 0, 프로젝트 단위: 1)
     status, // 진행상태 (시작 전: 0, 진행 중: 1, 완료: 2)
     registerDate, // 작업 시작일 (YYYYMMDD 형식)
-    categoryName, // 도메인
+    categoryName, // 산업 분야
     categoryRole = "개발", // 직군
     skillIdList, // 스킬 ID 리스트
     skillNameList, // 스킬 이름 리스트
@@ -81,7 +81,6 @@ const ProjectInfo = ({ content, className = "", onClick = null }) => {
         <div className="skills">
           {skillNameList && skillNameList.length > 0 ? (
             skillNameList.map((skill, index) => (
-              // 각 스킬 태그 출력
               <ProjectSkillTag key={index} text={skill} />
             ))
           ) : (

@@ -8,10 +8,9 @@ const SimilarProject = ({ projects }) => {
 
   return (
     <div className="similar-project-container">
-      {/* 제목 */}
       <p className="section-title">유사한 프로젝트</p>
 
-      {/* Carousel */}
+      {/* 캐러셀 */}
       <div
         id="carouselExample"
         className="carousel slide"
@@ -76,6 +75,7 @@ const SimilarProject = ({ projects }) => {
                         </div>
                       </div>
                     </div>
+
                     {/* 두 번째 카드 (데이터가 존재하는 경우) */}
                     {projects[index + 1] && (
                       <div className="col-md-12">
@@ -150,6 +150,7 @@ const SimilarProject = ({ projects }) => {
         <i className="fa-solid fa-caret-left"></i>
         <span className="visually-hidden">Previous</span>
       </button>
+
       {/* 다음 버튼 */}
       <button
         className="carousel-control-next"

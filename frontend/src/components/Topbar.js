@@ -98,7 +98,6 @@ const Topbar = () => {
 
       {/* 메뉴 영역 */}
       <ul className="nav-menu">
-        {/* Search Dropdown for Mobile */}
         <li>
           <button
             className="nav-link-btn"
@@ -115,6 +114,7 @@ const Topbar = () => {
             프로젝트 찾기
           </button>
         </li>
+
         {/* userType에 따라 프로젝트 관리 버튼 */}
         {userType === "1" ? (
           <li className="nav-item dropdown">

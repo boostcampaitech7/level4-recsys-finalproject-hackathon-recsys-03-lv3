@@ -6,8 +6,8 @@ import FreelancerSuggest from "../components/FreelancerSuggest";
 import RadarChart from "../components/RadarChart";
 import FreelancerSkillTag from "../components/FreelancerSkillTag";
 import DoughnutChart from "../components/DoughnutChart";
-import StaticStarRating from "../components/StaticStarRating";
-import ScoreDisplay from "../components/ScoreDisplay";
+import MultiStarRating from "../components/MultiStarRating";
+import SingleStarRating from "../components/SingleStarRating";
 import Loading from "../components/Loading";
 import "../style/FreelancerDetailPage.css";
 
@@ -216,7 +216,7 @@ const ProjectRates = ({ freelancerInfo, progress }) => {
     <div className="profile-rates">
       <div className="rates-header">
         <h4 className="sm-header">프로젝트 평점</h4>
-        <StaticStarRating
+        <MultiStarRating
           className="star-rates"
           rating={
             (freelancerInfo.expertise +
@@ -250,7 +250,7 @@ const ProjectStatus = ({ progress }) => {
     <div className="project-status">
       <div className="rates-header">
         <h4 className="sm-header">프로젝트 진행 상황</h4>
-        <p>{progress.projectCount}건</p>
+        <p className="status-count">{progress.projectCount}건</p>
       </div>
       <DoughnutChart
         data={[progress.completedCount, progress.ongoingCount]}
@@ -301,7 +301,7 @@ const ProjectHistory = ({ history }) => {
                         : `${project.duration}일`}
                     </span>
                   </div>
-                  <ScoreDisplay score={project.feedbackScore} />
+                  <SingleStarRating score={project.feedbackScore} />
                 </div>
               </div>
             </div>

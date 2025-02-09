@@ -50,8 +50,6 @@ const RecommendFreelancer = () => {
   const [sortOption, setSortOption] = useState("최신순");
   const [showOnlyApplied, setShowOnlyApplied] = useState(false);
 
-  const userId = sessionStorage.getItem("userId");
-
   useEffect(() => {
     const token = sessionStorage.getItem("token");
 

@@ -1,7 +1,7 @@
 import React from "react";
 import InfoCard from "./InfoCard";
 import ProjectSkillTag from "./ProjectSkillTag";
-import ScoreDisplay from "./ScoreDisplay";
+import SingleStarRating from "./SingleStarRating";
 import RadarChart from "./RadarChart";
 import "../style/FinishedProjectInfo.css";
 
@@ -54,7 +54,7 @@ const FinishedProjectInfo = ({ content, onReview }) => {
             <h3 className="project-title">{projectName}</h3>
             {isReviewed && (
               <div className="rating">
-                <ScoreDisplay score={content.feedbackScore} />
+                <SingleStarRating score={content.feedbackScore} />
               </div>
             )}
           </div>
@@ -98,10 +98,7 @@ const FinishedProjectInfo = ({ content, onReview }) => {
         <div className="right-section">
           {!isReviewed ? (
             <div className="before-review-container">
-              <button
-                className="review-button"
-                onClick={onReview} // 부모에서 받은 함수 실행
-              >
+              <button className="review-button" onClick={onReview}>
                 평가하기
               </button>
               <p className="review-placeholder-text">
