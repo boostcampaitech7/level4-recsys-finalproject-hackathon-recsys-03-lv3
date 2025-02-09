@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
+import pickle
 
 from tqdm import tqdm
 from dotenv import load_dotenv
@@ -14,12 +15,15 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import StandardScaler
 from typing import List, Optional, Set, Union
 
+from src.utils import check_path
+
 
 class Preprocessing:
     def text_embedding(
         df: pd.DataFrame,
         col_name: str,
-        n_components: int
+        n_components: int,
+        output_path: str
     ) -> pd.DataFrame:
         """
         텍스트 데이터를 임베딩 후 PCA로 차원 축소를 적용하는 함수 (Upstage Embeddings 사용)
@@ -28,6 +32,7 @@ class Preprocessing:
             df (pd.DataFrame): 임베딩할 텍스트 컬럼이 있는 데이터프레임
             col_name (str): 임베딩할 텍스트 컬럼명
             n_components (int): 텍스트 임베딩 벡터에 사용할 PCA 주성분 개수
+            output_path (str): 모델 저장 경로
 
         Returns:
             pd.DataFrame: 최종 임베딩된 텍스트 컬럼이 포함된 데이터프레임
@@ -41,11 +46,23 @@ class Preprocessing:
         embed_col = pd.DataFrame(np.array(embed_results))
 
         # 데이터 표준화 및 PCA 적용
+        check_path(output_path)
+
         scaler = StandardScaler()
         X_scaled = scaler.fit_transform(embed_col)
 
+        scaler_path = os.path.join(output_path, "scaler.pkl")
+        with open(scaler_path, "wb") as f:
+            pickle.dump(scaler, f)
+        print(f"StandardScaler 저장 완료: {scaler_path}")
+
         pca = PCA(n_components=n_components, random_state=42)
         X_pca = pca.fit_transform(X_scaled)
+
+        pca_path = os.path.join(output_path, "pca.pkl")
+        with open(pca_path, "wb") as f:
+            pickle.dump(pca, f)
+        print(f"PCA 모델 저장 완료: {pca_path}")
 
         # 새로운 컬럼 이름 생성 후 변경 (예: project_content_0, project_content_1, ...)
         X_pca_df = pd.DataFrame(
@@ -184,13 +201,13 @@ class Preprocessing:
         matrix_1 = np.array(matrix_1)
         matrix_2 = np.array(matrix_2)
         similarity_matrix = np.zeros((matrix_1.shape[0], matrix_2.shape[0]))
-        
+
         total_batches = (matrix_1.shape[0] // batch_size + 1) * (matrix_2.shape[0] // batch_size + 1)
         progress_bar = tqdm(total=total_batches, desc=f"Calculating {method} similarity", unit="batch")
 
         for i in range(0, matrix_1.shape[0], batch_size):
             end_i = min(i + batch_size, matrix_1.shape[0])
-            
+
             for j in range(0, matrix_2.shape[0], batch_size):
                 end_j = min(j + batch_size, matrix_2.shape[0])
 
