@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
@@ -69,6 +69,7 @@ const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/mymony/project/init`
 
 const ProjectInputPage = () => {
   const navigate = useNavigate();
+  const chatEndRef = useRef(null);
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -108,6 +109,13 @@ const ProjectInputPage = () => {
   useEffect(() => {
     setChatHistory([{ sender: "bot", text: questions[0] }]);
   }, []);
+
+  useEffect(() => {
+    const chatBody = document.querySelector(".chat-body");
+    if (chatBody) {
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+  }, [chatHistory]);
 
   const handleUserInput = () => {
     let updatedChat = [...chatHistory];
@@ -355,6 +363,7 @@ const ProjectInputPage = () => {
             </div>
           </div>
         ))}
+        <div ref={chatEndRef} />
       </div>
 
       {/* Input Field */}
