@@ -3,7 +3,7 @@ import InfoCard from "./InfoCard";
 import ProjectSkillTag from "./ProjectSkillTag";
 import ScoreDisplay from "./ScoreDisplay";
 import RadarChart from "./RadarChart";
-import "../style/FinishedProjectContent.css";
+import "../style/FinishedProjectInfo.css";
 
 const formatDate = (dateNumber) => {
   let year = Math.floor(dateNumber / 10000); // 2025
@@ -13,7 +13,7 @@ const formatDate = (dateNumber) => {
   return `${year}년 ${month}월 ${day}일`;
 };
 
-const FinishedProjectContent = ({ content, onReview }) => {
+const FinishedProjectInfo = ({ content, onReview }) => {
   const {
     projectId,
     projectName,
@@ -32,6 +32,16 @@ const FinishedProjectContent = ({ content, onReview }) => {
     feedbackContent,
     isReviewed,
   } = content;
+
+  // 평가 내용에서 줄바꿈(\n)을 <br />로 변환
+  const renderFeedbackContent = (content) => {
+    return content.split("\n").map((line, index) => (
+      <React.Fragment key={index}>
+        {line}
+        <br />
+      </React.Fragment>
+    ));
+  };
 
   return (
     <InfoCard>
@@ -62,16 +72,15 @@ const FinishedProjectContent = ({ content, onReview }) => {
               </p>
             </div>
             <div className="project-info-right">
-              {/* 금액 표시 (평가 후에만 보이도록) */}
-              <p
-                className={`finished-project-price ${isReviewed ? "visible" : ""}`}
-              >
-                {budget.toLocaleString()}원
+              <p>
+                <strong>금액:</strong> {budget.toLocaleString()}원
               </p>
               <p>
-                <strong>{categoryRole}</strong>
+                <strong>직군:</strong> {categoryRole}
               </p>
-              <p>{categoryName}</p>
+              <p>
+                <strong>분야: </strong> {categoryName}
+              </p>
             </div>
           </div>
           <div className="finished-skills">
@@ -108,9 +117,15 @@ const FinishedProjectContent = ({ content, onReview }) => {
           )}
         </div>
       </div>
-      {feedbackContent && <p className="review-comment">"{feedbackContent}"</p>}
+
+      {/* 평가 내용을 줄바꿈 반영하여 렌더링 */}
+      {feedbackContent && (
+        <p className="review-comment">
+          {renderFeedbackContent(feedbackContent)}
+        </p>
+      )}
     </InfoCard>
   );
 };
 
-export default FinishedProjectContent;
+export default FinishedProjectInfo;
