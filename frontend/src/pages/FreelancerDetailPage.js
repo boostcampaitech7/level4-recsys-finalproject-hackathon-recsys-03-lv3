@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ProfileIcon from "../components/ProfileIcon";
-import profileExample from "../assets/profile_example5.jpg";
-import "../style/FreelancerDetailPage.css";
 import FreelancerSuggest from "../components/FreelancerSuggest";
 import RadarChart from "../components/RadarChart";
 import FreelancerSkillTag from "../components/FreelancerSkillTag";
 import DoughnutChart from "../components/DoughnutChart";
-import StaticStarRating from "../components/StaticStarRating";
-import ScoreDisplay from "../components/ScoreDisplay";
+import MultiStarRating from "../components/MultiStarRating";
+import SingleStarRating from "../components/SingleStarRating";
+import Loading from "../components/Loading";
+import "../style/FreelancerDetailPage.css";
 
 const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/resource`;
 const userType = parseInt(sessionStorage.getItem("userType"), 10);
@@ -17,13 +17,14 @@ const userId = parseInt(sessionStorage.getItem("userId"), 10);
 
 const ProfilePage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const freelancerId = location.state?.freelancerId || userId;
+  const status = location.state?.status || 0; // status 기본값 설정
+  const isRecruiting = status === 0; // 모집 완료 여부 확인
 
   const [freelancerInfo, setFreelancerInfo] = useState(null);
   const [progress, setProgress] = useState(null);
   const [history, setHistory] = useState([]);
-  const location = useLocation();
-  const freelancerId = location.state?.freelancerId || userId;
-  //const freelancerId = parseInt(sessionStorage.getItem("userId"), 10); // 실제 사용 시 동적으로 설정 필요
 
   useEffect(() => {
     if (!freelancerId) {
@@ -59,7 +60,24 @@ const ProfilePage = () => {
 
         setFreelancerInfo(profileRes.data);
         setProgress(progressRes.data);
-        setHistory(historyRes.data);
+
+        const processedHistory = historyRes.data.map((project) => {
+          const feedbackContent =
+            project.feedbackContent
+              ?.replace(/\\n/g, "\n") // JSON 이스케이프된 줄바꿈 처리
+              .split("\n") // 줄바꿈 기준으로 나누기
+              .map((line) => line.trim()) // 각 줄 공백 제거
+              .filter((line) => line) // 빈 줄 제거
+              .join("\n") // 다시 줄바꿈으로 합치기
+              .trimEnd() || ""; // 마지막 줄 공백 제거
+
+          return {
+            ...project,
+            feedbackContent,
+          };
+        });
+
+        setHistory(processedHistory);
       } catch (error) {
         console.error("데이터 불러오기 실패: ", error);
       }
@@ -69,12 +87,15 @@ const ProfilePage = () => {
   }, [freelancerId]);
 
   if (!freelancerInfo || !progress) {
-    return <div>로딩 중...</div>;
+    return <Loading />;
   }
 
   return (
     <div className="profile-page">
-      <ProfileHeader freelancerInfo={freelancerInfo} />
+      <ProfileHeader
+        freelancerInfo={freelancerInfo}
+        isRecruiting={isRecruiting}
+      />
       <div className="history-card">
         <h3 className="history-header">프로젝트 히스토리</h3>
         <div className="project-stats">
@@ -90,7 +111,7 @@ const ProfilePage = () => {
   );
 };
 
-const ProfileHeader = ({ freelancerInfo }) => {
+const ProfileHeader = ({ freelancerInfo, isRecruiting }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [myProject, setMyProject] = useState(null);
@@ -138,7 +159,7 @@ const ProfileHeader = ({ freelancerInfo }) => {
   return (
     <div className="mypage-header">
       <div className="header-image">
-        <ProfileIcon profileImage={profileExample} />
+        <ProfileIcon userId={freelancerId} />
       </div>
       <div className="header-details">
         <h3 className="free-name">{freelancerInfo.freelancerName}</h3>
@@ -160,7 +181,7 @@ const ProfileHeader = ({ freelancerInfo }) => {
         </div>
       </div>
       <div className="for-suggest">
-        {userType === 1 ? (
+        {userType === 1 && isRecruiting ? (
           <>
             <button
               className="btn-suggest"
@@ -181,7 +202,9 @@ const ProfileHeader = ({ freelancerInfo }) => {
             />
           </>
         ) : (
-          <button className="btn-suggest">정보 수정</button>
+          freelancerId === userId && (
+            <button className="btn-suggest">정보 수정</button>
+          )
         )}
       </div>
     </div>
@@ -193,7 +216,7 @@ const ProjectRates = ({ freelancerInfo, progress }) => {
     <div className="profile-rates">
       <div className="rates-header">
         <h4 className="sm-header">프로젝트 평점</h4>
-        <StaticStarRating
+        <MultiStarRating
           className="star-rates"
           rating={
             (freelancerInfo.expertise +
@@ -227,7 +250,7 @@ const ProjectStatus = ({ progress }) => {
     <div className="project-status">
       <div className="rates-header">
         <h4 className="sm-header">프로젝트 진행 상황</h4>
-        <p>{progress.projectCount}건</p>
+        <p className="status-count">{progress.projectCount}건</p>
       </div>
       <DoughnutChart
         data={[progress.completedCount, progress.ongoingCount]}
@@ -255,7 +278,6 @@ const ProjectHistory = ({ history }) => {
   return (
     <div className="project-history-container">
       <div className="project-history">
-        {/* Display two items at a time */}
         {history.slice(currentIndex, currentIndex + 2).map((project, index) => (
           <div key={index} className="history-item">
             <h5 className="history-title">{project.projectName}</h5>
@@ -279,7 +301,7 @@ const ProjectHistory = ({ history }) => {
                         : `${project.duration}일`}
                     </span>
                   </div>
-                  <ScoreDisplay score={project.feedbackScore} />
+                  <SingleStarRating score={project.feedbackScore} />
                 </div>
               </div>
             </div>
@@ -294,11 +316,18 @@ const ProjectHistory = ({ history }) => {
                 ]}
               />
             </div>
-            <p className="review-comment"> {project.feedbackContent}</p>
+            <p className="review-comment">
+              {project.feedbackContent.split("\n").map((line, index) => (
+                <React.Fragment key={index}>
+                  {line}
+                  <br />
+                </React.Fragment>
+              ))}
+            </p>
           </div>
         ))}
       </div>
-      {/* Navigation Buttons */}
+      {/* 네비게이션 버튼 */}
       <div className="navigation-buttons">
         <button
           className="prev-button"

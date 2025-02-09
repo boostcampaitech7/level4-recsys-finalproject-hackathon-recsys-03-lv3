@@ -54,7 +54,6 @@ const MultiSelector = ({ title, options, value = [], onChange }) => {
   return (
     <div className="multi-selector">
       <div className="label-container" onClick={toggleDropdown}>
-        {/* <span className="label">{title}</span> */}
         <span className="selected-value">
           {selectedValues.length === 0
             ? title // 선택된 값이 없을 때 title 표시
@@ -86,6 +85,7 @@ const MultiSelector = ({ title, options, value = [], onChange }) => {
               전체
             </li>
           </ul>
+
           {/* 검색 필드 추가 - title이 "스킬"일 때만 */}
           {title === "스킬" && (
             <>

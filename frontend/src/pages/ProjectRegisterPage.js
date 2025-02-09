@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../style/ProjectRegisterPage.css";
-import botphoto from "../assets/chat_logo.png";
-import ProfileIcon from "../components/ProfileIcon";
 import SimilarProject from "../components/SimilarProject";
 import ProjectSkillTag from "../components/ProjectSkillTag";
+import botphoto from "../assets/chat_logo.png";
 import axios from "axios";
 
 const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/mymony/project/register`;
@@ -17,13 +16,17 @@ function convertToJSX(text) {
     const content = sections[i].trim();
 
     if (i % 2 === 1) {
-      // 짝수 인덱스 -> 제목 (꺽쇠 안의 내용)
+      // 홀수 인덱스 -> 본문 (꺽쇠 밖의 내용)
       jsxElements.push(<p key={i}>{content}</p>);
     } else {
-      // 홀수 인덱스 -> 본문 (꺽쇠 괄호 밖의 내용)
+      // 짝수 인덱스 -> 제목 (꺽쇠 괄호 안의 내용)
       const paragraphs = content.split(/\n+/).filter(Boolean); // 개행 문자 기준으로 나누고 빈 문자열 제거
       paragraphs.forEach((para, index) => {
-        jsxElements.push(<h5 key={`${i}-${index}`}>{para.trim()}</h5>);
+        jsxElements.push(
+          <h5 key={`${i}-${index}`}>
+            <strong>{para.trim()}</strong>
+          </h5>
+        );
       });
     }
   }
@@ -33,9 +36,12 @@ function convertToJSX(text) {
 
 const ProjectRegisterPage = () => {
   const location = useLocation();
-  const { projectSummary } = location.state || {};
-  console.log("projectSummary: ", projectSummary);
+  const { projectSummary, projectData } = location.state || {};
   const navigate = useNavigate();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState(
+    projectSummary.projectContent
+  );
   const posting = {
     duration: projectSummary.duration,
     budget: projectSummary.budget,
@@ -75,6 +81,16 @@ const ProjectRegisterPage = () => {
     }
   };
 
+  // 수정 버튼 클릭 시 실행되는 함수
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  // 수정 확정 버튼 클릭 시 실행되는 함수
+  const handleConfirmClick = () => {
+    setIsEditing(false);
+  };
+
   return (
     <div className="chat-page result">
       {/* Header */}
@@ -86,14 +102,16 @@ const ProjectRegisterPage = () => {
       <div className="chat-body">
         <div className="chat-bubble bot">
           <div className="chat-icon m-2">
-            <ProfileIcon
-              profileImage={botphoto}
+            <img
+              src={botphoto}
+              className="profile-image rounded-circle border"
+              alt="profile-icon"
               style={{
                 width: "45px",
                 height: "47px",
                 margin: "0",
               }}
-            />
+            ></img>
           </div>
           <div className="chat-content bot">
             <div className="content-box">
@@ -101,7 +119,7 @@ const ProjectRegisterPage = () => {
               <table className="custom-table rounded-table">
                 <tbody>
                   <tr>
-                    <td className="table-label">프로젝트 명</td>
+                    <td className="table-label">프로젝트 이름</td>
                     <td className="table-value">
                       {projectSummary.projectName || "미정"}
                     </td>
@@ -154,44 +172,58 @@ const ProjectRegisterPage = () => {
                   <tr>
                     <td className="table-label">금액</td>
                     <td className="table-value">
-                      {projectSummary.expectedBudget.toLocaleString() || "미정"}
-                      원 /
+                      {projectData.budget.toLocaleString() || "미정"}원 /
                       {projectSummary.contractType === 0
                         ? " 월"
                         : " 프로젝트" || "월"}
                     </td>
                   </tr>
                   <tr>
-                    <td className="table-label">프로젝트 세부 내용</td>
+                    <td className="table-label">프로젝트 상세 내용</td>
                   </tr>
-                  {/* Solar 결과 넣기 */}
+                  {/* Upstage Chat API 결과 넣기 */}
                   <tr className="table-full-row">
                     <td colSpan="2" className="table-extra">
-                      {convertToJSX(projectSummary.projectContent)}
+                      {isEditing ? (
+                        <textarea
+                          value={editedContent}
+                          onChange={(e) => setEditedContent(e.target.value)}
+                          className="custom-textarea"
+                        />
+                      ) : (
+                        convertToJSX(editedContent)
+                      )}
                     </td>
                   </tr>
                 </tbody>
               </table>
               <div className="register-btn-container">
-                {/* 수정 필요 */}
+                {/* 수정 버튼 */}
+                {isEditing ? (
+                  <button
+                    className="register-btn btn-edit"
+                    onClick={handleConfirmClick}
+                  >
+                    확정
+                  </button>
+                ) : (
+                  <button
+                    className="register-btn btn-edit"
+                    onClick={handleEditClick}
+                  >
+                    수정
+                  </button>
+                )}
                 <button
-                  className="register-btn btn-edit"
+                  className={`register-btn btn-confirm ${isEditing ? "btn-disabled" : ""}`}
                   type="button"
                   id="sendRequest"
                   onClick={() => {
-                    alert("요청이 완료되었습니다.");
-                    window.location.reload(); //window.location.href = "https://example.com";
+                    if (!isEditing) {
+                      handleRegister(posting);
+                    }
                   }}
-                >
-                  수정
-                </button>
-                <button
-                  className="register-btn btn-confirm"
-                  type="button"
-                  id="sendRequest"
-                  onClick={() => {
-                    handleRegister(posting);
-                  }}
+                  disabled={isEditing} // 수정 중이면 비활성화
                 >
                   등록
                 </button>

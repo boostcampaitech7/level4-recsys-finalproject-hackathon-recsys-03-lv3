@@ -109,10 +109,7 @@ const ProjectFeedback = ({ project, onClose, onSubmit }) => {
                 fullWidth
                 value={feedback.feedbackContent}
                 onChange={(e) =>
-                  setFeedback((prev) => ({
-                    ...prev,
-                    feedbackContent: e.target.value,
-                  }))
+                  setFeedback({ ...feedback, feedbackContent: e.target.value })
                 }
                 onFocus={() => setIsFocused(true)}
                 onBlur={(e) => setIsFocused(e.target.value.length > 0)} // 입력 없으면 포커스 해제 시 label 숨김

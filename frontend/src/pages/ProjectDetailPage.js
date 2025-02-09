@@ -4,6 +4,7 @@ import axios from "axios";
 import SimilarProject from "../components/SimilarProject";
 import ProjectSkillTag from "../components/ProjectSkillTag";
 import ProjectKeywordIcon from "../components/ProjectKeywordIcon";
+import Loading from "../components/Loading";
 import "../style/ProjectDetail.css";
 
 const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/project`;
@@ -70,7 +71,7 @@ const ProjectDetailPage = () => {
   }, [project]);
 
   if (!project || !similarProjects) {
-    return <div>로딩 중...</div>;
+    return <Loading />;
   }
 
   const handleApply = async () => {

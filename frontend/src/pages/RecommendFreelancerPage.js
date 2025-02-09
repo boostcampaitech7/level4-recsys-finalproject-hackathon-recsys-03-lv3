@@ -1,27 +1,45 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import FreelancerInfo from "../components/FreelancerInfo";
 import MultiSelector from "../components/MultiSelector";
 import SingleSelector from "../components/SingleSelector";
 import SwitchButton from "../components/SwitchButton";
+import Loading from "../components/Loading";
 import "../style/SearchPages.css";
-import profile1 from "../assets/profile_example1.jpg";
-import profile2 from "../assets/profile_example2.jpg";
-import profile3 from "../assets/profile_example3.jpg";
 
 const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/mymony/prestart-project`;
 
 const RecommendFreelancer = () => {
   const { projectId } = useParams(); // URL에서 projectId를 가져옴
   const location = useLocation();
-  const { projectName } = location.state || {};
+  const { projectName, status } = location.state || {};
 
   const [freelancers, setFreelancers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const roleList = ["백엔드 개발자", "프론트엔드 개발자", "풀스택 개발자"];
+  const navigate = useNavigate();
+
+  const roleList = [
+    "풀스택 개발자",
+    "백엔드 개발자",
+    "프론트엔드 개발자",
+    "모바일 개발자",
+    "임베디드 개발자",
+    "데스크톱/엔터프라이즈 개발자",
+    "QA/테스트 개발자",
+    "AI 개발자",
+    "게임/그래픽 개발자",
+    "데이터 엔지니어",
+    "데이터 분석가",
+    "데이터 사이언티스트/ML 전문가",
+    "클라우드 엔지니어",
+    "DevOps 엔지니어",
+    "디자이너",
+    "블록체인 엔지니어",
+    "DB 관리자",
+  ];
   const skillList = JSON.parse(sessionStorage.getItem("skill"), "[]").map(
     (skill) => skill.skillName
   );
@@ -31,8 +49,6 @@ const RecommendFreelancer = () => {
   const [filterSkillList, setFilterSkillList] = useState(skillList);
   const [sortOption, setSortOption] = useState("최신순");
   const [showOnlyApplied, setShowOnlyApplied] = useState(false);
-
-  const userId = sessionStorage.getItem("userId");
 
   useEffect(() => {
     const token = sessionStorage.getItem("token");
@@ -53,8 +69,7 @@ const RecommendFreelancer = () => {
         });
         setFreelancers(response.data);
       } catch (error) {
-        console.error("프리랜서 데이터를 불러오는 데 실패했습니다:", error);
-        setError("프리랜서 데이터를 불러오는 데 실패했습니다.");
+        return [];
       } finally {
         setLoading(false);
       }
@@ -63,8 +78,18 @@ const RecommendFreelancer = () => {
     fetchFreelancers();
   }, []);
 
-  if (loading) return <div>로딩 중...</div>;
-  if (error) return <div className="error-message">{error}</div>;
+  const handleFreelancerClick = (freelancerId) => {
+    navigate("/freelancer-detail", { state: { freelancerId, status } });
+  };
+
+  if (loading) return <Loading />;
+  if (error) {
+    return (
+      <div className="no-projects-container">
+        <p className="error-message">{error}</p>
+      </div>
+    );
+  }
 
   freelancers.forEach((freelancer) => {
     const {
@@ -99,6 +124,8 @@ const RecommendFreelancer = () => {
       if (sortOption === "최신순") return b.freelancerId - a.freelancerId;
       if (sortOption === "매칭 점수 높은순")
         return b.matchingScore - a.matchingScore;
+      if (sortOption === "피드백 점수 높은순")
+        return b.feedbackScore - a.feedbackScore;
       return 0;
     });
 
@@ -119,9 +146,9 @@ const RecommendFreelancer = () => {
       </div>
       <div className="filters">
         <div className="filter-group-left">
-          {/* 직군 필터 */}
+          {/* 직무 필터 */}
           <MultiSelector
-            title="직군/직무"
+            title="직무"
             options={roleList}
             onChange={setFilterRoles}
             value={filterRoles}
@@ -130,7 +157,7 @@ const RecommendFreelancer = () => {
           {/* 근무 형태 필터 */}
           <SingleSelector
             title="근무 형태"
-            options={["근무 형태", "원격", "대면"]}
+            options={["근무 형태", "대면", "원격"]}
             onChange={setFilterWorkType}
             value={filterWorkType}
           />
@@ -158,7 +185,7 @@ const RecommendFreelancer = () => {
           />
           <SingleSelector
             title="정렬 기준"
-            options={["최신순", "매칭 점수 높은순"]}
+            options={["최신순", "매칭 점수 높은순", "피드백 점수 높은순"]}
             onChange={setSortOption}
             value={sortOption}
           />
@@ -167,11 +194,17 @@ const RecommendFreelancer = () => {
 
       <div className="freelancers">
         {filteredFreelancers.map((freelancer) => (
-          <FreelancerInfo
+          <div
             key={freelancer.freelancerId}
-            freelancerInfo={freelancer}
-            pageType="recommend"
-          />
+            onClick={() => handleFreelancerClick(freelancer.freelancerId)}
+            style={{ cursor: "pointer" }}
+          >
+            <FreelancerInfo
+              key={freelancer.freelancerId}
+              freelancerInfo={freelancer}
+              pageType="recommend"
+            />
+          </div>
         ))}
       </div>
     </div>

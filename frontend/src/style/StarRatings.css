@@ -2,6 +2,7 @@
 
 .star-rating-container {
   display: flex;
+  align-items: center;
   gap: 12px;
 }
 
@@ -14,10 +15,10 @@
 }
 
 .star-rating div {
-  font-size: 20px; /* 별 크기 */
-  color: var(--color-star); /* 별 색상 */
-  vertical-align: middle; /* 세로 정렬 */
-  margin-right: 2px; /* 별 사이 여백 */
+  font-size: 20px;
+  color: var(--color-star);
+  vertical-align: middle;
+  margin-right: 2px;
 }
 
 .star {
@@ -51,5 +52,20 @@
   color: #333;
   font-weight: bold;
   position: relative;
-  top: 5px;
+}
+
+.score-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.star-icon {
+  font-size: 22px;
+  color: var(--color-star);
+}
+
+.review-count {
+  font-size: 16px;
+  color: #666;
 }

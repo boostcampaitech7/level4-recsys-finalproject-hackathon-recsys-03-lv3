@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
 import "../style/ProjectInputPage.css";
-import ProfileIcon from "../components/ProfileIcon";
 import botphoto from "../assets/chat_logo.png";
 
 const workType = ["대면", "원격"];
@@ -70,6 +69,7 @@ const API_BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/mymony/project/init`
 
 const ProjectInputPage = () => {
   const navigate = useNavigate();
+  const chatEndRef = useRef(null);
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -101,7 +101,7 @@ const ProjectInputPage = () => {
 
   useEffect(() => {
     if (!isLoading && isSuccess) {
-      navigate("/register-result", { state: { projectSummary } });
+      navigate("/register-result", { state: { projectSummary, projectData } });
     }
   }, [isLoading]);
 
@@ -109,6 +109,13 @@ const ProjectInputPage = () => {
   useEffect(() => {
     setChatHistory([{ sender: "bot", text: questions[0] }]);
   }, []);
+
+  useEffect(() => {
+    const chatBody = document.querySelector(".chat-body");
+    if (chatBody) {
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+  }, [chatHistory]);
 
   const handleUserInput = () => {
     let updatedChat = [...chatHistory];
@@ -213,14 +220,16 @@ const ProjectInputPage = () => {
             {/* 챗봇 메시지에만 아이콘 추가 */}
             {chat.sender === "bot" && (
               <div className="chat-icon m-2">
-                <ProfileIcon
-                  profileImage={botphoto}
+                <img
+                  src={botphoto}
+                  className="profile-image rounded-circle border"
+                  alt="profile-icon"
                   style={{
                     width: "45px",
                     height: "47px",
                     margin: "0",
                   }}
-                />
+                ></img>
               </div>
             )}
             <div className={`chat-content ${chat.sender}`}>
@@ -354,6 +363,7 @@ const ProjectInputPage = () => {
             </div>
           </div>
         ))}
+        <div ref={chatEndRef} />
       </div>
 
       {/* Input Field */}
