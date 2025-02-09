@@ -149,10 +149,10 @@ const SignUpCompany = () => {
               className="signup-company-selector"
             />
           </div>
+          <button type="submit" className="signup-button">
+            회원가입 완료
+          </button>
         </form>
-        <button type="submit" className="signup-button">
-          회원가입 완료
-        </button>
       </div>
     </div>
   );

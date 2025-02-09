@@ -79,34 +79,38 @@ const RegisteredProjects = () => {
           </button>
         </div>
       </div>
-      {projects.map((project) => (
-        <div
-          key={project.projectId}
-          onClick={() =>
-            handleProjectClick(
-              project.projectId,
-              project.projectName,
-              project.status
-            )
-          }
-          style={{ cursor: "pointer" }}
-        >
-          <ProjectInfo
+      {projects.length > 0 ? (
+        projects.map((project) => (
+          <div
             key={project.projectId}
-            content={{
-              projectName: project.projectName,
-              skillNameList: project.skillNameList,
-              locationName: project.locationName,
-              registerDate: project.registerDate,
-              duration: project.duration,
-              budget: project.budget,
-              categoryRole: "개발",
-              categoryName: project.categoryName,
-              status: project.status,
-            }}
-          />
-        </div>
-      ))}
+            onClick={() =>
+              handleProjectClick(
+                project.projectId,
+                project.projectName,
+                project.status
+              )
+            }
+            style={{ cursor: "pointer" }}
+          >
+            <ProjectInfo
+              key={project.projectId}
+              content={{
+                projectName: project.projectName,
+                skillNameList: project.skillNameList,
+                locationName: project.locationName,
+                registerDate: project.registerDate,
+                duration: project.duration,
+                budget: project.budget,
+                categoryRole: "개발",
+                categoryName: project.categoryName,
+                status: project.status,
+              }}
+            />
+          </div>
+        ))
+      ) : (
+        <p className="error-message mt-5 p-3">등록한 프로젝트가 없습니다.</p>
+      )}
     </div>
   );
 };
