@@ -47,6 +47,8 @@ const SearchProjectPage = () => {
           },
         });
         setProjects(response.data);
+
+        console.log(response.data);
       } catch (error) {
         console.error("프로젝트 데이터를 불러오는 데 실패했습니다:", error);
         setError("프로젝트 데이터를 불러오는 데 실패했습니다.");
@@ -163,11 +165,6 @@ const SearchProjectPage = () => {
       {/* 필터링된 프로젝트 리스트 */}
       {filteredProjects.map((project) => (
         <ProjectInfo
-          onClick={() =>
-            navigate("/project-detail", {
-              state: { projectId: project.projectId },
-            })
-          }
           key={project.projectId}
           content={{
             projectName: project.projectName,
@@ -180,7 +177,14 @@ const SearchProjectPage = () => {
             categoryRole: "개발",
             categoryName: project.categoryName,
             status: project.status,
+            matchingScore: project.matchingScore,
           }}
+          showMatchingScore={true}
+          onClick={() =>
+            navigate("/project-detail", {
+              state: { projectId: project.projectId },
+            })
+          }
         />
       ))}
     </div>
