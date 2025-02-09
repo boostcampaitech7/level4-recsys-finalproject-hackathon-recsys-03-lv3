@@ -12,8 +12,9 @@ from sqlalchemy.exc import IntegrityError
 from langchain.memory import ConversationBufferMemory
 from langchain.schema import SystemMessage, HumanMessage
 from catboost import Pool
+from sklearn.preprocessing import MinMaxScaler
 
-from api.upstage import chat_with_solar
+from api.upstage import chat_with_solar, text_embedding
 from src.models import Project, Category, ProjectSkill, Skill, Company, Location, ProjectRanking, ProjectApplicants, Feedback, Freelancer, FreelancerSkill, FreelancerCategory
 from src.schemas.project import ProjectRequest, FeedbackRequest, ProjectListResponse, ProjectDetailResponse, ProjectFeedbackResponse, SolarResponse, CompanyResponse, ProjectProgressResponse
 from src.services.filter_service import FilterService
@@ -559,7 +560,7 @@ class ProjectService:
             user_id (int): 기업 ID
             db (Session): SQLAlchemy 데이터베이스 세션
         """
-        # X 만들기
+        # 프리랜서
         result = (
             db.query(
                 Freelancer.id.label("freelancer_id"),
@@ -574,43 +575,55 @@ class ProjectService:
             .all()
         )
 
+        # 프로젝트
         df = pd.DataFrame(result, columns=["freelancer_id",
                                            "freelancer_experience",
                                            "freelancer_price",
                                            "freelancer_category",
                                            "freelancer_skills"])
 
+        content_embedding = text_embedding(project_data.projectContent)
+        content_embedding_df = pd.DataFrame([content_embedding], columns=[f"project_content_{i}" for i in range(256)])
+
         project_skills = ",".join(map(str, project_data.skillList))
-        df = df.assign(
-            project_id=project_data.projectId,
-            project_budget=project_data.budget,
-            project_skills=project_skills,
-            project_category=str(project_data.categoryId)
-        )
+        project_info_df = pd.DataFrame([{
+            "project_id": project_data.projectId,
+            "project_budget": project_data.budget,
+            "project_skills": project_skills,
+            "project_category": str(project_data.categoryId)
+        }])
+
+        # X 만들기
+        df = pd.concat([df.assign(**project_info_df.iloc[0].to_dict()), content_embedding_df], axis=1)
+
         numerical_features = ["project_budget", "freelancer_experience", "freelancer_price"]
         categorical_features = ["project_skills", "project_category", "freelancer_skills", "freelancer_category"]
-        features = numerical_features + categorical_features
+        embedding_features = [f"project_content_{i}" for i in range(256)]
+        features = numerical_features + categorical_features + embedding_features
+
         X = df[features]
         X_pool = Pool(data=X, cat_features=categorical_features)
 
         # 모델 로드
         file_path = download_model_file(file_name="model.pkl")
-
         with open(file_path, "rb") as f:
             model = pickle.load(f)
 
         # 모델 예측
         predictions = model.predict(X_pool)
-        result_df = df[["project_id", "freelancer_id"]].copy()
-        result_df["matching_score"] = predictions
+        scaler = MinMaxScaler(feature_range=(0, 100))
+        predictions_scaled = scaler.fit_transform(predictions.reshape(-1, 1)).flatten()
 
         # 결과 저장
+        result_df = df[["project_id", "freelancer_id"]].copy()
+        result_df["matching_score"] = predictions_scaled
+
         try:
             for _, row in result_df.iterrows():
                 new_entry = ProjectRanking(
                     project_id=row["project_id"],
                     freelancer_id=row["freelancer_id"],
-                    matching_score=row["matching_score"] * 100
+                    matching_score=row["matching_score"]
                 )
                 db.add(new_entry)
 

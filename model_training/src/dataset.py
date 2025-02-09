@@ -1,5 +1,4 @@
 import os
-
 import numpy as np
 import pandas as pd
 import torch
@@ -8,7 +7,6 @@ from tqdm import tqdm
 from typing import Optional, Tuple, Union
 
 from sqlalchemy import text
-
 from api.db import SessionLocal
 from src.utils import check_path
 from src.preprocessing import Preprocessing
@@ -115,6 +113,7 @@ def load_data(data_path: str):
 
 def preprocess_data(
         data_path: str,
+        output_path: str,
         n_components: int,
         embed: bool = False,
         similarity: Optional[str] = None
@@ -124,20 +123,22 @@ def preprocess_data(
 
     Args:
         data_path (str): 데이터 저장 경로
+        output_path (str): 모델 저장 경로
         n_components (int): 텍스트 임베딩 벡터에 사용할 PCA 주성분 개수
         embed (bool): 전처리 방식. 임베딩을 사용할 경우 True. 기본값은 False (인코딩)
         similarity (Optional[str]): 유사도를 추가 피처로 사용할 경우 종류 선택. 기본값은 None ("cosine", "dot_product", "jaccard")
 
+
     Returns:
         Optional[Tuple[Union[np.ndarray, torch.Tensor], Union[np.ndarray, torch.Tensor]]]: similarity를 선택하면 유사도 출력. 기본값은 None
     """
-    project_df = pd.read_csv(os.path.join(data_path, "project_original.csv"))
-    freelancer_df = pd.read_csv(os.path.join(data_path, "freelancer_original.csv"))
-    inter_df = pd.read_csv(os.path.join(data_path, "inter_original.csv"))
+    project_df = pd.read_csv(os.path.join(data_path, "project.csv"))
+    freelancer_df = pd.read_csv(os.path.join(data_path, "freelancer.csv"))
+    inter_df = pd.read_csv(os.path.join(data_path, "inter.csv"))
 
     print("📍 preprocessing project data ==============================")
     # 텍스트 임베딩 (Upstage Embeddings -> PCA)
-    # project_df = Preprocessing.text_embedding(project_df, "project_content", n_components)
+    project_df = Preprocessing.text_embedding(project_df, "project_content", n_components, output_path)
 
     # 범주형 변수 인코딩 (멀티-핫)
     project_df = Preprocessing.encode_categorical_features(
@@ -241,7 +242,7 @@ def preprocess_data(
 
         chunk_size = 15000  # 한 번에 처리할 행 개수
         total_chunks = len(inter_df) // chunk_size + (1 if len(inter_df) % chunk_size > 0 else 0)  # 전체 청크 개수 계산
-        
+
         with open(output_path, "w") as f:
             with tqdm(total=total_chunks, desc="🔄 Merging similarity data", unit="chunk") as pbar:
                 for chunk_start in range(0, len(inter_df), chunk_size):
@@ -259,7 +260,7 @@ def preprocess_data(
                         chunk.to_csv(f, mode="a", index=True, header=False)
 
                     pbar.update(1)
-                
+
                 pbar.close()
 
         print(f"inter.csv saved successfully with {similarity} similarity! ==========")
