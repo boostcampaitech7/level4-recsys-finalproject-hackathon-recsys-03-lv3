@@ -82,7 +82,7 @@ const RecommendFreelancer = () => {
     fetchFreelancers();
   }, []);
 
-  if (loading) return <div>로딩 중...</div>;
+  if (loading) return <Loading />;
   if (error) {
     return (
       <div className="no-projects-container">

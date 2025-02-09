@@ -92,3 +92,7 @@
   cursor: pointer;
   width: 100%;
 }
+
+.edit-button:hover {
+  background-color: var(--color-hover);
+}

@@ -23,8 +23,8 @@
 .spinner {
   width: 50px;
   height: 50px;
-  border: 5px solid #96e0d1;
-  border-top: 5px solid #138d74;
+  border: 5px solid #87cabd;
+  border-top: 5px solid var(--color-hover);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -32,7 +32,7 @@
 .loading-text {
   margin-top: 15px;
   font-size: 18px;
-  color: #138d74;
+  color: var(--color-hover);
   font-weight: bold;
 }
 

@@ -83,5 +83,5 @@
 }
 
 .search-project-button:hover {
-  background-color: #138d74;
+  background-color: var(--color-hover);
 }

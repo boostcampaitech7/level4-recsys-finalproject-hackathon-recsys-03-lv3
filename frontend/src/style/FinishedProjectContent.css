@@ -115,6 +115,10 @@
   margin-bottom: 20px;
 }
 
+.review-button:hover {
+  background-color: var(--color-hover);
+}
+
 /* 평가 전 코멘트 */
 .review-placeholder-text {
   color: gray;
