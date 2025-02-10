@@ -51,6 +51,7 @@ const ProjectRegisterPage = () => {
     projectContent: projectSummary.projectContent,
     projectName: projectSummary.projectName,
     categoryId: projectSummary.categoryId,
+    categoryName: projectSummary.categoryName,
     skillList: projectSummary.skillIdList,
   };
 
@@ -122,6 +123,12 @@ const ProjectRegisterPage = () => {
                     <td className="table-label">프로젝트 이름</td>
                     <td className="table-value">
                       {projectSummary.projectName || "미정"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="table-label">산업 분야</td>
+                    <td className="table-value">
+                      {projectSummary.categoryName || "미정"}
                     </td>
                   </tr>
                   <tr>
