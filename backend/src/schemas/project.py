@@ -88,6 +88,7 @@ class ProjectFeedbackResponse(BaseModel):
     companyName: str
     skillIdList: List[int]
     skillNameList: List[str]
+    categoryName: str
     feedbackScore: float
     expertise: Optional[float] = None
     proactiveness: Optional[float] = None
