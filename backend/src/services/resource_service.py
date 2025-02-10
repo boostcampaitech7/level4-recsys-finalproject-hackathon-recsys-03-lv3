@@ -266,7 +266,6 @@ class ResourceService:
         feedback_sub = (
             db.query(
                 Feedback.freelancer_id.label("freelancer_id"),
-                Feedback.project_id.label("project_id"),
                 func.count(Feedback.id).label("feedbackCount"),
                 func.round(
                     func.avg(
@@ -284,8 +283,7 @@ class ResourceService:
                 func.round(func.avg(Feedback.maintainability), 1).label("maintainability")
             )
             .group_by(
-                Feedback.freelancer_id,
-                Feedback.project_id
+                Feedback.freelancer_id
             )
             .subquery()
         )
@@ -321,13 +319,12 @@ class ResourceService:
             ))
             .join(category_sub, category_sub.c.freelancer_id == Freelancer.id)
             .join(skill_sub, skill_sub.c.freelancer_id == Freelancer.id)
-            .outerjoin(feedback_sub, and_(
-                feedback_sub.c.freelancer_id == Freelancer.id,
-                feedback_sub.c.project_id == project_id))
+            .outerjoin(feedback_sub, feedback_sub.c.freelancer_id == Freelancer.id)
             .outerjoin(ProjectApplicants, and_(
                 Freelancer.id == ProjectApplicants.freelancer_id,
                 ProjectApplicants.project_id == project_id
             ))
+            .filter(feedback_sub.c.feedbackScore.isnot(None))
             .order_by(ProjectRanking.matching_score.desc())
             .limit(MAX_CNT)
             .all()
