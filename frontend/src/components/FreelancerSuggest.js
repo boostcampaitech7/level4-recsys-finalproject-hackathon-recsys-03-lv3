@@ -7,17 +7,17 @@ import "../style/FreelancerDetailPage.css";
 import "../style/InfoCard.css";
 
 const FreelancerSuggest = ({ isOpen, onClose, projectList }) => {
-  const [selectedProject, setSelectedProject] = useState(null); // 선택된 프로젝트 ID 저장
+  const [selectedProject, setSelectedProject] = useState(null);
   const navigate = useNavigate();
 
   const handleCardClick = (projectId) => {
-    setSelectedProject(projectId); // 클릭한 카드 선택 (기존 선택된 카드 해제)
+    setSelectedProject(projectId);
   };
 
   const handleSuggestClick = () => {
     if (selectedProject) {
       alert("제안이 완료되었습니다.");
-      onClose(); // 팝업 닫기
+      onClose();
       setTimeout(() => {
         navigate("/myproject");
       }, 10);

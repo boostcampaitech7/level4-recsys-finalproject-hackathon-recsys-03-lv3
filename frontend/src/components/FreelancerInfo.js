@@ -1,10 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import {
-  Chart,
-  ArcElement, // Arc 요소 등록
-  Tooltip,
-  Legend,
-} from "chart.js";
+import { Chart, ArcElement, Tooltip, Legend } from "chart.js";
 
 import FreelancerSkillTag from "./FreelancerSkillTag";
 import InfoCard from "./InfoCard";
