@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import ProjectSkillTag from "./ProjectSkillTag";
-import "../style/InfoCard.css";
+
 import "../style/FreelancerDetailPage.css";
+import "../style/InfoCard.css";
 
 const FreelancerSuggest = ({ isOpen, onClose, projectList }) => {
   const [selectedProject, setSelectedProject] = useState(null); // 선택된 프로젝트 ID 저장

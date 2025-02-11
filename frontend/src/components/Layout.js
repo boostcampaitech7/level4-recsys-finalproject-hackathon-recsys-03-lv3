@@ -1,7 +1,8 @@
 import React from "react";
-import Topbar from "./Topbar";
-import Footer from "./Footer";
 import { Outlet } from "react-router-dom";
+
+import Footer from "./Footer";
+import Topbar from "./Topbar";
 
 const Layout = ({ isLoggedIn, setIsLoggedIn }) => {
   return (

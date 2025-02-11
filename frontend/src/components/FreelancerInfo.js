@@ -1,16 +1,18 @@
 import React, { useRef, useEffect } from "react";
-import InfoCard from "./InfoCard";
-import ProfileIcon from "./ProfileIcon";
-import FreelancerSkillTag from "./FreelancerSkillTag";
-import RadarChart from "./RadarChart";
 import {
   Chart,
   ArcElement, // Arc 요소 등록
   Tooltip,
   Legend,
 } from "chart.js";
-import "../style/FreelancerInfo.css";
+
+import FreelancerSkillTag from "./FreelancerSkillTag";
+import InfoCard from "./InfoCard";
+import ProfileIcon from "./ProfileIcon";
+import RadarChart from "./RadarChart";
 import SingleStarRating from "./SingleStarRating";
+
+import "../style/FreelancerInfo.css";
 
 Chart.register(ArcElement, Tooltip, Legend);
 
