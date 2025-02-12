@@ -1,0 +1,99 @@
+@import "colors.css";
+
+.similar-project-container {
+  position: relative;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  box-sizing: border-box;
+  min-height: 500px;
+}
+
+.similar-project-container .section-title {
+  margin-left: 5px;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  position: absolute;
+  top: 50%;
+  z-index: 10;
+  height: 40px;
+  width: 35px;
+}
+
+/* 이전 버튼: 컨테이너의 왼쪽 패딩 위치 */
+.carousel-control-prev {
+  left: -5px;
+}
+
+/* 다음 버튼: 컨테이너의 오른쪽 패딩 위치 */
+.carousel-control-next {
+  right: -5px;
+}
+
+.carousel-control-prev i,
+.carousel-control-next i {
+  font-size: 20px;
+  color: var(--color-secondary);
+}
+
+.carousel-control-prev i:hover,
+.carousel-control-next i:hover {
+  color: black; /* 호버 시 색상 */
+}
+
+.cus-card1 {
+  border-top: 1px solid #e5e5e5;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 20px;
+  margin-top: 10px;
+}
+
+.projects-title {
+  color: black;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.category {
+  font-size: 14px;
+  color: #555555;
+  margin-bottom: 15px;
+}
+
+.project-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+}
+
+.info-label {
+  min-width: 80px;
+  font-weight: bold;
+  color: #333333;
+}
+
+.budget {
+  color: var(--color-primary);
+  font-weight: bold;
+}
+
+.pointer {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.pointer:hover {
+  text-decoration: none;
+}

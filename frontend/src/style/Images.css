@@ -1,0 +1,46 @@
+.logo-image {
+  width: 30px;
+  height: 42px;
+  transform: rotate(15deg);
+  transition: transform 0.3s;
+}
+
+.profile-image {
+  width: 150px;
+  height: 150px;
+  transition: transform 0.3s;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #87cabd;
+  border-top: 5px solid var(--color-hover);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  margin-top: 15px;
+  font-size: 18px;
+  color: var(--color-hover);
+  font-weight: bold;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

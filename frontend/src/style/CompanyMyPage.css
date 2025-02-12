@@ -1,0 +1,80 @@
+@import "colors.css";
+
+.page-container {
+  overflow-x: auto;
+  min-height: 90vh;
+  background-color: var(--color-bg);
+}
+
+.profile-photo {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.company-info {
+  margin-left: 40px;
+}
+
+.company-name {
+  font-size: 30px;
+  margin-top: 15px;
+  font-weight: bold;
+  color: black;
+}
+
+.company-address {
+  font-size: 1rem;
+  color: black;
+  font-weight: 500;
+  margin-top: 20px;
+}
+
+.intro-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 0 30px;
+  gap: 60px;
+}
+
+.company-introduction {
+  margin-top: 4px;
+  margin-left: 15px;
+  font-size: 18px;
+  font-weight: 600;
+  color: black;
+  padding: 5px 20px;
+  border-left: 1px solid hsl(0 0% 0% / 0.3);
+  border-right: 1px solid hsl(0 0% 0% / 0.3);
+}
+
+.company-content {
+  font-size: 1rem;
+  color: black;
+  font-weight: 500;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  width: 1000px;
+  margin: 20px auto;
+}
+
+.edit-btn {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  margin-right: 10px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.edit-btn:hover {
+  background-color: var(--color-hover);
+}

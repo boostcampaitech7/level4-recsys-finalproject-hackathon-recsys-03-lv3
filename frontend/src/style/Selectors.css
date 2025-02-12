@@ -1,0 +1,152 @@
+@import "colors.css";
+
+/* 전체 드롭다운 컨테이너 */
+.single-selector {
+  position: relative;
+  display: inline-block;
+  font-family: Arial, sans-serif;
+}
+
+.multi-selector {
+  position: relative;
+  display: inline-block;
+  font-family: Arial, sans-serif;
+}
+
+/* 라벨과 선택된 값 컨테이너 */
+.label-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  min-width: 120px;
+  width: auto;
+  max-width: max-content;
+  border: 1px solid var(--color-secondary);
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: white;
+  color: var(--color-chat);
+}
+
+/* 선택된 값 */
+.selected-value {
+  color: var(--color-point);
+  margin-right: 8px;
+}
+
+/* 화살표 스타일 */
+.arrow i {
+  font-size: 12px;
+  transition: transform 0.3s ease;
+}
+.arrow.open {
+  transform: rotate(180deg);
+}
+
+/* 드롭다운 메뉴 */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: auto;
+  margin-top: 4px;
+  border: 1px solid var(--color-secondary);
+  border-radius: 4px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  overflow: hidden;
+  overflow-y: auto;
+  display: block;
+}
+
+/* 드롭다운 리스트 */
+.dropdown-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 300px;
+  max-width: 200px;
+  overflow-x: inherit;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-secondary) transparent;
+}
+
+/* 드롭다운 아이템 */
+.dropdown-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: normal;
+  hyphens: auto;
+}
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+/* 선택된 아이템 */
+.dropdown-item.selected {
+  font-weight: bold;
+  color: var(--color-point);
+  background-color: #e9f5ff;
+}
+
+/* 선택 표시 (체크마크) */
+.checkmark i {
+  float: right;
+  color: var(--color-point);
+  font-size: 18px;
+}
+
+.back-option {
+  color: #888;
+  font-style: italic;
+}
+
+/* 스크롤 바 */
+.scrollable {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* "전체" 스타일 */
+.전체-option {
+  color: var(--color-chat);
+  font-weight: normal;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.전체-option.selected {
+  color: var(--color-chat);
+  background-color: transparent;
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--color-secondary);
+  margin: 4px 0;
+  border: none;
+}
+
+/* 검색 바 */
+.search-bar {
+  padding: 4px 8px 8px;
+  border-bottom: 1px solid var(--color-secondary);
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--color-secondary);
+  border-radius: 4px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  border-color: var(--color-point);
+  box-shadow: 0 0 4px var(--color-point);
+}

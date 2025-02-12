@@ -1,0 +1,136 @@
+@import "colors.css";
+
+.info-card {
+  position: relative;
+  overflow-x: visible;
+  max-width: 1000px;
+  white-space: nowrap;
+}
+
+/* 전체 레이아웃 컨테이너 */
+.finished-project-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 20px;
+  max-width: 1000px;
+  min-height: 250px;
+}
+
+/* 왼쪽 프로젝트 정보 */
+.left-section {
+  color: black;
+  overflow-wrap: break-word;
+  max-width: 65%;
+  margin-left: 20px;
+}
+
+.title-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* 평가 UI */
+.rating {
+  align-items: center;
+  justify-items: center;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.finished-project-info-grid {
+  display: grid;
+  grid-template-columns: 0.5fr 1fr;
+  gap: 30px;
+  align-items: start;
+  max-width: 800px;
+}
+
+.finished-project-info-left,
+.finished-project-info-right {
+  display: flex;
+  flex-direction: column;
+}
+
+.finished-project-info-left p,
+.finished-project-info-right p {
+  margin: 5px 0;
+  font-size: 18px;
+}
+
+.finished-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+/* 오른쪽 평가 영역 */
+.right-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 35%;
+  height: 300px;
+  text-align: center;
+}
+
+/* 평가 전 버튼과 코멘트를 감싸는 컨테이너 */
+.before-review-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 평가하기 버튼 */
+.review-button {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap;
+  margin: auto;
+  margin-bottom: 20px;
+}
+
+.review-button:hover {
+  background-color: var(--color-hover);
+}
+
+/* 평가 전 코멘트 */
+.review-placeholder-text {
+  color: gray;
+  font-size: 14px;
+  text-align: center;
+}
+
+.radar-chart {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 180px;
+  height: 180px;
+}
+
+.review-comment {
+  border-top: 2px solid #ddd;
+  margin-top: 10px;
+  padding-top: 15px;
+  padding-left: 15px;
+  font-size: 16px;
+  font-style: italic;
+  text-align: start;
+  line-height: 1.6;
+  word-wrap: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
+}

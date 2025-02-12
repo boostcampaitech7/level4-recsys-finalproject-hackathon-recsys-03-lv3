@@ -1,0 +1,71 @@
+@import "colors.css";
+
+.star-rating-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.star-rating {
+  display: flex;
+  gap: 4px;
+  cursor: pointer;
+  font-size: 24px;
+  user-select: none;
+}
+
+.star-rating div {
+  font-size: 20px;
+  color: var(--color-star);
+  vertical-align: middle;
+  margin-right: 2px;
+}
+
+.star {
+  position: relative;
+  width: 24px;
+  height: 30px;
+  overflow: hidden;
+  color: var(--color-secondary);
+}
+
+.star.full {
+  color: var(--color-star);
+}
+
+.star.half::before {
+  content: "★";
+  position: absolute;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  color: var(--color-star);
+  overflow: hidden;
+}
+
+.star.empty {
+  color: var(--color-secondary);
+}
+
+.score-display {
+  font-size: 18px;
+  color: #333;
+  font-weight: bold;
+  position: relative;
+}
+
+.score-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.star-icon {
+  font-size: 22px;
+  color: var(--color-star);
+}
+
+.review-count {
+  font-size: 16px;
+  color: #666;
+}

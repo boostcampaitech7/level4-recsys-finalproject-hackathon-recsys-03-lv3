@@ -1,0 +1,99 @@
+.freelancer-list-container,
+.registered-project-container,
+.search-freelancer-container,
+.search-project-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  padding: 20px;
+  max-width: 100%;
+  overflow-x: auto;
+  min-height: 100vh;
+}
+
+.header-container,
+.filters {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.header-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: left;
+  color: black;
+}
+
+.registered-project-container .header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.header {
+  text-align: left;
+  font-weight: 600;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.header-right {
+  flex: 1;
+}
+
+.filters,
+.register-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  font-size: 12px;
+}
+
+.filter-group-left,
+.register-left {
+  display: flex;
+  gap: 10px;
+  flex-grow: 1;
+}
+
+.filter-group-right,
+.register-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reset-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background-color: transparent;
+  border: none;
+  color: #333;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.reset-button:hover {
+  font-weight: 500;
+}
+
+.filters > * {
+  flex-shrink: 0;
+}
+
+.freelancers .info-card {
+  justify-content: center;
+}
